@@ -12,7 +12,7 @@ class Scene;
 
         Scene* GetCurrentScene() const;
         bool IsGameStarted() const;
-        void GameStarted();
+        void GameStarted(bool status);
         void LoadScene(Scene* scene);
         
         sf::VideoMode mode;

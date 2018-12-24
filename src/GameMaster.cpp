@@ -9,9 +9,9 @@ GameMaster& GameMaster::Get()
     return instance;
 }
 
-void GameMaster::GameStarted()
+void GameMaster::GameStarted(bool status)
 {
-    this->gameStatus = true;
+    this->gameStatus = status;
 }
 
 Scene* GameMaster::GetCurrentScene() const

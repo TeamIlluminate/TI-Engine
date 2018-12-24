@@ -4,17 +4,11 @@
 
 using namespace eng;
 
-Render& Render::Get()
-{
-    static Render instance;
-    return instance;
-}
-
-
 //Initialization of the window. If we already have a window -> close current and create new.
-void Render::Init(sf::VideoMode mode)
+Render::Render(sf::VideoMode mode)
 {
-    if(!window)
+    //Здесь проблема, займусь, когда проснусь. Или сам поправь -> if(!window) не работает адекватно, быть может нужно инитить nullptr
+    if(true)
     {
         this->currentScene = GameMaster::Get().GetCurrentScene();
         this->window = new sf::RenderWindow(mode, "TI Engine improved");
@@ -47,6 +41,7 @@ void Render::WindowLoop()
             if (event.type == sf::Event::Closed)
             {
                 window->close();
+                GameMaster::Get().GameStarted(false);
             }
         }
 
