@@ -7,11 +7,12 @@ using namespace eng;
 //Initialization of the window. If we already have a window -> close current and create new.
 Render::Render(sf::VideoMode mode)
 {
-    //Здесь проблема, займусь, когда проснусь. Или сам поправь -> if(!window) не работает адекватно, быть может нужно инитить nullptr
-    if(true)
+    if(!this->window)
     {
         this->currentScene = GameMaster::Get().GetCurrentScene();
         this->window = new sf::RenderWindow(mode, "TI Engine improved");
+        //window must be deactived in thread which it where created
+        this->window->setActive(false);
         this->windowThread = new sf::Thread(&Render::WindowLoop, this);
         this->windowThread->launch();
     }
@@ -23,6 +24,7 @@ Render::Render(sf::VideoMode mode)
         this->windowThread->terminate(); //Terminate window drawning loop;
         delete this->window; //Free space 4r new window
         this->window = new sf::RenderWindow(mode, "TI Engine improved"); //I wanna make some spec file-descriptor like (Project name; Engine version; ... etc)
+        this->window->setActive(false);
         this->windowThread->launch(); //Restart thread
     }
 }
@@ -34,7 +36,6 @@ void Render::WindowLoop()
     while (window->isOpen())
     {
         sf::Clock DeltaClock;
-
         sf::Event event;
         while (window->pollEvent(event))
         {

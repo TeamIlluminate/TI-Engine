@@ -13,7 +13,7 @@ namespace eng{
 
         private:
 
-        GameObject * parent;
+        GameObject * parent = nullptr;
         
     };
 }

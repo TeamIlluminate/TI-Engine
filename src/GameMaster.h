@@ -25,7 +25,7 @@ class Scene;
         GameMaster& operator= (GameMaster const&) = delete;
 
         bool gameStatus = false;
-        Scene* currentScene;
+        Scene* currentScene = nullptr;
     };
 
 }

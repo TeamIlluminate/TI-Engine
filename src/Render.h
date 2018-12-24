@@ -12,9 +12,9 @@ class Scene;
 
         private:
 
-        sf::RenderWindow* window;
-        sf::Thread* windowThread;
-        Scene* currentScene;
+        sf::RenderWindow* window = nullptr;
+        sf::Thread* windowThread = nullptr;
+        Scene* currentScene = nullptr;
 
         void WindowLoop();
 
