@@ -16,12 +16,13 @@ int main() {
     std::srand(20);
 
     for (int i = 0; i < 10; i++)
-         mainScene->AddGameObject(new JustCircle("Ebashik #" + std::to_string(i), 100 + 20 * i , 100, 20.f, b2_dynamicBody));
-    mainScene->AddGameObject(new JustCircle("BB",150, 180, 50.f, b2_staticBody));
+    mainScene->AddGameObject(new JustCircle("Movable #" + std::to_string(i), 100 + 20 * i , 100, 20.f, b2_dynamicBody));
+
+    mainScene->AddGameObject(new JustCircle("Fixed",150, 180, 50.f, b2_staticBody));
 
     render->SetScene(mainScene);
 
-    while(eng::GameMaster::Get().IsGameStarted()){}
+    while(eng::GameMaster::Get().IsGameStarted()){} //Now imitate game\editor cycle
 
     return 0;
 }

@@ -35,3 +35,10 @@ void PhysBody::FixedUpdate() {
 void PhysBody::BeginContact(GameObject* object) {
     std::cout << attached->GetName() << " with " << object->GetName() << '\n';
 }
+
+void PhysBody::RayCast()
+{
+    //Здесь сначала нужно будет проинитить лучи и скопировать трансформ, затем прорейкастить и описать логику.
+    //Можешь сам заняться, либо можешь заняться спрайтом и обеспечением шейдеров в системе \ etc, а я займусь этим, когда проснусь. (20.45 -> [04\05].00)
+    this->fixture.shape->RayCast(nullptr, b2RayCastInput(), b2Transform(), 0);
+}

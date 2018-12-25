@@ -17,6 +17,8 @@ class GameObject;
         void OnInit();
         void BeginContact(GameObject* object);
 
+        void RayCast();
+
         private:
 
         b2FixtureDef fixture;
