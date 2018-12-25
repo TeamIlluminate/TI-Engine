@@ -1,4 +1,6 @@
 #include "Utils.h"
+#include "CollisionEventManager.h"
+#include <Box2D/Box2D.h>
 
 namespace eng{
 
@@ -9,24 +11,31 @@ class Camera;
     {
         public:
         
-        Scene(const std::string Name); //Name 4r Serialization ability
+        Scene(const std::string name); //Name 4r Serialization ability
 
         std::list<GameObject*> GetGameObjects() const; //Generaly 4r Render using or serializing
 
+        void AddGameObject(GameObject* object);
+
         /* GameObjects GETTERS */
 
-        GameObject* FindGameObject(std::string ObjectName) const;
-        std::list<GameObject*> FindGameObjects(std::string ObjectName) const;
+        GameObject* FindGameObject(std::string objectName) const;
+        std::list<GameObject*> FindGameObjects(std::string objectName) const;
 
-        void RemoveFromScene(GameObject* ObjectToRemove); //Remove gameobject from current Scene and free memory
+        b2World* GetWorld() const;
 
-        Camera* GetActiveCamera() const; //Find first Active Camera 4r View
+        void PhysicsLoop();
+
+        void RemoveFromScene(GameObject* objectToRemove); //Remove gameobject from current Scene and free memory
 
         private:
 
+        b2World* world;
+        CollisionEventManager* collisionEventManager; 
         std::list<GameObject*> sceneObjects;
         std::string name;
-
+        sf::Thread* physicThread;
+        int timestep = 60;int velocityIterations = 6;int positionIterations = 2;
     };
 
 }

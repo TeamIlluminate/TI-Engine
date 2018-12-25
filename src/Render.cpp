@@ -1,6 +1,10 @@
 #include "Render.h"
 #include "Scene.h"
 #include "GameMaster.h"
+#include "Transform.h"
+#include "Components/Mesh.h"
+#include "GameObject.h"
+#include "Component.h"
 
 using namespace eng;
 
@@ -29,6 +33,11 @@ Render::Render(sf::VideoMode mode)
     }
 }
 
+void Render::SetScene(Scene* scene)
+{
+    this->currentScene = scene;
+}
+
 void Render::WindowLoop()
 {
     window->clear();
@@ -37,6 +46,7 @@ void Render::WindowLoop()
     {
         sf::Clock DeltaClock;
         sf::Event event;
+        
         while (window->pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
@@ -48,6 +58,43 @@ void Render::WindowLoop()
 
         window->clear();
 
+        if(currentScene)
+        {
+            std::list<GameObject* > objects = this->currentScene->GetGameObjects();
+
+            for(GameObject* object : objects)
+            {
+                Draw(object);
+            }
+        }
         window->display();
+    }
+}
+
+void Render::Draw(GameObject* object)
+{
+    std::list<Component*> cmps = object->GetComponents();
+
+    for(Component* cmp : cmps)
+    {
+        cmp->Update();
+    }
+
+    Mesh* mesh = object->GetComponent<Mesh>();
+
+    if(mesh)
+    window->draw(*mesh->GetDrawable(), mesh->GetRenderStates());
+
+    //if(object->GetName() == "BB")
+    //std::cout << "RenderUpdate: " << object->transform.position.x << " || " << object->transform.position.y << '\n';
+
+    std::list<GameObject* > subObjects = object->GetChilds();
+
+    if(subObjects.size() > 0)
+    {
+        for(GameObject* subObject : subObjects)
+        {
+            Draw(subObject);
+        }
     }
 }
