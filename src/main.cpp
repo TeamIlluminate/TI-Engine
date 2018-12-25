@@ -14,8 +14,10 @@ int main() {
     gameMaster.LoadScene(mainScene);
 
     std::srand(20);
-    mainScene->AddGameObject(new JustCircle("Ebashik", 195, 100, 50, b2_dynamicBody));
-    mainScene->AddGameObject(new JustCircle("BB",150, 180, 50, b2_staticBody));
+
+    for (int i = 0; i < 10; i++)
+         mainScene->AddGameObject(new JustCircle("Ebashik #" + std::to_string(i), 100 + 20 * i , 100, 20.f, b2_dynamicBody));
+    mainScene->AddGameObject(new JustCircle("BB",150, 180, 50.f, b2_staticBody));
 
     render->SetScene(mainScene);
 

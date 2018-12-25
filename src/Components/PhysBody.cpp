@@ -23,9 +23,13 @@ void PhysBody::OnInit() {
 
 void PhysBody::FixedUpdate() {
     b2Vec2 position = body->GetPosition();
-    //if(attached->GetName() == "BB")
-    //std::cout << "PhysUpdate: " << attached->transform.position.x << " || " << attached->transform.position.y << '\n';
+
     attached->transform.position = sf::Vector2f(position.x, position.y);
+
+    // std::cout << '\n' << attached->GetName() << '\n';
+    // std::cout << "TRANSFORM: " << attached->transform.position.x << " || " << attached->transform.position.y << '\n';
+    // std::cout << "BODY POS: " << body->GetPosition().x << " || " << body->GetPosition().y << '\n';
+    // std::cout << "SUB RADIUS: " << fixture.shape->m_radius << '\n';
 }
 
 void PhysBody::BeginContact(GameObject* object) {
