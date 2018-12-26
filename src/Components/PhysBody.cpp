@@ -14,7 +14,6 @@ void PhysBody::OnInit() {
     defBody.type = this->type;
     defBody.position.Set(attached->transform.position.x, attached->transform.position.y);
     
-
     this->body = GameMaster::Get().GetCurrentScene()->GetWorld()->CreateBody(&defBody);
     this->body->ApplyLinearImpulse(b2Vec2(0, std::rand() % 20 + 1), b2Vec2(attached->transform.position.x, attached->transform.position.y), true);
     this->body->CreateFixture(&fixture);

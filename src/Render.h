@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include <thread>
 
 namespace eng{
 
@@ -16,7 +17,8 @@ class GameObject;
         private:
 
         sf::RenderWindow* window = nullptr;
-        sf::Thread* windowThread = nullptr;
+
+        std::thread* wThread;
         Scene* currentScene = nullptr;
 
         void WindowLoop();

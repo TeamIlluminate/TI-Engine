@@ -1,6 +1,7 @@
 #include "Utils.h"
 #include "CollisionEventManager.h"
 #include <Box2D/Box2D.h>
+#include <thread>
 
 namespace eng{
 
@@ -34,7 +35,7 @@ class Camera;
         CollisionEventManager* collisionEventManager; 
         std::list<GameObject*> sceneObjects;
         std::string name;
-        sf::Thread* physicThread;
+        std::thread* physicThread;
         int timestep = 60;int velocityIterations = 6;int positionIterations = 2;
     };
 

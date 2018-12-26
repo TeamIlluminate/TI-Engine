@@ -10,8 +10,7 @@ class Component;
     {
         public:
 
-            GameObject();
-            GameObject(const std::string name);
+            GameObject(const std::string name = "empty");
 
             void AddChild(GameObject * child);
             sf::Vector2f GetGlobalCoordinates();

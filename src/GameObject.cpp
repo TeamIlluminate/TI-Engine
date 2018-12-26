@@ -3,7 +3,6 @@
 
 using namespace eng;
 
-GameObject::GameObject() : name("Empty"){}
 GameObject::GameObject(std::string newName) : name(newName){}
 
 void GameObject::AddNewComponent(Component *component) {

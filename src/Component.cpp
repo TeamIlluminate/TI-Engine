@@ -5,23 +5,3 @@ using namespace eng;
 void Component::SetParent(GameObject * attachTo) {
     this->attached = attachTo;
 }
-
-void Component::Update() {
-
-}
-
-void Component::FixedUpdate() {
-
-}
-
-void Component::OnInit() {
-
-}
-
-void Component::BeginContact(GameObject* object) {
-
-}
-
-void Component::EndContact(GameObject* object) {
-    
-}

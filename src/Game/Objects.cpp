@@ -30,7 +30,7 @@ class JustCircle : public eng::GameObject {
 class StaticCircle : public eng::GameObject {
     public:
 
-    StaticCircle(std::string name, float x, float y, float param) : GameObject(name) {
+    StaticCircle(std::string name, float x, float y, float param) : GameObject(name) {  
 
         sf::CircleShape* shape = new sf::CircleShape(param);
         shape->setFillColor(sf::Color(0, 0, param * 10));

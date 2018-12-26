@@ -12,8 +12,8 @@ Scene::Scene(std::string name)
     world = new b2World(gravity);
     collisionEventManager = new CollisionEventManager(this);
     (*world).SetContactListener(collisionEventManager);
-    physicThread = new sf::Thread(&Scene::PhysicsLoop, this);
-    physicThread->launch(); 
+    physicThread = new std::thread(&Scene::PhysicsLoop, this);
+    physicThread->detach(); 
 }
 
 b2World* Scene::GetWorld() const 
@@ -69,7 +69,6 @@ void Scene::PhysicsLoop() {
                component->FixedUpdate();
            }
         }
-        
-        sf::sleep(sf::milliseconds(20));
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
 }
