@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "Components/ShapeMesh.h"
 #include "Components/PhysBody.h"
+#include "Components/Camera.h"
 
 class JustCircle : public eng::GameObject {
     public:
@@ -18,26 +19,10 @@ class JustCircle : public eng::GameObject {
         physShape->m_radius = param;
         b2FixtureDef fixtureDef;
         fixtureDef.shape = physShape;
-        fixtureDef.density = 1;
-        fixtureDef.friction = 0.3f;
+        fixtureDef.density = 1000;
 
         this->AddNewComponent(new eng::PhysBody(fixtureDef, bodyType));
 
-    }
-};
-
-
-class StaticCircle : public eng::GameObject {
-    public:
-
-    StaticCircle(std::string name, float x, float y, float param) : GameObject(name) {  
-
-        sf::CircleShape* shape = new sf::CircleShape(param);
-        shape->setFillColor(sf::Color(0, 0, param * 10));
-
-        this->AddNewComponent( new eng::ShapeMesh(shape));
-        this->transform.position = sf::Vector2<float>(x, y);
-
-
+        this->AddNewComponent(new eng::Camera());
     }
 };

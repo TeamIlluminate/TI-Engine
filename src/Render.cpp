@@ -51,15 +51,12 @@ void Render::WindowLoop()
 
     ImGui::SFML::Init(*window);
 
-    sf::Color bgColor;
-    float color[3] = { 0.f, 0.f, 0.f };
-    char windowTitle[255] = "ImGui + SFML = <3";
     sf::Clock deltaClock;
 
     while (window->isOpen())
     {
 
-        window->clear(bgColor);
+        window->clear();
         sf::Clock DeltaClock;
         sf::Event event;
         
@@ -73,6 +70,8 @@ void Render::WindowLoop()
             }
         }
 
+        ImGui::SFML::Update(*window, deltaClock.restart());        
+   
         if(currentScene)
         {
             std::list<GameObject* > objects = this->currentScene->GetGameObjects();
@@ -81,33 +80,8 @@ void Render::WindowLoop()
             {
                 Draw(object);
             }
-        }
-
-        ImGui::SFML::Update(*window, deltaClock.restart());        
-   
-        ImGui::Begin("Sample window");
+        }    
         
-        // Инструмент выбора цвета
-        if (ImGui::ColorEdit3("Background color", color)) {
-            // код вызывается при изменении значения, поэтому всё
-            // обновляется автоматически
-
-            bgColor.r = static_cast<sf::Uint8>(color[0] * 255.f);
-            bgColor.g = static_cast<sf::Uint8>(color[1] * 255.f);
-            bgColor.b = static_cast<sf::Uint8>(color[2] * 255.f);
-        }
-
-        ImGui::InputText("Window title", windowTitle, 255);
-        ImGui::ShowDemoWindow();
-        if (ImGui::Button("Update window title")) {
-            // этот код выполняется, когда юзер жмёт на кнопку
-            // здесь можно было бы написать 
-            // if(ImGui::InputText(...))
-            window->setTitle(windowTitle);
-        }
-
-        ImGui::End(); // end window
-
         ImGui::SFML::Render(*window);
 
         window->display();
@@ -122,6 +96,7 @@ void Render::Draw(GameObject* object)
     for(Component* cmp : cmps)
     {
         cmp->Update();
+        cmp->GUI();
     }
 
     Mesh* mesh = object->GetComponent<Mesh>();

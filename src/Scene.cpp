@@ -8,8 +8,10 @@ using namespace eng;
 Scene::Scene(std::string name)
 {
     this->name = name;
-    b2Vec2 gravity(0, 0);
+
+    b2Vec2 gravity;
     world = new b2World(gravity);
+
     collisionEventManager = new CollisionEventManager(this);
     (*world).SetContactListener(collisionEventManager);
     physicThread = new std::thread(&Scene::PhysicsLoop, this);
