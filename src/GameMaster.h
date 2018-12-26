@@ -1,31 +1,30 @@
 #include "Utils.h"
 
-namespace eng{
+namespace eng
+{
 
 class Scene;
 
-    class GameMaster
-    {
-        public:
+class GameMaster
+{
+  public:
+    static GameMaster &Get();
 
-        static GameMaster& Get();
+    Scene *GetCurrentScene() const;
+    bool IsGameStarted() const;
+    void GameStarted(bool status);
+    void LoadScene(Scene *scene);
 
-        Scene* GetCurrentScene() const;
-        bool IsGameStarted() const;
-        void GameStarted(bool status);
-        void LoadScene(Scene* scene);
-        
-        sf::VideoMode mode;
+    sf::VideoMode mode;
 
-        private:
-        
-        GameMaster(){};
-        ~GameMaster(){};
-        GameMaster(GameMaster const&) = delete;
-        GameMaster& operator= (GameMaster const&) = delete;
+  private:
+    GameMaster(){};
+    ~GameMaster(){};
+    GameMaster(GameMaster const &) = delete;
+    GameMaster &operator=(GameMaster const &) = delete;
 
-        bool gameStatus = false;
-        Scene* currentScene = nullptr;
-    };
+    bool gameStatus = false;
+    Scene *currentScene = nullptr;
+};
 
-}
+} // namespace eng

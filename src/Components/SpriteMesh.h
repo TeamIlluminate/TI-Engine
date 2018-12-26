@@ -1,12 +1,12 @@
 #include "Mesh.h"
 
-namespace eng{
+namespace eng
+{
 
-    class SpriteMesh : public Mesh
-    {
-        public:
-
-        sf::Drawable* GetDrawable();
-        sf::RenderStates GetRenderStates();
-    };
-}
+class SpriteMesh : public Mesh
+{
+  public:
+    sf::Drawable *GetDrawable();
+    sf::RenderStates GetRenderStates();
+};
+} // namespace eng

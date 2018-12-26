@@ -1,28 +1,27 @@
 #include "Utils.h"
 #include <thread>
 
-namespace eng{
+namespace eng
+{
 
 class Scene;
 class GameObject;
 
-    class Render
-    {
-        public:
-        
-        Render(sf::VideoMode mode);
+class Render
+{
+public:
+  Render(sf::VideoMode mode);
 
-        void SetScene(Scene* scene);
+  void SetScene(Scene *scene);
 
-        private:
+private:
+  sf::RenderWindow *window = nullptr;
 
-        sf::RenderWindow* window = nullptr;
+  std::thread *wThread;
+  Scene *currentScene = nullptr;
 
-        std::thread* wThread;
-        Scene* currentScene = nullptr;
+  void WindowLoop();
+  void Draw(GameObject *object);
+};
 
-        void WindowLoop();
-        void Draw(GameObject* object);
-    };
-
-}
+} // namespace eng

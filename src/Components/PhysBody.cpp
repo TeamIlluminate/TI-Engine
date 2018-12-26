@@ -5,37 +5,39 @@
 #include <stdlib.h>
 
 using namespace eng;
-PhysBody::PhysBody(b2FixtureDef fixture, b2BodyType type) : fixture(fixture), type(type) { }
+PhysBody::PhysBody(b2FixtureDef fixture, b2BodyType type) : fixture(fixture), type(type) {}
 b2FixtureDef PhysBody::GetFixture() { return fixture; }
 
-void PhysBody::OnInit() {
+void PhysBody::OnInit()
+{
 
     b2BodyDef defBody;
 
     defBody.type = this->type;
     defBody.position.Set(attached->transform.position.x, attached->transform.position.y);
-    
+
     this->body = GameMaster::Get().GetCurrentScene()->GetWorld()->CreateBody(&defBody);
-    
+
     this->body->CreateFixture(&fixture);
-    
+
     AddImpulse(sf::Vector2f(10, 1));
 }
 
-
-void PhysBody::FixedUpdate() {
+void PhysBody::FixedUpdate()
+{
     b2Vec2 position = body->GetPosition();
 
     attached->transform.position = sf::Vector2f(position.x, position.y);
 }
 
-void PhysBody::BeginContact(GameObject* object) {
+void PhysBody::BeginContact(GameObject *object)
+{
     std::cout << attached->GetName() << " with " << object->GetName() << '\n';
 }
 
-GameObject * PhysBody::RayCast(sf::Vector2f to)    
+GameObject *PhysBody::RayCast(sf::Vector2f to)
 {
-    RayCastHandler * handler = new RayCastHandler();   
+    RayCastHandler *handler = new RayCastHandler();
     this->body->GetWorld()->RayCast(handler, this->body->GetPosition(), b2Vec2(to.x, to.y));
     return handler->foundedObject;
 }
