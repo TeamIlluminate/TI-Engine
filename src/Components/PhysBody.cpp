@@ -6,6 +6,9 @@
 
 using namespace eng;
 PhysBody::PhysBody(b2FixtureDef fixture, b2BodyType type) : fixture(fixture), type(type) {}
+PhysBody::~PhysBody() {
+    body->GetWorld()->DestroyBody(body);
+}
 b2FixtureDef PhysBody::GetFixture() { return fixture; }
 
 void PhysBody::OnInit()

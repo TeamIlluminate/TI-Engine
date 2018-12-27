@@ -6,6 +6,8 @@ namespace eng
 class Component
 {
 public:
+  //If component was attached to gameobmect DONT USE this destructor
+  //Use GameObject::RemoveComponent instead
   virtual ~Component(){}
   void SetParent(GameObject *attachTo)
   {

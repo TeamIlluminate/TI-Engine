@@ -13,7 +13,8 @@ class Scene
 {
   public:
     Scene(const std::string name); //Name 4r Serialization ability
-
+    //destructor??
+    
     std::list<GameObject *> GetGameObjects() const; //Generaly 4r Render using or serializing
 
     void AddGameObject(GameObject *object);

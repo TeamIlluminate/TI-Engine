@@ -11,6 +11,7 @@ class PhysBody : public Component
 {
   public:
     PhysBody(b2FixtureDef fixture, b2BodyType type);
+    ~PhysBody();
     b2FixtureDef GetFixture();
     b2Body *body;
 

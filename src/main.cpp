@@ -24,8 +24,9 @@ int main()
         JustCircle * circle =         new JustCircle("Movable 123", 500, 500, 30.f, b2_dynamicBody);
         
         mainScene->AddGameObject(circle);
-
-        circle->~JustCircle();
+        auto mesh = circle->GetComponent<eng::Mesh>();
+        circle->RemoveComponent(mesh);
+        //circle->~JustCircle();
 
     render->SetScene(mainScene);
 
