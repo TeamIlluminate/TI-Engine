@@ -30,6 +30,7 @@ std::list<GameObject *> Scene::GetGameObjects() const
 
 void Scene::AddGameObject(GameObject *object)
 {
+    object->SetScene(this);
     this->sceneObjects.push_back(object);
 }
 

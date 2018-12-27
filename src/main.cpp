@@ -2,6 +2,8 @@
 #include "Render.h"
 #include "Scene.h"
 #include "Game/Objects.cpp"
+#include "Components/PhysBody.h"
+#include "Component.h"
 
 int main()
 {
@@ -18,6 +20,12 @@ int main()
 
     for (int i = 0; i < 3; i++)
         mainScene->AddGameObject(new JustCircle("Movable #" + std::to_string(i), 100 + 300 * i, 100, 20.f, b2_dynamicBody));
+
+        JustCircle * circle =         new JustCircle("Movable 123", 500, 500, 30.f, b2_dynamicBody);
+        
+        mainScene->AddGameObject(circle);
+
+        circle->~JustCircle();
 
     render->SetScene(mainScene);
 

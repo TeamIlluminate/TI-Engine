@@ -2,7 +2,7 @@
 #include "CollisionEventManager.h"
 #include <Box2D/Box2D.h>
 #include <thread>
-
+#pragma once
 namespace eng
 {
 
@@ -27,7 +27,7 @@ class Scene
 
     void PhysicsLoop();
 
-    void RemoveFromScene(GameObject *objectToRemove); //Remove gameobject from current Scene and free memory
+    void RemoveFromScene(GameObject *objectToRemove); //Remove gameobject from current Scene
 
   private:
     b2World *world;

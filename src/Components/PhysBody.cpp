@@ -39,6 +39,7 @@ GameObject *PhysBody::RayCast(sf::Vector2f to)
 {
     RayCastHandler *handler = new RayCastHandler();
     this->body->GetWorld()->RayCast(handler, this->body->GetPosition(), b2Vec2(to.x, to.y));
+  //  if (handler->foundedObject) {std::cout << "something";}
     return handler->foundedObject;
 }
 
