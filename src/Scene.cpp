@@ -14,13 +14,15 @@ Scene::Scene(std::string name)
 
     collisionEventManager = new CollisionEventManager(this);
     (*world).SetContactListener(collisionEventManager);
-    physicThread = new std::thread(&Scene::PhysicsLoop, this);
-    physicThread->detach();
 }
 
 b2World *Scene::GetWorld() const
 {
     return this->world;
+}
+
+void Scene::AddB2BodyToDelete(b2Body* body) {
+    toDelete.push_back(body);
 }
 
 std::list<weak_ptr<GameObject> > Scene::GetGameObjects() const
@@ -69,20 +71,26 @@ void Scene::Destroy(weak_ptr<GameObject> gameObject)
 
 void Scene::PhysicsLoop()
 {
-    while (GameMaster::Get().IsGameStarted())
-    {
         float32 timeStep = 0.02f;
+
+        for (auto bodyToDelete : toDelete) {
+            world->DestroyBody(bodyToDelete);
+        }
+        toDelete.clear();
 
         world->Step(timeStep, velocityIterations, positionIterations);
 
-        for (shared_ptr<GameObject> gameObject : sceneObjects)
+        list<shared_ptr<GameObject> > sharedObjects = sceneObjects;
+
+        for (auto gameObject : sharedObjects)
         {
             auto components = gameObject->GetComponents();
             for (auto component : components)
             {
-                component.lock()->FixedUpdate();
+                if(auto cmp = component.lock())
+                {
+                    cmp->FixedUpdate();
+                }
             }
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
-    }
 }

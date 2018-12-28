@@ -16,7 +16,7 @@ namespace eng
         weak_ptr<PhysBody>  bodyComponent;     
 
         bool isFiring = false;
-        const float shootDeley = 1.f;
+        const float shootDeley = .03f;
         float shoot = 0;
     
         

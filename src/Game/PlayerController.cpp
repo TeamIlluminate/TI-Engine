@@ -13,34 +13,41 @@ void PlayerController::OnInit()
 }
 void PlayerController::Update()
 {
-    if (shoot < shootDeley)
-        shoot += DeltaTime();
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    if (auto comp = bodyComponent.lock())
     {
-        this->MoveIn(sf::Vector2f(0, -5));
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-    {
-        this->MoveIn(sf::Vector2f(0, 5));
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-    {
-        this->MoveIn(sf::Vector2f(-5, 0));
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-    {
-        this->MoveIn(sf::Vector2f(5, 0));
-    }
-
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-    {
-        if (!isFiring && shoot >= shootDeley)
+        if (!comp->body->GetWorld()->IsLocked())
         {
-            shoot = 0;
-            isFiring != isFiring;
-            sf::Vector2i currentPosition = sf::Mouse::getPosition();
-            this->ShootIn(sf::Vector2f(currentPosition.x, currentPosition.y));
+
+            if (shoot < shootDeley)
+                shoot += DeltaTime();
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            {
+                this->MoveIn(sf::Vector2f(0, -5));
+            }
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            {
+                this->MoveIn(sf::Vector2f(0, 5));
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            {
+                this->MoveIn(sf::Vector2f(-5, 0));
+            }
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            {
+                this->MoveIn(sf::Vector2f(5, 0));
+            }
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+            {
+                if (!isFiring && shoot >= shootDeley)
+                {
+                    shoot = 0;
+                    isFiring != isFiring;
+                    sf::Vector2i currentPosition = sf::Mouse::getPosition();
+                    this->ShootIn(sf::Vector2f(currentPosition.x, currentPosition.y));
+                }
+            }
         }
     }
 }
@@ -62,7 +69,7 @@ void PlayerController::ShootIn(sf::Vector2f position)
         {
             direction = Normalize(direction);
 
-            shared_ptr<GameObject> bullet = std::make_shared<eng::GameObject>();
+            shared_ptr<GameObject> bullet = std::make_shared<eng::GameObject>("BULLER");
             bullet->transform.position = parent->transform.position + direction * 15.f;
 
             auto shape = make_shared<sf::CircleShape>(2.f);

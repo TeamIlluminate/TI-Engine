@@ -8,7 +8,10 @@ using namespace eng;
 PhysBody::PhysBody(b2FixtureDef fixture, b2BodyType type) : fixture(fixture), type(type) {}
 
 PhysBody::~PhysBody() {
-    this->body->GetWorld()->DestroyBody(body);
+    if (auto parent = owner.lock()) {
+        std::cout << "я хочу убить себя" << '\n';
+        parent->GetScene()->AddB2BodyToDelete(body);
+    }
 }
 
 b2FixtureDef PhysBody::GetFixture() { return fixture; }

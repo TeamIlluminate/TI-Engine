@@ -11,8 +11,8 @@ class Component;
 class GameObject : public enable_shared_from_this<GameObject>
 {
   public:
-
-    GameObject(const std::string name = "empty");
+    GameObject() : name("empty") {};
+    GameObject(std::string name) : name(name) {};
 
     //push reference to child in list and set reference on this gameobject in child
     //delete reference on this child from previous parent of child

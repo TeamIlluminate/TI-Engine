@@ -2,6 +2,8 @@
 #include "CollisionEventManager.h"
 #include <Box2D/Box2D.h>
 #include <thread>
+#include <mutex>
+
 #pragma once
 namespace eng
 {
@@ -14,7 +16,7 @@ class Scene
   public:
     Scene(const std::string name); //Name 4r Serialization ability
     //destructor??
-    
+
     std::list<weak_ptr<GameObject> > GetGameObjects() const; //Generaly 4r Render using or serializing
 
     void AddGameObject(shared_ptr<GameObject> object);
@@ -25,6 +27,8 @@ class Scene
     std::list<weak_ptr<GameObject> > FindGameObjects(std::string objectName) const;
 
     b2World *GetWorld() const;
+
+    void AddB2BodyToDelete(b2Body *body);
 
     void PhysicsLoop();
 
@@ -40,7 +44,10 @@ class Scene
     int positionIterations = 2;
 
     std::list<shared_ptr<GameObject> > sceneObjects;
+    std::list<b2Body*> toDelete;
     std::string name;
+
+    mutex mtx;
 
 };
 

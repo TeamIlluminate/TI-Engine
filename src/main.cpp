@@ -67,11 +67,13 @@ int main()
 
     render->SetScene(mainScene);
 
-    mainScene->AddGameObject(createPlayer(600, 400));
+    mainScene->AddGameObject(createPlayer(600, 500));
 
-    mainScene->AddGameObject(createEnemy(100, 100));
-    mainScene->AddGameObject(createEnemy(200, 100));
-    mainScene->AddGameObject(createEnemy(300, 100));
+    for(int i = 0; i < 15; ++i)
+    {
+        mainScene->AddGameObject(createEnemy(1 + i * 100, 100 + i * 10));
+    }
+
 
     while (eng::GameMaster::Get().IsGameStarted())
     {

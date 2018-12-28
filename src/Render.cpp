@@ -52,6 +52,7 @@ void Render::WindowLoop()
     ImGui::SFML::Init(*window);
 
     sf::Clock deltaClock;
+    float fixedDelta = 0;
 
     while (window->isOpen())
     {
@@ -59,6 +60,19 @@ void Render::WindowLoop()
         window->clear();
         sf::Clock DeltaClock;
         sf::Event event;
+
+        float dTime = deltaClock.restart().asSeconds();
+
+        if(fixedDelta < 0.02f)
+        fixedDelta += dTime;
+        else
+        {
+            if(currentScene)
+            currentScene->PhysicsLoop();
+            fixedDelta = 0;
+        }
+
+        GameMaster::Get().UpdateDeltaTime(dTime);
 
         while (window->pollEvent(event))
         {
@@ -85,8 +99,6 @@ void Render::WindowLoop()
         }
 
         ImGui::SFML::Render(*window);
-
-        GameMaster::Get().UpdateDeltaTime(deltaClock.restart().asSeconds());
 
         window->display();
     }

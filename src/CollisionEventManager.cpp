@@ -35,22 +35,26 @@ void CollisionEventManager::BeginContact(b2Contact *contact)
         }
     }
 
-    auto components = firstObject.lock()->GetComponents();
+    auto firstShared = firstObject.lock();
+    auto secondShared = secondObject.lock();
 
-    if(firstObject.lock() && secondObject.lock())
+    if( firstShared && secondShared)
     {
+        auto components = firstShared->GetComponents();
         for (auto component : components)
         {
-            component.lock()->BeginContact(secondObject);
+            if (auto comp = component.lock()) {            
+                comp->BeginContact(secondObject);
+            }
         }
 
-        components = secondObject.lock()->GetComponents();
-
+        components = secondShared->GetComponents();
         for (auto component : components)
         {
-            component.lock()->BeginContact(firstObject);
+            if (auto comp = component.lock()) {            
+                comp->BeginContact(firstObject);
+            }
         }
-        
     }
 }
 
@@ -83,20 +87,25 @@ void CollisionEventManager::EndContact(b2Contact *contact)
         }
     }
 
-    auto components = firstObject.lock()->GetComponents();
+    auto firstShared = firstObject.lock();
+    auto secondShared = secondObject.lock();
 
-    if(firstObject.lock() && secondObject.lock())
+    if( firstShared && secondShared)
     {
+        auto components = firstShared->GetComponents();
         for (auto component : components)
         {
-            component.lock()->EndContact(secondObject);
+            if (auto comp = component.lock()) {            
+                comp->EndContact(secondObject);
+            }
         }
 
-        components = secondObject.lock()->GetComponents();
-
+        components = secondShared->GetComponents();
         for (auto component : components)
         {
-            component.lock()->EndContact(firstObject);
+            if (auto comp = component.lock()) {            
+                comp->EndContact(firstObject);
+            }
         }
     }
 }

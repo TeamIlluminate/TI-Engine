@@ -3,7 +3,6 @@
 
 using namespace eng;
 
-GameObject::GameObject(std::string newName) : name(newName) {}
 
 
 sf::Vector2f GameObject::GetGlobalCoordinates() const

@@ -29,6 +29,7 @@ class Bullet : public Component
         if (physBody && shooter && parent)
         {
             sf::Vector2f position = direction * 8.f;
+            
             physBody->TransformPosition(position);
             if (Magnitude(shooter->transform.position - parent->transform.position) > 3000)
             {
@@ -42,9 +43,11 @@ class Bullet : public Component
         auto collision = hit.lock();
         auto parent = owner.lock();
 
+        string s = collision->GetName();
+
         if (collision && parent)
         {
-            if (collision->GetName() == "ENEMY")
+            if (collision->GetName() == "Enemy")
             {
                 parent->GetScene()->Destroy(hit);
             }
