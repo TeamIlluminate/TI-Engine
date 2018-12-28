@@ -15,30 +15,33 @@ class Scene
     Scene(const std::string name); //Name 4r Serialization ability
     //destructor??
     
-    std::list<GameObject *> GetGameObjects() const; //Generaly 4r Render using or serializing
+    std::list<weak_ptr<GameObject> > GetGameObjects() const; //Generaly 4r Render using or serializing
 
-    void AddGameObject(GameObject *object);
+    void AddGameObject(shared_ptr<GameObject> object);
 
     /* GameObjects GETTERS */
 
-    GameObject *FindGameObject(std::string objectName) const;
-    std::list<GameObject *> FindGameObjects(std::string objectName) const;
+    weak_ptr<GameObject> FindGameObject(std::string objectName) const;
+    std::list<weak_ptr<GameObject> > FindGameObjects(std::string objectName) const;
 
     b2World *GetWorld() const;
 
     void PhysicsLoop();
 
-    void RemoveFromScene(GameObject *objectToRemove); //Remove gameobject from current Scene
+    void Destroy(weak_ptr<GameObject> objectToRemove); //Remove gameobject from current Scene
 
   private:
     b2World *world;
     CollisionEventManager *collisionEventManager;
-    std::list<GameObject *> sceneObjects;
-    std::string name;
     std::thread *physicThread;
+
     int timestep = 60;
     int velocityIterations = 6;
     int positionIterations = 2;
+
+    std::list<shared_ptr<GameObject> > sceneObjects;
+    std::string name;
+
 };
 
 } // namespace eng

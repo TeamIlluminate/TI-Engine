@@ -13,12 +13,5 @@ class Camera : public Component
     void GUI();
 
   private:
-    sf::Color bgColor;
-    float forceX = 0;
-    float forceY = 0;
-    char windowTitle[255] = "ImGui + SFML = <3";
-
-    bool status = false;
-    PhysBody *physBody;
 };
 } // namespace eng

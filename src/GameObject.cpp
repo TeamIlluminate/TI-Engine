@@ -4,23 +4,15 @@
 using namespace eng;
 
 GameObject::GameObject(std::string newName) : name(newName) {}
-GameObject::~GameObject() {
-    if (this->parent) {
-        this->parent->RemoveChild(this);
-    }
-    for (Component * component : components) {
-        component->~Component();
-    }
-    this->scene->RemoveFromScene(this);
-    for (GameObject * child : childs) {
-        child->~GameObject();
-    }
-}
 
 
 sf::Vector2f GameObject::GetGlobalCoordinates() const
 {
-    return parent ? transform.position + parent->GetGlobalCoordinates() : transform.position;
+    if(shared_ptr<GameObject> prn = parent.lock())
+    {
+        transform.position + prn->GetGlobalCoordinates();
+    }
+    else return transform.position;
 }
 
 const std::string GameObject::GetName() const
@@ -33,44 +25,60 @@ void GameObject::SetName(std::string newName)
     this->name = newName;
 }
 
-void GameObject::AddChild(GameObject *child)
+void GameObject::AddChild(shared_ptr<GameObject> child)
 {
-    if (child->parent) {
-        child->parent->RemoveChild(child);
-    }
+    // if ( auto prn = child->parent.lock() ){
+    //     prn->RemoveChild(child);
+    // }
+
     childs.push_back(child);
-    child->parent = this;
+
+    child->parent = weak_from_this();
+
 }
 
 void GameObject::RemoveChild(GameObject * child) {
-    this->childs.remove(child);
-    child->parent = nullptr;
+
 }
 
-std::list<GameObject *> GameObject::GetChilds() const
+std::list<weak_ptr<GameObject> > GameObject::GetChilds() const
 {
-    return this->childs;
-}
-GameObject *GameObject::GetParent() const
-{
+    list<weak_ptr<GameObject> > weaks;
+    for(auto shared : this->childs)
+    {
+        weaks.push_back((weak_ptr<GameObject>)shared);
+    }
 
+    return weaks;
+}
+
+weak_ptr<GameObject> GameObject::GetParent() const
+{
     return this->parent;
 }
-void GameObject::AddNewComponent(Component *component)
+
+void GameObject::AddComponent(shared_ptr<Component> component)
 {
-    component->SetParent(this);
+    component->SetOwner(weak_from_this());
     this->components.push_back(component);
     component->OnInit();
 }
 
-std::list<Component *> GameObject::GetComponents() const
+std::list<weak_ptr<Component> > GameObject::GetComponents() const
 {
-    return this->components;
+    list<weak_ptr<Component> > weaks;
+
+    for(auto shared : this->components)
+    {
+        weaks.push_back((weak_ptr<Component>)shared);
+    }
+
+    return weaks;
 }
 
 void GameObject::RemoveComponent(Component * component) {
-    this->components.remove(component);
-    component->~Component();
+    // this->components.remove(component);
+    // component->~Component();
 }
 
 Scene * GameObject::GetScene() const {
@@ -79,7 +87,7 @@ Scene * GameObject::GetScene() const {
 
 void GameObject::SetScene(Scene * scene){
     if (this->scene) {
-        this->scene->RemoveFromScene(this);
+        this->scene->Destroy(weak_from_this());
     }
     this->scene = scene;
 }

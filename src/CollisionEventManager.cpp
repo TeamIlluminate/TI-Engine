@@ -12,41 +12,45 @@ void CollisionEventManager::BeginContact(b2Contact *contact)
     b2Body *first = contact->GetFixtureA()->GetBody();
     b2Body *second = contact->GetFixtureB()->GetBody();
 
-    GameObject *firstObject;
-    GameObject *secondObject;
+    weak_ptr<GameObject> firstObject;
+    weak_ptr<GameObject> secondObject;
 
     auto gameObjects = scene->GetGameObjects();
 
-    for (GameObject *gameObject : gameObjects)
+    for (auto gameObject : gameObjects)
     {
 
-        PhysBody *body = gameObject->GetComponent<PhysBody>();
+        auto body = gameObject.lock()->GetComponent<PhysBody>();
 
-        if (body)
+        if (auto bodyShare = body.lock())
         {
-            if (body->body == first)
+            if (bodyShare->body == first)
             {
                 firstObject = gameObject;
             }
-            if (body->body == second)
+            if (bodyShare->body == second)
             {
                 secondObject = gameObject;
             }
         }
     }
 
-    auto components = firstObject->GetComponents();
+    auto components = firstObject.lock()->GetComponents();
 
-    for (auto component : components)
+    if(firstObject.lock() && secondObject.lock())
     {
-        component->BeginContact(secondObject);
-    }
+        for (auto component : components)
+        {
+            component.lock()->BeginContact(secondObject);
+        }
 
-    components = secondObject->GetComponents();
+        components = secondObject.lock()->GetComponents();
 
-    for (auto component : components)
-    {
-        component->BeginContact(firstObject);
+        for (auto component : components)
+        {
+            component.lock()->BeginContact(firstObject);
+        }
+        
     }
 }
 
@@ -56,40 +60,43 @@ void CollisionEventManager::EndContact(b2Contact *contact)
     b2Body *first = contact->GetFixtureA()->GetBody();
     b2Body *second = contact->GetFixtureB()->GetBody();
 
-    GameObject *firstObject;
-    GameObject *secondObject;
+    weak_ptr<GameObject> firstObject;
+    weak_ptr<GameObject> secondObject;
 
     auto gameObjects = scene->GetGameObjects();
 
-    for (GameObject *gameObject : gameObjects)
+    for (auto gameObject : gameObjects)
     {
 
-        PhysBody *body = gameObject->GetComponent<PhysBody>();
+        auto body = gameObject.lock()->GetComponent<PhysBody>();
 
-        if (body)
+        if (auto bodyShare = body.lock())
         {
-            if (body->body == first)
+            if (bodyShare->body == first)
             {
                 firstObject = gameObject;
             }
-            if (body->body == second)
+            if (bodyShare->body == second)
             {
                 secondObject = gameObject;
             }
         }
     }
 
-    auto components = firstObject->GetComponents();
+    auto components = firstObject.lock()->GetComponents();
 
-    for (auto component : components)
+    if(firstObject.lock() && secondObject.lock())
     {
-        component->EndContact(secondObject);
-    }
+        for (auto component : components)
+        {
+            component.lock()->EndContact(secondObject);
+        }
 
-    components = secondObject->GetComponents();
+        components = secondObject.lock()->GetComponents();
 
-    for (auto component : components)
-    {
-        component->EndContact(firstObject);
+        for (auto component : components)
+        {
+            component.lock()->EndContact(firstObject);
+        }
     }
 }

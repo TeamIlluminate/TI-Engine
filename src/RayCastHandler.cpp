@@ -13,8 +13,8 @@ float32 RayCastHandler::ReportFixture(b2Fixture *fixture, const b2Vec2 &point, c
     auto gameObjects = GameMaster::Get().GetCurrentScene()->GetGameObjects();
     for (auto gameObject : gameObjects)
     {
-        auto physBody = gameObject->GetComponent<PhysBody>();
-        if (foundedBody == physBody->body)
+        auto physBody = gameObject.lock()->GetComponent<PhysBody>();
+        if (foundedBody == physBody.lock()->body)
         {
             foundedObject = gameObject;
             return 0;

@@ -1,13 +1,62 @@
 #include "GameMaster.h"
 #include "Render.h"
 #include "Scene.h"
-#include "Game/Objects.cpp"
 #include "Components/PhysBody.h"
+#include "Components/ShapeMesh.h"
 #include "Component.h"
+#include "GameObject.h"
+#include <Box2D/Box2D.h>
+#include "Game/PlayerController.h"
+#include "Game/EnemyAI.h"
+
+shared_ptr<eng::GameObject> createPlayer(float x, float y) {
+    shared_ptr<eng::GameObject> player = make_shared<eng::GameObject>("Player");
+    player->transform.position = sf::Vector2f(x, y);
+
+    shared_ptr<sf::CircleShape> shape = make_shared<sf::CircleShape>(5.f);
+    shape->setOrigin(5.f, 5.f);
+    shape->setFillColor(sf::Color::Blue);
+    player->AddComponent(make_shared<eng::ShapeMesh>(shape));
+    b2CircleShape * physShape = new b2CircleShape();
+    physShape->m_radius = 5.f;
+    b2FixtureDef fixture;
+    fixture.shape = physShape;
+    fixture.density = 1;    
+    player->AddComponent(make_shared<eng::PhysBody>(fixture, b2_dynamicBody));
+    player->AddComponent(make_shared<eng::PlayerController>()); 
+
+    return player; 
+                                                             
+}
+
+shared_ptr<eng::GameObject> createEnemy(float x, float y)
+{
+
+    shared_ptr<eng::GameObject> enemy = make_shared<eng::GameObject>("Enemy");
+    enemy->transform.position = sf::Vector2f(x, y);
+
+    shared_ptr<sf::RectangleShape> shape = make_shared<sf::RectangleShape>(sf::Vector2f(20, 25));
+    shape->setFillColor(sf::Color::Red);
+
+    enemy->AddComponent(make_shared<eng::ShapeMesh>(shape));
+
+    b2PolygonShape *rect = new b2PolygonShape();
+    rect->SetAsBox(20, 25); 
+
+    b2FixtureDef fixture;
+    fixture.density = 5;
+    fixture.friction = 1;
+    fixture.shape = rect;
+
+    enemy->AddComponent(make_shared<eng::PhysBody>(fixture, b2_dynamicBody));
+    enemy->AddComponent(make_shared<eng::EnemyAI>());
+
+    return enemy;
+
+}
 
 int main()
 {
-
     eng::Render *render = new eng::Render(sf::VideoMode::getFullscreenModes()[0]);
     eng::GameMaster::Get().GameStarted(true);
 
@@ -16,19 +65,13 @@ int main()
     eng::Scene *mainScene = new eng::Scene("MainScene");
     gameMaster.LoadScene(mainScene);
 
-    std::srand(20);
-
-    for (int i = 0; i < 3; i++)
-        mainScene->AddGameObject(new JustCircle("Movable #" + std::to_string(i), 100 + 300 * i, 100, 20.f, b2_dynamicBody));
-
-        JustCircle * circle =         new JustCircle("Movable 123", 500, 500, 30.f, b2_dynamicBody);
-        
-        mainScene->AddGameObject(circle);
-        auto mesh = circle->GetComponent<eng::Mesh>();
-        circle->RemoveComponent(mesh);
-        //circle->~JustCircle();
-
     render->SetScene(mainScene);
+
+    mainScene->AddGameObject(createPlayer(600, 400));
+
+    mainScene->AddGameObject(createEnemy(100, 100));
+    mainScene->AddGameObject(createEnemy(200, 100));
+    mainScene->AddGameObject(createEnemy(300, 100));
 
     while (eng::GameMaster::Get().IsGameStarted())
     {

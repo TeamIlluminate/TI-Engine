@@ -6,11 +6,11 @@ namespace eng
 class ShapeMesh : public Mesh
 {
 public:
-  ShapeMesh(sf::Shape *shape);
-  sf::Drawable *GetDrawable();
+  ShapeMesh(shared_ptr<sf::Shape> shape);
+  weak_ptr<sf::Drawable> GetDrawable();
   sf::RenderStates GetRenderStates();
 
 private:
-  sf::Shape *currentShape;
+  shared_ptr<sf::Shape> currentShape;
 };
 } // namespace eng

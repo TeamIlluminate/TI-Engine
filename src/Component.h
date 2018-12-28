@@ -1,17 +1,20 @@
 #include "Utils.h"
 #include "GameObject.h"
+#include "GameMaster.h"
+
 #pragma once
+
 namespace eng
 {
 class Component
 {
 public:
-  //If component was attached to gameobmect DONT USE this destructor
-  //Use GameObject::RemoveComponent instead
-  virtual ~Component(){}
-  void SetParent(GameObject *attachTo)
+
+  virtual ~Component(){};
+
+  void SetOwner(weak_ptr<GameObject> newOwner)
   {
-    this->attached = attachTo;
+    this->owner = newOwner;
   }
   //Called before frame render
   virtual void Update(){};
@@ -22,11 +25,16 @@ public:
   //Called on GUI
   virtual void GUI(){};
   //
-  virtual void BeginContact(GameObject *gameObject){};
+  virtual void BeginContact(weak_ptr<GameObject>  gameObject){};
   //
-  virtual void EndContact(GameObject *gameObject){};
+  virtual void EndContact(weak_ptr<GameObject> gameObject){};
+
+  virtual float DeltaTime()
+  {
+    return GameMaster::Get().GetDeltaTime();
+  };
 
 protected:
-  GameObject *attached = nullptr;
+  weak_ptr<GameObject> owner;
 };
 } // namespace eng

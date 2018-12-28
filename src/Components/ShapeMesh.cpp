@@ -3,11 +3,12 @@
 
 using namespace eng;
 
-ShapeMesh::ShapeMesh(sf::Shape *shape) : currentShape(shape) {}
+ShapeMesh::ShapeMesh(shared_ptr<sf::Shape> shape) : currentShape(shape) {}
 
-sf::Drawable *ShapeMesh::GetDrawable()
+weak_ptr<sf::Drawable> ShapeMesh::GetDrawable()
 {
-    currentShape->setPosition(attached->GetGlobalCoordinates());
-    return currentShape;
+    currentShape->setPosition(owner.lock()->GetGlobalCoordinates());
+    return (weak_ptr<sf::Drawable>) currentShape;
 }
+
 sf::RenderStates ShapeMesh::GetRenderStates() { return sf::RenderStates::Default; }

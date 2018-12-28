@@ -74,46 +74,54 @@ void Render::WindowLoop()
 
         if (currentScene)
         {
-            std::list<GameObject *> objects = this->currentScene->GetGameObjects();
+            auto references = this->currentScene->GetGameObjects();
 
-            for (GameObject *object : objects)
+            for (auto reference : references)
             {
-                Draw(object);
+                if (auto concreteObject = reference.lock()) {
+                    Draw(concreteObject);
+                }
             }
         }
 
         ImGui::SFML::Render(*window);
+
+        GameMaster::Get().UpdateDeltaTime(deltaClock.restart().asSeconds());
 
         window->display();
     }
     ImGui::SFML::Shutdown();
 }
 
-void Render::Draw(GameObject *object)
+void Render::Draw(shared_ptr<GameObject> object)
 {
-    std::list<Component *> cmps = object->GetComponents();
+    auto references = object->GetComponents();
 
-    for (Component *cmp : cmps)
+    for (auto reference : references)
     {
-        cmp->Update();
-        cmp->GUI();
-    }
-
-    Mesh *mesh = object->GetComponent<Mesh>();
-
-    if (mesh)
-        window->draw(*mesh->GetDrawable(), mesh->GetRenderStates());
-
-    //if(object->GetName() == "BB")
-    //std::cout << "RenderUpdate: " << object->transform.position.x << " || " << object->transform.position.y << '\n';
-
-    std::list<GameObject *> subObjects = object->GetChilds();
-
-    if (subObjects.size() > 0)
-    {
-        for (GameObject *subObject : subObjects)
-        {
-            Draw(subObject);
+        if (auto component = reference.lock()) {
+            component->Update();
+            component->GUI();
         }
     }
+
+    auto meshref = object->GetComponent<Mesh>();
+
+    if (auto mesh = meshref.lock()) {
+        auto drawable = mesh->GetDrawable().lock();
+        auto renderStates = mesh->GetRenderStates();
+
+        if (drawable) {
+            window->draw(*drawable.get(), renderStates);
+        }
+    }
+
+    auto subObjects = object->GetChilds();
+
+        for (auto subObject : subObjects)
+        {
+            if (auto concreteObject = subObject.lock()) {
+                Draw(concreteObject);
+            }
+        }
 }

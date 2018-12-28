@@ -6,13 +6,16 @@ using namespace eng;
 
 void PlayerController::OnInit()
 {
-    bodyComponent = this->attached->GetComponent<PhysBody>();
+    if (auto parent = owner.lock())
+    {
+        bodyComponent = parent->GetComponent<PhysBody>();
+    }
 }
 void PlayerController::Update()
 {
-    if(shoot < shootDeley)
-    shoot += DeltaTime();
-    
+    if (shoot < shootDeley)
+        shoot += DeltaTime();
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
         this->MoveIn(sf::Vector2f(0, -5));
@@ -32,7 +35,7 @@ void PlayerController::Update()
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-        if(!isFiring && shoot >= shootDeley)
+        if (!isFiring && shoot >= shootDeley)
         {
             shoot = 0;
             isFiring != isFiring;
@@ -44,37 +47,42 @@ void PlayerController::Update()
 
 void PlayerController::MoveIn(sf::Vector2f position)
 {
-    bodyComponent->TransformPosition(position);
+    if (auto physBody = bodyComponent.lock())
+    {
+        physBody->TransformPosition(position);
+    }
 }
 
 void PlayerController::ShootIn(sf::Vector2f position)
 {
-    sf::Vector2f direction = position - this->attached->transform.position;
-    if (Magnitude(direction) > 15.f)
+    if (auto parent = this->owner.lock())
     {
-        direction = Normalize(direction);
-        GameObject *bullet = new GameObject();
+        sf::Vector2f direction = position - parent->transform.position;
+        if (Magnitude(direction) > 15.f)
+        {
+            direction = Normalize(direction);
 
-        bullet->transform.position = this->attached->transform.position + direction * 15.f;
+            shared_ptr<GameObject> bullet = std::make_shared<eng::GameObject>();
+            bullet->transform.position = parent->transform.position + direction * 15.f;
 
-        sf::CircleShape *shape = new sf::CircleShape(2.f);
-        shape->setOrigin(2.f, 2.f);
-        shape->setFillColor(sf::Color::Yellow);
+            auto shape = make_shared<sf::CircleShape>(2.f);
+            shape->setOrigin(2.f, 2.f);
+            shape->setFillColor(sf::Color::Yellow);
+            bullet->AddComponent(make_shared<eng::ShapeMesh>(shape));
 
-        bullet->AddComponent(new ShapeMesh(shape));
+            b2CircleShape *b2circle = new b2CircleShape();
+            b2circle->m_radius = 2.f;
 
-        b2CircleShape* b2circle = new b2CircleShape();
-        b2circle->m_radius = 2.f;
+            b2FixtureDef fixture;
+            fixture.shape = b2circle;
+            fixture.friction = 1.f;
+            fixture.density = 2.f;
 
-        b2FixtureDef fixture; 
-        fixture.shape = b2circle;
-        fixture.friction = 1.f;
-        fixture.density = 2.f;
+            bullet->AddComponent(make_shared<eng::PhysBody>(fixture, b2BodyType::b2_dynamicBody));
+            bullet->AddComponent(make_shared<Bullet>(Normalize(direction), parent));
+            parent->GetScene()->AddGameObject(bullet);
 
-        bullet->AddComponent(new eng::PhysBody(fixture, b2BodyType::b2_dynamicBody));
-        bullet->AddComponent(new eng::Bullet(Normalize(direction), attached));
-        this->attached->GetScene()->AddGameObject(bullet);
-
-        isFiring != isFiring;
+            isFiring != isFiring;
+        }
     }
 }

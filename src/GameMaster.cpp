@@ -28,3 +28,13 @@ void GameMaster::LoadScene(Scene *scene)
 {
     this->currentScene = scene;
 }
+
+float GameMaster::GetDeltaTime() const
+{
+    return deltaTime;
+}
+
+float GameMaster::UpdateDeltaTime(float dt)
+{
+    deltaTime = dt;
+}

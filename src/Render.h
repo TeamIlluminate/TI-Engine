@@ -21,7 +21,7 @@ private:
   Scene *currentScene = nullptr;
 
   void WindowLoop();
-  void Draw(GameObject *object);
+  void Draw(shared_ptr<GameObject> object);
 };
 
 } // namespace eng

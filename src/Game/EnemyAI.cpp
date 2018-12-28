@@ -1,43 +1,35 @@
-#include "Utils.h"
-#include "Component.h"
 #include "Components/PhysBody.h"
-#pragma once
+#include "Game/EnemyAI.h"
 
-namespace eng
-{
+using namespace eng;
 
-class EnemyAI : public Component
-{
-    std::list<GameObject*> players;
-
-    void FixedUpdate()
+    void EnemyAI::FixedUpdate()
     {
-        players = attached->GetScene()->FindGameObjects("Player");
-
-        for(auto player : players)
+        if(auto parent = owner.lock())
         {
-            if(Magnitude(player->transform.position - attached->transform.position) < 250)
+            players = parent->GetScene()->FindGameObjects("Player");
+
+            for(auto iterator : players)
             {
-                PhysBody* body = attached->GetComponent<PhysBody>();
-                    
-                sf::Vector2f nPos = Normalize(player->transform.position - attached->transform.position) * 8.f * 0.1f;
-                body->TransformPosition(nPos);
-            }    
+                if (auto player = iterator.lock()) {
+                    if(Magnitude(player->transform.position - parent->transform.position) < 250)
+                    {
+                        auto body = parent->GetComponent<PhysBody>();
+                        sf::Vector2f nPos = Normalize(player->transform.position - parent->transform.position) * 8.f * 0.1f;
+                        body.lock()->TransformPosition(nPos);
+                    }    
+                }
+             }
         }
     }
 
-    void BeginContact(GameObject* hit)
+    void EnemyAI::BeginContact(weak_ptr<GameObject> hit)
     {
-        if(hit->GetName() == "Player")
-        {
-            attached->GetScene()->Destroy(hit);
-            GameObject* newEnemy = new GameObject(*attached);
-            sf::Vector2f subPos = sf::Vector2f(newEnemy->transform.position.x + 20, newEnemy->transform.position.y); 
-            newEnemy->transform.position = subPos;
-            attached->GetScene()->AddGameObject(newEnemy);
+        if (auto foundedObject = hit.lock()) {
+
+            if(foundedObject->GetName() == "Player")
+            {
+                owner.lock()->GetScene()->Destroy(hit);
+            }
         }
     }
-
-};
-
-} // namespace eng

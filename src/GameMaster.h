@@ -1,4 +1,5 @@
 #include "Utils.h"
+#pragma once
 
 namespace eng
 {
@@ -14,6 +15,9 @@ class GameMaster
     bool IsGameStarted() const;
     void GameStarted(bool status);
     void LoadScene(Scene *scene);
+    float GetDeltaTime() const;
+
+    float UpdateDeltaTime(float dt);
 
     sf::VideoMode mode;
 
@@ -25,6 +29,7 @@ class GameMaster
 
     bool gameStatus = false;
     Scene *currentScene = nullptr;
+    float deltaTime = 0;
 };
 
 } // namespace eng
