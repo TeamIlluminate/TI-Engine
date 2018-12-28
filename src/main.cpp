@@ -8,6 +8,7 @@
 #include <Box2D/Box2D.h>
 #include "Game/PlayerController.h"
 #include "Game/EnemyAI.h"
+#include "Game/FPSDraw.cpp"
 
 shared_ptr<eng::GameObject> createPlayer(float x, float y) {
     shared_ptr<eng::GameObject> player = make_shared<eng::GameObject>("Player");
@@ -55,6 +56,18 @@ shared_ptr<eng::GameObject> createEnemy(float x, float y)
 
 }
 
+shared_ptr<eng::GameObject> createStats()
+{
+    shared_ptr<eng::GameObject> stats = make_shared<eng::GameObject>("stats");
+
+    shared_ptr<sf::CircleShape> shape = make_shared<sf::CircleShape>(0.f);
+    shape->setFillColor(sf::Color::Black);
+    stats->AddComponent(make_shared<eng::ShapeMesh>(shape));   
+
+    stats->AddComponent(make_shared<eng::FPSDraw>());
+    return stats;
+}
+
 int main()
 {
     eng::Render *render = new eng::Render(sf::VideoMode::getFullscreenModes()[0]);
@@ -73,6 +86,8 @@ int main()
     {
         mainScene->AddGameObject(createEnemy(1 + i * 100, 100 + i * 10));
     }
+
+    mainScene->AddGameObject(createStats());
 
 
     while (eng::GameMaster::Get().IsGameStarted())
