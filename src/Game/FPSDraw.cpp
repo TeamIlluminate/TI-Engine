@@ -33,26 +33,50 @@ class FPSDraw : public Component
             fpsTime = 0;
         }
 
-        if(auto parent = owner.lock())
+        auto parent = owner.lock();
+
+        if(parent)
         {
             objectsCount = parent->GetScene()->GetGameObjects().size();
+
+            //ImGui::ShowDemoWindow();
+
+            ImGui::Begin("Stats");
+
+            ImGui::SetWindowPos(ImVec2(1500, 10));
+            ImGui::SetWindowSize(ImVec2(400, 600));
+
+            string _fps = to_string(fps);
+            string _dTime = to_string(DeltaTime());
+            string _gameTime = to_string(time);
+            string _objectCount = to_string(objectsCount);
+
+            ImGui::LabelText("<---FPS", _fps.c_str());
+            ImGui::LabelText("<---DeltaTime", _dTime.c_str());
+            ImGui::LabelText("<---Game time", _gameTime.c_str());
+            ImGui::LabelText("<---Objects count", _objectCount.c_str());
+
+            ImGui::Columns(2, "ObjectList", true);
+            ImGui::Text("Object Name"); ImGui::NextColumn();
+            ImGui::Text("Object Position"); ImGui::NextColumn();
+            ImGui::Separator();
+
+
+            for(auto weakObject : parent->GetScene()->GetGameObjects())
+            {
+                if(auto currObject = weakObject.lock())
+                {
+                    string pos = "(" + to_string(currObject->transform.position.x) + ";" + to_string(currObject->transform.position.y) + ")";
+
+                    ImGui::Text(currObject->GetName().c_str()); ImGui::NextColumn();
+                    ImGui::Text(pos.c_str()); ImGui::NextColumn();
+                }
+            }
+
+            
+
+            ImGui::End();
         }
-
-        ImGui::Begin("Stats");
-
-        ImGui::SetWindowSize(ImVec2(400, 150));
-
-        string _fps = to_string(fps);
-        string _dTime = to_string(DeltaTime());
-        string _gameTime = to_string(time);
-        string _objectCount = to_string(objectsCount);
-
-        ImGui::LabelText("<---FPS", _fps.c_str());
-        ImGui::LabelText("<---DeltaTime", _dTime.c_str());
-        ImGui::LabelText("<---Game time", _gameTime.c_str());
-        ImGui::LabelText("<---Objects count", _objectCount.c_str());
-
-        ImGui::End();
     }
 };
 

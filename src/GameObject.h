@@ -40,8 +40,9 @@ class GameObject : public enable_shared_from_this<GameObject>
             shared_ptr<T> requeredComponent = dynamic_pointer_cast<T>(component);
             
             if(requeredComponent) return requeredComponent;
-            
          }
+         weak_ptr<T> nullweak;
+         return nullweak;
     }
 
     std::list<weak_ptr<Component> > GetComponents() const;
