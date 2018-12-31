@@ -38,7 +38,6 @@ std::list<weak_ptr<GameObject> > Scene::GetGameObjects() const
 
 void Scene::AddGameObject(shared_ptr<GameObject> object)
 {
-    //this->sceneObjects.push_front(object);
     this->neededToAdd.push_back(object);
 }
 
@@ -78,7 +77,10 @@ void Scene::PhysicsLoop()
                 auto concreteComponent = refComponent.lock();
                 concreteComponent->OnInit();
             }
+            
             this->sceneObjects.push_back(gameObject);
+            gameObject->id = idCounter;
+            idCounter++;
         }
         neededToAdd.clear();
 

@@ -10,7 +10,9 @@ public:
   weak_ptr<sf::Drawable> GetDrawable();
   sf::RenderStates GetRenderStates();
   void SetShader(shared_ptr<sf::Shader> shader);
+  bool *GetEnabled() {return &isEnabled;};
   bool isEnabled = false;
+  static bool enbl;
 private:
   shared_ptr<sf::Shape> currentShape;
   shared_ptr<sf::Shader> currentShader;

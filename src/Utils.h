@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <list>
+#include <functional>
 
 #pragma once
 

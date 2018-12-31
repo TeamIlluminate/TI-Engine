@@ -10,7 +10,6 @@ void ShaderManager::OnInit()
 
 void ShaderManager::GUI()
 {
-    ImGui::ShowDemoWindow();
     ImGui::InputTextMultiline("##source", code, IM_ARRAYSIZE(code), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), flags);
     if (ImGui::Button("Apply shader to selected"))
     {
@@ -36,13 +35,18 @@ void ShaderManager::GUI()
     ImGui::Text("shader");
     ImGui::NextColumn();
     ImGui::Separator();
-    for (auto weakObject : meshs)
+
+    for (auto weakMesh : meshs)
     {
-        if (auto shader = weakObject.lock())
+        if (auto shader = weakMesh.lock())
         {
             ImGui::Text(shader->owner.lock()->GetName().c_str());
             ImGui::NextColumn();
-            ImGui::Checkbox("", &(shader->isEnabled));
+
+            if(ImGui::Checkbox(to_string(shader->owner.lock()->id).c_str(), shader->GetEnabled()))
+            {
+                shader->isEnabled != shader->isEnabled;
+            }
             ImGui::NextColumn();
         }
     }

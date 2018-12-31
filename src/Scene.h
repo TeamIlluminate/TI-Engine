@@ -35,6 +35,9 @@ class Scene
     void Destroy(weak_ptr<GameObject> objectToRemove); //Remove gameobject from current Scene
 
   private:
+
+    int idCounter = 0;
+
     b2World *world;
     CollisionEventManager *collisionEventManager;
     std::thread *physicThread;

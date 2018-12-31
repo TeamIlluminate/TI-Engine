@@ -16,7 +16,7 @@ class ShaderManager : public eng::Component
     void ApplyShaderTo(list<shared_ptr<eng::ShapeMesh>> shaders);
     ImGuiInputTextFlags flags;
     char code[1024*16] = 
-    "#version 150\n"
+    "#version 130\n"
     "out vec4 colorOut;\n"
             "void main() { \n"
             "colorOut = vec4(1.0, 0.0, 0.0, 1.0);\n"

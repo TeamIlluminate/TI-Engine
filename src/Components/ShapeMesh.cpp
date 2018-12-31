@@ -3,7 +3,8 @@
 
 using namespace eng;
 
-ShapeMesh::ShapeMesh(shared_ptr<sf::Shape> shape) : currentShape(shape) {}
+ShapeMesh::ShapeMesh(shared_ptr<sf::Shape> shape) : currentShape(shape) {
+}
 
 weak_ptr<sf::Drawable> ShapeMesh::GetDrawable()
 {
