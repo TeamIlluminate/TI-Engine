@@ -9,19 +9,21 @@ namespace eng
 class Component
 {
 public:
-
+  //Use constructor only for initialize variables
+  //Remember field owner is null by default
+  //If you want code with using owner variable - put this code in OnInit()
   virtual ~Component(){};
 
   void SetOwner(weak_ptr<GameObject> newOwner)
   {
     this->owner = newOwner;
   }
+  //Called when Component attached to gameobject
+  virtual void OnInit(){};
   //Called before frame render
   virtual void Update(){};
   //Called after physics calculating
   virtual void FixedUpdate(){};
-  //Called when Component attached to gameobject
-  virtual void OnInit(){};
   //Called on GUI
   virtual void GUI(){};
   //

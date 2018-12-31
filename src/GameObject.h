@@ -32,7 +32,7 @@ class GameObject : public enable_shared_from_this<GameObject>
     //Add component to components list and set to him this gameobject as parent
     void AddComponent(shared_ptr<Component> component);
 
-    template <class T>
+    template <typename T, typename = enable_if<is_base_of<Component, T>::value>>
     weak_ptr<T> GetComponent()
     {
          for (auto component : this->components)
