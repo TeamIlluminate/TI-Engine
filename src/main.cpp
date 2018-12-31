@@ -9,13 +9,14 @@
 #include "Game/PlayerController.h"
 #include "Game/EnemyAI.h"
 #include "Game/FPSDraw.cpp"
+#include "Game/ShaderSystem.h"
 
 shared_ptr<eng::GameObject> createPlayer(float x, float y) {
     shared_ptr<eng::GameObject> player = make_shared<eng::GameObject>("Player");
     player->transform.position = sf::Vector2f(x, y);
 
     shared_ptr<sf::CircleShape> shape = make_shared<sf::CircleShape>(5.f);
-    shape->setOrigin(5.f, 5.f);
+    shape->setOrigin(2.5f, 2.5f);
     shape->setFillColor(sf::Color::Blue);
     player->AddComponent(make_shared<eng::ShapeMesh>(shape));
     b2CircleShape * physShape = new b2CircleShape();
@@ -25,7 +26,6 @@ shared_ptr<eng::GameObject> createPlayer(float x, float y) {
     fixture.density = 1;    
     player->AddComponent(make_shared<eng::PhysBody>(fixture, b2_dynamicBody));
     player->AddComponent(make_shared<eng::PlayerController>()); 
-
     return player; 
                                                              
 }
@@ -68,6 +68,12 @@ shared_ptr<eng::GameObject> createStats()
     return stats;
 }
 
+shared_ptr<eng::GameObject> createShaderManager() {
+    shared_ptr<eng::GameObject> shaderManager = make_shared<eng::GameObject>("shaderManager");
+    shaderManager->AddComponent(make_shared<gm::ShaderManager>());
+    return shaderManager;
+}
+
 int main()
 {
     eng::Render *render = new eng::Render(sf::VideoMode::getFullscreenModes()[0]);
@@ -81,13 +87,14 @@ int main()
     render->SetScene(mainScene);
 
     mainScene->AddGameObject(createPlayer(600, 500));
-
+    mainScene->AddGameObject(createPlayer(700, 500));
     for(int i = 0; i < 15; ++i)
     {
         mainScene->AddGameObject(createEnemy(1 + i * 100, 100 + i * 10));
     }
 
     mainScene->AddGameObject(createStats());
+    mainScene->AddGameObject(createShaderManager());
 
 
     while (eng::GameMaster::Get().IsGameStarted())

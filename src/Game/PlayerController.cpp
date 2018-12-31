@@ -73,7 +73,7 @@ void PlayerController::ShootIn(sf::Vector2f position)
             bullet->transform.position = parent->transform.position + direction * 15.f;
 
             auto shape = make_shared<sf::CircleShape>(2.f);
-            shape->setOrigin(2.f, 2.f);
+            shape->setOrigin(1.f, 1.f);
             shape->setFillColor(sf::Color::Yellow);
             bullet->AddComponent(make_shared<eng::ShapeMesh>(shape));
 

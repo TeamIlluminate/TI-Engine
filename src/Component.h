@@ -18,7 +18,7 @@ public:
   {
     this->owner = newOwner;
   }
-  //Called when Component attached to gameobject
+  //Called when Component appears on scene with gameobject
   virtual void OnInit(){};
   //Called before frame render
   virtual void Update(){};
@@ -36,7 +36,6 @@ public:
     return GameMaster::Get().GetDeltaTime();
   };
 
-protected:
   weak_ptr<GameObject> owner;
 };
 } // namespace eng

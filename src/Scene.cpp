@@ -38,8 +38,8 @@ std::list<weak_ptr<GameObject> > Scene::GetGameObjects() const
 
 void Scene::AddGameObject(shared_ptr<GameObject> object)
 {
-    object->SetScene(this);
-    this->sceneObjects.push_back(object);
+    //this->sceneObjects.push_front(object);
+    this->neededToAdd.push_back(object);
 }
 
 weak_ptr<GameObject> Scene::FindGameObject(std::string objectName) const
@@ -71,6 +71,17 @@ void Scene::Destroy(weak_ptr<GameObject> gameObject)
 
 void Scene::PhysicsLoop()
 {
+        for (auto gameObject : this->neededToAdd) {
+            gameObject->SetScene(this);
+            auto components = gameObject->GetComponents();
+            for (auto refComponent : components) {
+                auto concreteComponent = refComponent.lock();
+                concreteComponent->OnInit();
+            }
+            this->sceneObjects.push_back(gameObject);
+        }
+        neededToAdd.clear();
+
         float32 timeStep = 0.02f;
 
         for (auto bodyToDelete : toDelete) {
@@ -80,9 +91,8 @@ void Scene::PhysicsLoop()
 
         world->Step(timeStep, velocityIterations, positionIterations);
 
-        list<shared_ptr<GameObject> > sharedObjects = sceneObjects;
 
-        for (auto gameObject : sharedObjects)
+        for (auto gameObject : sceneObjects)
         {
             auto components = gameObject->GetComponents();
             for (auto component : components)

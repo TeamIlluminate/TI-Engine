@@ -27,7 +27,8 @@ void PhysBody::OnInit()
     this->body = GameMaster::Get().GetCurrentScene()->GetWorld()->CreateBody(&defBody);
 
     this->body->CreateFixture(&fixture);
-
+    this->body->SetGravityScale(0);
+    
     AddImpulse(sf::Vector2f(10, 1));
 }
 

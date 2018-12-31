@@ -11,4 +11,9 @@ weak_ptr<sf::Drawable> ShapeMesh::GetDrawable()
     return (weak_ptr<sf::Drawable>) currentShape;
 }
 
-sf::RenderStates ShapeMesh::GetRenderStates() { return sf::RenderStates::Default; }
+sf::RenderStates ShapeMesh::GetRenderStates() { return states; }
+
+void ShapeMesh::SetShader(shared_ptr<sf::Shader> shader) {
+    currentShader = shader;
+    states.shader = shader.get();
+}

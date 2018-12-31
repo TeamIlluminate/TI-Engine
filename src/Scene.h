@@ -45,6 +45,7 @@ class Scene
 
     std::list<shared_ptr<GameObject> > sceneObjects;
     std::list<b2Body*> toDelete;
+    std::list<shared_ptr<GameObject> > neededToAdd;
     std::string name;
 
     mutex mtx;

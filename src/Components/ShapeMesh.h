@@ -9,8 +9,11 @@ public:
   ShapeMesh(shared_ptr<sf::Shape> shape);
   weak_ptr<sf::Drawable> GetDrawable();
   sf::RenderStates GetRenderStates();
-
+  void SetShader(shared_ptr<sf::Shader> shader);
+  bool isEnabled = false;
 private:
   shared_ptr<sf::Shape> currentShape;
+  shared_ptr<sf::Shader> currentShader;
+  sf::RenderStates states;
 };
 } // namespace eng

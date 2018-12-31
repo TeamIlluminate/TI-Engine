@@ -39,7 +39,6 @@ class FPSDraw : public Component
         {
             objectsCount = parent->GetScene()->GetGameObjects().size();
 
-            //ImGui::ShowDemoWindow();
 
             ImGui::Begin("Stats");
 

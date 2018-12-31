@@ -20,7 +20,7 @@ class Bullet : public Component
         }
     }
 
-    void FixedUpdate()
+    void Update()
     {
         auto physBody = bodyComponent.lock();
         auto shooter = whoShoot.lock();

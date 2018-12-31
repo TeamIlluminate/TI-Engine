@@ -60,7 +60,6 @@ void GameObject::AddComponent(shared_ptr<Component> component)
 {
     component->SetOwner(weak_from_this());
     this->components.push_back(component);
-    component->OnInit();
 }
 
 std::list<weak_ptr<Component> > GameObject::GetComponents() const
