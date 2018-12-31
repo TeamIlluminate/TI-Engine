@@ -10,6 +10,7 @@ void ShaderManager::OnInit()
 
 void ShaderManager::GUI()
 {
+    ImGui::Begin("ShaderManager");
     ImGui::InputTextMultiline("##source", code, IM_ARRAYSIZE(code), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), flags);
     if (ImGui::Button("Apply shader to selected"))
     {
@@ -50,6 +51,7 @@ void ShaderManager::GUI()
             ImGui::NextColumn();
         }
     }
+    ImGui::End();
 }
 
 void ShaderManager::ApplyShaderTo(list<shared_ptr<eng::ShapeMesh>> shaderControllers)

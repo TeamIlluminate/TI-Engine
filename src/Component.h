@@ -1,12 +1,13 @@
 #include "Utils.h"
 #include "GameObject.h"
+#include "Editor.hpp"
 #include "GameMaster.h"
 
 #pragma once
 
 namespace eng
 {
-class Component
+class Component : public Editor
 {
 public:
   //Use constructor only for initialize variables

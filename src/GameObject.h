@@ -1,5 +1,6 @@
 #include "Utils.h"
 #include "Transform.h"
+#include "Editor.hpp"
 #include "Scene.h"
 #pragma once
 
@@ -8,7 +9,7 @@ namespace eng
 
 class Component;
 
-class GameObject : public enable_shared_from_this<GameObject>
+class GameObject : public enable_shared_from_this<GameObject>, public Editor
 {
   public:
     GameObject() : name("empty") {};
@@ -57,17 +58,19 @@ class GameObject : public enable_shared_from_this<GameObject>
     Scene *GetScene() const;
     //Called when gameobject added to scene
     void SetScene(Scene *scene);
+
+    void DrawEditor();
     
     //Coordinates on scene OR coordinates on scene relative to parent (parent is 0 0 point)
     Transform transform = Transform(sf::Vector2f(0, 0));
     int id = 0;
     
+    std::string name;
   protected:
     Scene *scene = nullptr;
 
     weak_ptr<GameObject> parent;
 
-    std::string name;
     std::list<shared_ptr<GameObject> > childs;
     std::list<shared_ptr<Component> > components;
 

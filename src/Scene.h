@@ -31,8 +31,12 @@ class Scene
     void AddB2BodyToDelete(b2Body *body);
 
     void PhysicsLoop();
-
+    void PushGameobjects();
     void Destroy(weak_ptr<GameObject> objectToRemove); //Remove gameobject from current Scene
+
+    list<weak_ptr<Camera>> GetCameras() {
+      return cameras;
+    }
 
   private:
 
@@ -47,6 +51,7 @@ class Scene
     int positionIterations = 2;
 
     std::list<shared_ptr<GameObject> > sceneObjects;
+    std::list<weak_ptr<Camera>> cameras;
     std::list<b2Body*> toDelete;
     std::list<shared_ptr<GameObject> > neededToAdd;
     std::string name;

@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "imgui.h"
 #include "imgui-SFML.h"
+#include <algorithm>
 
 namespace eng
 {
@@ -39,7 +40,6 @@ class FPSDraw : public Component
         {
             objectsCount = parent->GetScene()->GetGameObjects().size();
 
-
             ImGui::Begin("Stats");
 
             ImGui::SetWindowPos(ImVec2(1500, 10));
@@ -64,16 +64,14 @@ class FPSDraw : public Component
             for(auto weakObject : parent->GetScene()->GetGameObjects())
             {
                 if(auto currObject = weakObject.lock())
-                {
-                    string pos = "(" + to_string(currObject->transform.position.x) + ";" + to_string(currObject->transform.position.y) + ")";
-
-                    ImGui::Text(currObject->GetName().c_str()); ImGui::NextColumn();
-                    ImGui::Text(pos.c_str()); ImGui::NextColumn();
+                {        
+                    ImGui::Text(currObject->GetName().c_str());   
+                    ImGui::NextColumn();
+                    DrawVector2(currObject->transform.position);
+                    ImGui::NextColumn();
+                    ImGui::Separator();
                 }
             }
-
-            
-
             ImGui::End();
         }
     }

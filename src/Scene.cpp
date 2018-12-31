@@ -70,19 +70,7 @@ void Scene::Destroy(weak_ptr<GameObject> gameObject)
 
 void Scene::PhysicsLoop()
 {
-        for (auto gameObject : this->neededToAdd) {
-            gameObject->SetScene(this);
-            auto components = gameObject->GetComponents();
-            for (auto refComponent : components) {
-                auto concreteComponent = refComponent.lock();
-                concreteComponent->OnInit();
-            }
-            
-            this->sceneObjects.push_back(gameObject);
-            gameObject->id = idCounter;
-            idCounter++;
-        }
-        neededToAdd.clear();
+        PushGameobjects();
 
         float32 timeStep = 0.02f;
 
@@ -105,4 +93,23 @@ void Scene::PhysicsLoop()
                 }
             }
         }
+}
+
+void Scene::PushGameobjects() {
+     for (auto gameObject : this->neededToAdd) {
+            gameObject->SetScene(this);
+            auto components = gameObject->GetComponents();
+            for (auto refComponent : components) {
+                auto concreteComponent = refComponent.lock();
+                concreteComponent->OnInit();
+            }
+            auto camera = gameObject->GetComponent<Camera>();
+            if (auto concreteCamera = camera.lock()) {
+                cameras.push_back(concreteCamera);
+            }
+            this->sceneObjects.push_back(gameObject);
+            gameObject->id = idCounter;
+            idCounter++;
+        }
+        neededToAdd.clear();
 }

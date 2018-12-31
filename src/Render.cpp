@@ -7,6 +7,7 @@
 #include "Component.h"
 #include "imgui.h"
 #include "imgui-SFML.h"
+#include "Components/Camera.h"
 
 using namespace eng;
 
@@ -67,7 +68,8 @@ void Render::WindowLoop()
         fixedDelta += dTime;
         else
         {
-            if(currentScene)
+            currentScene->PushGameobjects();
+            if(currentScene && !isEditor)
             currentScene->PhysicsLoop();
             fixedDelta = 0;
         }
@@ -88,7 +90,23 @@ void Render::WindowLoop()
 
         if (currentScene)
         {
+
             auto references = this->currentScene->GetGameObjects();
+
+            if(isEditor)
+            {
+                ImGui::Begin("Inspector");
+
+                for(auto reference : references)
+                {
+                    if(auto _gameObject = reference.lock())
+                    {
+                        _gameObject->DrawEditor();
+                    }
+                }
+
+                ImGui::End();     
+            }
 
             for (auto reference : references)
             {
@@ -100,6 +118,16 @@ void Render::WindowLoop()
 
         ImGui::SFML::Render(*window);
 
+        auto cameras = currentScene->GetCameras();
+        for(auto _camera : cameras)
+        {
+            if(auto camera = _camera.lock())
+            {
+                if(camera->isEnabled)
+                window->setView(camera->view);
+            }
+        }
+
         window->display();
     }
     ImGui::SFML::Shutdown();
@@ -109,11 +137,14 @@ void Render::Draw(shared_ptr<GameObject> object)
 {
     auto references = object->GetComponents();
 
-    for (auto reference : references)
+    if(!isEditor)
     {
-        if (auto component = reference.lock()) {
-            component->Update();
-            component->GUI();
+        for (auto reference : references)
+        {
+            if (auto component = reference.lock()) {
+                component->Update();
+                component->GUI();
+            }
         }
     }
 

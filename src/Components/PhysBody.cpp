@@ -18,7 +18,6 @@ b2FixtureDef PhysBody::GetFixture() { return fixture; }
 
 void PhysBody::OnInit()
 {
-
     b2BodyDef defBody;
 
     defBody.type = this->type;
@@ -28,8 +27,6 @@ void PhysBody::OnInit()
 
     this->body->CreateFixture(&fixture);
     this->body->SetGravityScale(0);
-    
-    AddImpulse(sf::Vector2f(10, 1));
 }
 
 void PhysBody::FixedUpdate()

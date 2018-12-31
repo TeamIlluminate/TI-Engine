@@ -55,6 +55,8 @@ class Bullet : public Component
         }
     }
 
+   
+
   private:
     weak_ptr<PhysBody> bodyComponent;
     weak_ptr<GameObject> whoShoot;

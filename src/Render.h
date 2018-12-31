@@ -22,6 +22,8 @@ private:
 
   void WindowLoop();
   void Draw(shared_ptr<GameObject> object);
+
+  bool isEditor = true;
 };
 
 } // namespace eng

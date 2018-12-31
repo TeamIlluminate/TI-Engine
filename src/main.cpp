@@ -6,10 +6,12 @@
 #include "Component.h"
 #include "GameObject.h"
 #include <Box2D/Box2D.h>
+#include "Components/Camera.h"
 #include "Game/PlayerController.h"
 #include "Game/EnemyAI.h"
 #include "Game/FPSDraw.cpp"
 #include "Game/ShaderSystem.h"
+#include "Editor.hpp"
 
 shared_ptr<eng::GameObject> createPlayer(float x, float y) {
     shared_ptr<eng::GameObject> player = make_shared<eng::GameObject>("Player");
@@ -26,8 +28,9 @@ shared_ptr<eng::GameObject> createPlayer(float x, float y) {
     fixture.density = 1;    
     player->AddComponent(make_shared<eng::PhysBody>(fixture, b2_dynamicBody));
     player->AddComponent(make_shared<eng::PlayerController>()); 
-    return player; 
-                                                             
+    player->AddComponent(make_shared<eng::Camera>());
+    player->GetComponent<eng::Camera>().lock()->isEnabled = true;
+    return player;                                                             
 }
 
 shared_ptr<eng::GameObject> createEnemy(float x, float y)
@@ -38,11 +41,11 @@ shared_ptr<eng::GameObject> createEnemy(float x, float y)
 
     shared_ptr<sf::RectangleShape> shape = make_shared<sf::RectangleShape>(sf::Vector2f(20, 25));
     shape->setFillColor(sf::Color::Red);
-
+    shape->setOrigin(10, 12.5);
     enemy->AddComponent(make_shared<eng::ShapeMesh>(shape));
 
     b2PolygonShape *rect = new b2PolygonShape();
-    rect->SetAsBox(20, 25); 
+    rect->SetAsBox(10.f, 12.5f); 
 
     b2FixtureDef fixture;
     fixture.density = 5;
@@ -52,6 +55,7 @@ shared_ptr<eng::GameObject> createEnemy(float x, float y)
     enemy->AddComponent(make_shared<eng::PhysBody>(fixture, b2_dynamicBody));
     enemy->AddComponent(make_shared<eng::EnemyAI>());
 
+    
     return enemy;
 
 }
@@ -87,8 +91,8 @@ int main()
     render->SetScene(mainScene);
 
     mainScene->AddGameObject(createPlayer(600, 500));
-    mainScene->AddGameObject(createPlayer(700, 500));
-    for(int i = 0; i < 15; ++i)
+
+    for(int i = 0; i < 10; ++i)
     {
         mainScene->AddGameObject(createEnemy(1 + i * 100, 100 + i * 10));
     }
