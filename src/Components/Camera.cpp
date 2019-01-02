@@ -27,14 +27,14 @@ void Camera::Update()
             view.setSize(scale * 16, scale * 9);
         }
     }
-    if (auto _owner = owner.lock())
+    if (auto owner = _owner.lock())
     {
-        view.setCenter(_owner->transform.position);
+        view.setCenter(owner->transform.position);
     }
 }
 
 void Camera::DrawEditor() {
-    auto gameObject = owner.lock();
+    auto gameObject = _owner.lock();
     if (gameObject) {
         int id = gameObject->id;
         if (ImGui::TreeNode("Camera's of " + id)) {

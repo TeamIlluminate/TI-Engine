@@ -14,7 +14,7 @@ void GameMaster::GameStarted(bool status)
     this->gameStatus = status;
 }
 
-Scene *GameMaster::GetCurrentScene() const
+weak_ptr<Scene> GameMaster::GetCurrentScene() const
 {
     return this->currentScene;
 }
@@ -24,7 +24,7 @@ bool GameMaster::IsGameStarted() const
     return this->gameStatus;
 }
 
-void GameMaster::LoadScene(Scene *scene)
+void GameMaster::LoadScene(shared_ptr<Scene> scene)
 {
     this->currentScene = scene;
 }

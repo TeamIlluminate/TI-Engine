@@ -11,7 +11,7 @@ namespace eng
 class GameObject;
 class Camera;
 
-class Scene
+class Scene : public enable_shared_from_this<Scene>
 {
   public:
     Scene(const std::string name); //Name 4r Serialization ability
@@ -26,7 +26,7 @@ class Scene
     weak_ptr<GameObject> FindGameObject(std::string objectName) const;
     std::list<weak_ptr<GameObject> > FindGameObjects(std::string objectName) const;
 
-    b2World *GetWorld() const;
+    weak_ptr<b2World> GetWorld() const;
 
     void AddB2BodyToDelete(b2Body *body);
 
@@ -42,7 +42,7 @@ class Scene
 
     int idCounter = 0;
 
-    b2World *world;
+    shared_ptr<b2World> world;
     CollisionEventManager *collisionEventManager;
     std::thread *physicThread;
 

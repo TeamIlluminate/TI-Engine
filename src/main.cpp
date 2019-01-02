@@ -85,7 +85,7 @@ int main()
 
     eng::GameMaster &gameMaster = eng::GameMaster::Get();
 
-    eng::Scene *mainScene = new eng::Scene("MainScene");
+    shared_ptr<eng::Scene> mainScene = make_shared<eng::Scene>("MainScene");
     gameMaster.LoadScene(mainScene);
 
     render->SetScene(mainScene);

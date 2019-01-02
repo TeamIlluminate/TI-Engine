@@ -17,7 +17,7 @@ public:
 
   void SetOwner(weak_ptr<GameObject> newOwner)
   {
-    this->owner = newOwner;
+    this->_owner = newOwner;
   }
   //Called when Component appears on scene with gameobject
   virtual void OnInit(){};
@@ -37,6 +37,6 @@ public:
     return GameMaster::Get().GetDeltaTime();
   };
 
-  weak_ptr<GameObject> owner;
+  weak_ptr<GameObject> _owner;
 };
 } // namespace eng

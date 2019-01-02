@@ -13,7 +13,7 @@ namespace eng
         private:
         void MoveIn(sf::Vector2f position);
         void ShootIn(sf::Vector2f position);
-        weak_ptr<PhysBody>  bodyComponent;     
+        weak_ptr<PhysBody>  _bodyComponent;     
 
         bool isFiring = false;
         const float shootDeley = .1f;

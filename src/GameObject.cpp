@@ -78,17 +78,13 @@ void GameObject::RemoveComponent(Component *component)
     // component->~Component();
 }
 
-Scene *GameObject::GetScene() const
+weak_ptr<Scene> GameObject::GetScene() const
 {
     return scene;
 }
 
-void GameObject::SetScene(Scene *scene)
+void GameObject::SetScene(shared_ptr<Scene> scene)
 {
-    if (this->scene)
-    {
-        this->scene->Destroy(weak_from_this());
-    }
     this->scene = scene;
 }
 

@@ -5,17 +5,17 @@ using namespace eng;
 
     void EnemyAI::FixedUpdate()
     {
-        if(auto parent = owner.lock())
+        if(auto owner = _owner.lock())
         {
-            players = parent->GetScene()->FindGameObjects("Player");
+            players = owner->GetScene().lock()->FindGameObjects("Player");
 
             for(auto iterator : players)
             {
                 if (auto player = iterator.lock()) {
-                    if(Magnitude(player->transform.position - parent->transform.position) < 250)
+                    if(Magnitude(player->transform.position - owner->transform.position) < 250)
                     {
-                        auto body = parent->GetComponent<PhysBody>();
-                        sf::Vector2f nPos = Normalize(player->transform.position - parent->transform.position) * 8.f * 0.1f;
+                        auto body = owner->GetComponent<PhysBody>();
+                        sf::Vector2f nPos = Normalize(player->transform.position - owner->transform.position) * 8.f * 0.1f;
                         body.lock()->TransformPosition(nPos);
                     }    
                 }
@@ -29,7 +29,7 @@ using namespace eng;
 
             if(foundedObject->GetName() == "Player")
             {
-                owner.lock()->GetScene()->Destroy(hit);
+                _owner.lock()->GetScene().lock()->Destroy(hit);
             }
         }
     }

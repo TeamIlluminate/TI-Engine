@@ -16,12 +16,12 @@ Render::Render(sf::VideoMode mode)
 {
     if (!this->window)
     {
-        this->currentScene = GameMaster::Get().GetCurrentScene();
-        this->window = new sf::RenderWindow(mode, "TI Engine improved");
+        this->SetScene(GameMaster::Get().GetCurrentScene());
+        this->window = make_shared<sf::RenderWindow>(mode, "TI Engine improved");
         //window must be deactived in thread which it where created
         this->window->setActive(false);
 
-        this->wThread = new std::thread(&Render::WindowLoop, this);
+        this->wThread = make_shared<std::thread>(&Render::WindowLoop, this);
         this->wThread->detach();
     }
     else
@@ -31,19 +31,18 @@ Render::Render(sf::VideoMode mode)
 
         //First - free space
         this->wThread->~thread(); // ->terminate(); //Terminate window drawning loop;
-        delete this->window;      //Free space 4r new window
 
-        this->window = new sf::RenderWindow(mode, "TI Engine improved"); //I wanna make some spec file-descriptor like (Project name; Engine version; ... etc)
+        this->window =  make_shared<sf::RenderWindow>(mode, "TI Engine improved"); //I wanna make some spec file-descriptor like (Project name; Engine version; ... etc)
         this->window->setActive(false);
 
-        this->wThread = new std::thread(&Render::WindowLoop, this); //Restart thread
+        this->wThread = make_shared<std::thread>(&Render::WindowLoop, this); //Restart thread
         this->wThread->detach();
     }
 }
 
-void Render::SetScene(Scene *scene)
+void Render::SetScene(weak_ptr<Scene> scene)
 {
-    this->currentScene = scene;
+    this->_currentScene = scene;
 }
 
 void Render::WindowLoop()
@@ -68,10 +67,12 @@ void Render::WindowLoop()
         fixedDelta += dTime;
         else
         {
+            if (auto currentScene = _currentScene.lock()) {
             currentScene->PushGameobjects();
             if(currentScene && !isEditor)
             currentScene->PhysicsLoop();
             fixedDelta = 0;
+            }
         }
 
         GameMaster::Get().UpdateDeltaTime(dTime);
@@ -88,10 +89,10 @@ void Render::WindowLoop()
 
         ImGui::SFML::Update(*window, deltaClock.restart());
 
-        if (currentScene)
+        if (auto currentScene = _currentScene.lock())
         {
 
-            auto references = this->currentScene->GetGameObjects();
+            auto references = currentScene->GetGameObjects();
 
             if(isEditor)
             {
@@ -114,10 +115,9 @@ void Render::WindowLoop()
                     Draw(concreteObject);
                 }
             }
-        }
+        
 
         ImGui::SFML::Render(*window);
-
         auto cameras = currentScene->GetCameras();
         for(auto _camera : cameras)
         {
@@ -129,6 +129,7 @@ void Render::WindowLoop()
         }
 
         window->display();
+        }
     }
     ImGui::SFML::Shutdown();
 }

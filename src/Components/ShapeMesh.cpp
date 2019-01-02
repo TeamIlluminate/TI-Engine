@@ -8,7 +8,7 @@ ShapeMesh::ShapeMesh(shared_ptr<sf::Shape> shape) : currentShape(shape) {
 
 weak_ptr<sf::Drawable> ShapeMesh::GetDrawable()
 {
-    currentShape->setPosition(owner.lock()->GetGlobalCoordinates());
+    currentShape->setPosition(_owner.lock()->GetGlobalCoordinates());
     return (weak_ptr<sf::Drawable>) currentShape;
 }
 

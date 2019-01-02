@@ -34,11 +34,9 @@ class FPSDraw : public Component
             fpsTime = 0;
         }
 
-        auto parent = owner.lock();
-
-        if(parent)
+        if(auto owner = _owner.lock())
         {
-            objectsCount = parent->GetScene()->GetGameObjects().size();
+            objectsCount = owner->GetScene().lock()->GetGameObjects().size();
 
             ImGui::Begin("Stats");
 
@@ -61,13 +59,13 @@ class FPSDraw : public Component
             ImGui::Separator();
 
 
-            for(auto weakObject : parent->GetScene()->GetGameObjects())
+            for(auto _gameObject : owner->GetScene().lock()->GetGameObjects())
             {
-                if(auto currObject = weakObject.lock())
+                if(auto gameObject = _gameObject.lock())
                 {        
-                    ImGui::Text(currObject->GetName().c_str());   
+                    ImGui::Text(gameObject->GetName().c_str());   
                     ImGui::NextColumn();
-                    DrawVector2(currObject->transform.position);
+                    DrawVector2(gameObject->transform.position);
                     ImGui::NextColumn();
                     ImGui::Separator();
                 }

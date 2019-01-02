@@ -11,10 +11,10 @@ class GameMaster
   public:
     static GameMaster &Get();
 
-    Scene *GetCurrentScene() const;
+    weak_ptr<Scene> GetCurrentScene() const;
     bool IsGameStarted() const;
     void GameStarted(bool status);
-    void LoadScene(Scene *scene);
+    void LoadScene(shared_ptr<Scene> scene);
     float GetDeltaTime() const;
 
     float UpdateDeltaTime(float dt);
@@ -28,7 +28,7 @@ class GameMaster
     GameMaster &operator=(GameMaster const &) = delete;
 
     bool gameStatus = false;
-    Scene *currentScene = nullptr;
+    shared_ptr<Scene> currentScene;
     float deltaTime = 0;
 };
 

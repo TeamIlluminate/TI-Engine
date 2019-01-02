@@ -10,30 +10,30 @@ namespace eng
 class Bullet : public Component
 {
   public:
-    Bullet(sf::Vector2f direction, weak_ptr<GameObject> whoShoot) : direction(direction), whoShoot(whoShoot) {}
+    Bullet(sf::Vector2f direction, shared_ptr<GameObject> whoShoot) : direction(direction), _whoShoot(whoShoot) {}
 
     void OnInit()
     {
-        if (shared_ptr<GameObject> parent = owner.lock())
+        if (shared_ptr<GameObject> owner = _owner.lock())
         {
-            bodyComponent = parent->GetComponent<PhysBody>();
+            _bodyComponent = owner->GetComponent<PhysBody>();
         }
     }
 
     void Update()
     {
-        auto physBody = bodyComponent.lock();
-        auto shooter = whoShoot.lock();
-        auto parent = owner.lock();
+        auto bodyComponent = _bodyComponent.lock();
+        auto whoShoot = _whoShoot.lock();
+        auto owner = _owner.lock();
 
-        if (physBody && shooter && parent)
+        if (bodyComponent && whoShoot && owner)
         {
             sf::Vector2f position = direction * 8.f;
             
-            physBody->TransformPosition(position);
-            if (Magnitude(shooter->transform.position - parent->transform.position) > 3000)
+            bodyComponent->TransformPosition(position);
+            if (Magnitude(whoShoot->transform.position - owner->transform.position) > 3000)
             {
-                parent->GetScene()->Destroy(owner);
+                owner->GetScene().lock()->Destroy(owner);
             }
         }
     }
@@ -41,25 +41,25 @@ class Bullet : public Component
     void BeginContact(weak_ptr<GameObject> hit)
     {
         auto collision = hit.lock();
-        auto parent = owner.lock();
+        auto owner = _owner.lock();
 
         string s = collision->GetName();
 
-        if (collision && parent)
+        if (collision && owner)
         {
             if (collision->GetName() == "Enemy")
             {
-                parent->GetScene()->Destroy(hit);
+                owner->GetScene().lock()->Destroy(hit);
             }
-            parent->GetScene()->Destroy(owner);
+            owner->GetScene().lock()->Destroy(owner);
         }
     }
 
    
 
   private:
-    weak_ptr<PhysBody> bodyComponent;
-    weak_ptr<GameObject> whoShoot;
+    weak_ptr<PhysBody> _bodyComponent;
+    weak_ptr<GameObject> _whoShoot;
     sf::Vector2f direction;
 };
 } // namespace eng

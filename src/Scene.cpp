@@ -10,13 +10,13 @@ Scene::Scene(std::string name)
     this->name = name;
 
     b2Vec2 gravity;
-    world = new b2World(gravity);
+    world = make_shared<b2World>(gravity);
 
     collisionEventManager = new CollisionEventManager(this);
-    (*world).SetContactListener(collisionEventManager);
+    world->SetContactListener(collisionEventManager);
 }
 
-b2World *Scene::GetWorld() const
+weak_ptr<b2World> Scene::GetWorld() const
 {
     return this->world;
 }
@@ -27,13 +27,12 @@ void Scene::AddB2BodyToDelete(b2Body* body) {
 
 std::list<weak_ptr<GameObject> > Scene::GetGameObjects() const
 {
-    list<weak_ptr<GameObject> > weaks;
-    for(auto shared : this->sceneObjects)
+    list<weak_ptr<GameObject> > _gameObjects;
+    for(auto gameObject : this->sceneObjects)
     {
-        weaks.push_back((weak_ptr<GameObject>)shared);
+        _gameObjects.push_back(gameObject);
     }
-
-    return weaks;
+    return _gameObjects;
 }
 
 void Scene::AddGameObject(shared_ptr<GameObject> object)
@@ -52,20 +51,21 @@ weak_ptr<GameObject> Scene::FindGameObject(std::string objectName) const
 
 std::list<weak_ptr<GameObject> > Scene::FindGameObjects(std::string objectName) const
 {
-    std::list<weak_ptr<GameObject>> findedObjects;
+    std::list<weak_ptr<GameObject>> _foundedObjects;
 
     for (auto gameObject : sceneObjects)
     {
         if (gameObject->GetName() == objectName)
-            findedObjects.push_back(gameObject);
+            _foundedObjects.push_back(gameObject);
     }
 
-    return findedObjects;
+    return _foundedObjects;
 }
 
-void Scene::Destroy(weak_ptr<GameObject> gameObject)
+void Scene::Destroy(weak_ptr<GameObject> _gameObject)
 {
-    sceneObjects.remove((shared_ptr<GameObject>)gameObject);
+    auto gameObject = _gameObject.lock();
+    sceneObjects.remove(gameObject);
 }
 
 void Scene::PhysicsLoop()
@@ -97,7 +97,7 @@ void Scene::PhysicsLoop()
 
 void Scene::PushGameobjects() {
      for (auto gameObject : this->neededToAdd) {
-            gameObject->SetScene(this);
+            gameObject->SetScene(shared_from_this());
             auto components = gameObject->GetComponents();
             for (auto refComponent : components) {
                 auto concreteComponent = refComponent.lock();

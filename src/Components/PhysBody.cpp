@@ -8,9 +8,8 @@ using namespace eng;
 PhysBody::PhysBody(b2FixtureDef fixture, b2BodyType type) : fixture(fixture), type(type) {}
 
 PhysBody::~PhysBody() {
-    if (auto parent = owner.lock()) {
-        std::cout << "я хочу убить себя" << '\n';
-        parent->GetScene()->AddB2BodyToDelete(body);
+    if (auto scene = GameMaster::Get().GetCurrentScene().lock()) {
+        scene->AddB2BodyToDelete(body);
     }
 }
 
@@ -21,9 +20,9 @@ void PhysBody::OnInit()
     b2BodyDef defBody;
 
     defBody.type = this->type;
-    defBody.position.Set(owner.lock()->transform.position.x, owner.lock()->transform.position.y);
+    defBody.position.Set(_owner.lock()->transform.position.x, _owner.lock()->transform.position.y);
 
-    this->body = GameMaster::Get().GetCurrentScene()->GetWorld()->CreateBody(&defBody);
+    this->body = GameMaster::Get().GetCurrentScene().lock()->GetWorld().lock()->CreateBody(&defBody);
 
     this->body->CreateFixture(&fixture);
     this->body->SetGravityScale(0);
@@ -33,7 +32,7 @@ void PhysBody::FixedUpdate()
 {
     b2Vec2 position = body->GetPosition();
 
-    owner.lock()->transform.position = sf::Vector2f(position.x, position.y);
+    _owner.lock()->transform.position = sf::Vector2f(position.x, position.y);
 }
 
 weak_ptr<GameObject> PhysBody::RayCast(sf::Vector2f to)
@@ -47,8 +46,8 @@ weak_ptr<GameObject> PhysBody::RayCast(sf::Vector2f to)
 void PhysBody::TransformPosition(sf::Vector2f newPos)
 {
     if (!this->body->GetWorld()->IsLocked()) {
-        if (auto parent = owner.lock()) {
-            newPos = newPos + parent->transform.position;
+        if (auto owner = _owner.lock()) {
+            newPos = newPos + owner->transform.position;
             b2Vec2 toPos = b2Vec2(newPos.x, newPos.y);
             this->body->SetTransform(toPos, 0);
         }
@@ -57,5 +56,5 @@ void PhysBody::TransformPosition(sf::Vector2f newPos)
 
 void PhysBody::AddImpulse(sf::Vector2f impulse)
 {
-    this->body->ApplyLinearImpulse(b2Vec2(impulse.x, impulse.y), b2Vec2(owner.lock()->transform.position.x, owner.lock()->transform.position.y), true);
+    this->body->ApplyLinearImpulse(b2Vec2(impulse.x, impulse.y), b2Vec2(_owner.lock()->transform.position.x, _owner.lock()->transform.position.y), true);
 }

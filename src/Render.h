@@ -12,18 +12,18 @@ class Render
 public:
   Render(sf::VideoMode mode);
 
-  void SetScene(Scene *scene);
+  void SetScene(weak_ptr<Scene> _scene);
 
 private:
-  sf::RenderWindow *window = nullptr;
+  shared_ptr<sf::RenderWindow> window;
 
-  std::thread *wThread;
-  Scene *currentScene = nullptr;
+  shared_ptr<std::thread> wThread;
+  weak_ptr<Scene> _currentScene;
 
   void WindowLoop();
   void Draw(shared_ptr<GameObject> object);
 
-  bool isEditor = true;
+  bool isEditor = false;
 };
 
 } // namespace eng

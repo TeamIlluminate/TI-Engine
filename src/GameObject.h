@@ -55,9 +55,9 @@ class GameObject : public enable_shared_from_this<GameObject>, public Editor
 
     void SetName(const std::string newName);
 
-    Scene *GetScene() const;
+    weak_ptr<Scene> GetScene() const;
     //Called when gameobject added to scene
-    void SetScene(Scene *scene);
+    void SetScene(shared_ptr<Scene> scene);
 
     void DrawEditor();
     
@@ -67,7 +67,7 @@ class GameObject : public enable_shared_from_this<GameObject>, public Editor
     
     std::string name;
   protected:
-    Scene *scene = nullptr;
+    weak_ptr<Scene> scene;
 
     weak_ptr<GameObject> parent;
 

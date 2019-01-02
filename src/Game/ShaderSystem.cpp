@@ -41,10 +41,10 @@ void ShaderManager::GUI()
     {
         if (auto shader = weakMesh.lock())
         {
-            ImGui::Text(shader->owner.lock()->GetName().c_str());
+            ImGui::Text(shader->_owner.lock()->GetName().c_str());
             ImGui::NextColumn();
 
-            if(ImGui::Checkbox(to_string(shader->owner.lock()->id).c_str(), shader->GetEnabled()))
+            if(ImGui::Checkbox(to_string(shader->_owner.lock()->id).c_str(), shader->GetEnabled()))
             {
                 shader->isEnabled != shader->isEnabled;
             }
@@ -62,7 +62,7 @@ void ShaderManager::ApplyShaderTo(list<shared_ptr<eng::ShapeMesh>> shaderControl
 
         for (auto shaderController : shaderControllers)
         {
-            cout << shaderController->owner.lock()->GetName();
+            cout << shaderController->_owner.lock()->GetName();
             shaderController->SetShader(shader);
         }
     }
@@ -70,10 +70,9 @@ void ShaderManager::ApplyShaderTo(list<shared_ptr<eng::ShapeMesh>> shaderControl
 
 void ShaderManager::GetGameObjectsWithShader()
 {
-    auto _owner = owner.lock();
-    if (_owner)
+    if (auto owner = _owner.lock())
     {
-        auto allGameObjects = _owner->GetScene()->GetGameObjects();
+        auto allGameObjects = owner->GetScene().lock()->GetGameObjects();
         meshs.clear();
         for (auto concreteGameObject : allGameObjects)
         {

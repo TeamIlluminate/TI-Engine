@@ -6,16 +6,16 @@ using namespace eng;
 
 void PlayerController::OnInit()
 {
-    if (auto parent = owner.lock())
+    if (auto owner = _owner.lock())
     {
-        bodyComponent = parent->GetComponent<PhysBody>();
+        _bodyComponent = owner->GetComponent<PhysBody>();
     }
 }
 void PlayerController::Update()
 {
-    if (auto comp = bodyComponent.lock())
+    if (auto bodyComponent = _bodyComponent.lock())
     {
-        if (!comp->body->GetWorld()->IsLocked())
+        if (!bodyComponent->body->GetWorld()->IsLocked())
         {
 
             if (shoot < shootDeley)
@@ -54,23 +54,23 @@ void PlayerController::Update()
 
 void PlayerController::MoveIn(sf::Vector2f position)
 {
-    if (auto physBody = bodyComponent.lock())
+    if (auto bodyComponent = _bodyComponent.lock())
     {
-        physBody->TransformPosition(position);
+        bodyComponent->TransformPosition(position);
     }
 }
 
 void PlayerController::ShootIn(sf::Vector2f position)
 {
-    if (auto parent = this->owner.lock())
+    if (auto owner = this->_owner.lock())
     {
-        sf::Vector2f direction = position - parent->transform.position;
+        sf::Vector2f direction = position - owner->transform.position;
         if (Magnitude(direction) > 15.f)
         {
             direction = Normalize(direction);
 
             shared_ptr<GameObject> bullet = std::make_shared<eng::GameObject>("BULLER");
-            bullet->transform.position = parent->transform.position + direction * 15.f;
+            bullet->transform.position = owner->transform.position + direction * 15.f;
 
             auto shape = make_shared<sf::CircleShape>(2.f);
             shape->setOrigin(1.f, 1.f);
@@ -86,8 +86,8 @@ void PlayerController::ShootIn(sf::Vector2f position)
             fixture.density = 2.f;
 
             bullet->AddComponent(make_shared<eng::PhysBody>(fixture, b2BodyType::b2_dynamicBody));
-            bullet->AddComponent(make_shared<Bullet>(Normalize(direction), parent));
-            parent->GetScene()->AddGameObject(bullet);
+            bullet->AddComponent(make_shared<Bullet>(Normalize(direction), owner));
+            owner->GetScene().lock()->AddGameObject(bullet);
 
             isFiring != isFiring;
         }
