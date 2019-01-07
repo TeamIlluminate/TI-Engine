@@ -11,6 +11,11 @@ void PlayerController::OnInit()
         _bodyComponent = owner->GetComponent<PhysBody>();
     }
 }
+
+shared_ptr<Component> PlayerController::Clone() {
+    return make_shared<PlayerController>(*this);
+}
+
 void PlayerController::Update()
 {
     if (auto bodyComponent = _bodyComponent.lock())

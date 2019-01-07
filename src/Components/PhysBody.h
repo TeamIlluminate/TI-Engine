@@ -13,7 +13,9 @@ class PhysBody : public Component
   public:
     PhysBody(b2FixtureDef fixture, b2BodyType type);
     ~PhysBody();
+    shared_ptr<Component> Clone();
     b2FixtureDef GetFixture();
+
     b2Body* body;
 
     void FixedUpdate();

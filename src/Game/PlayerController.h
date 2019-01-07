@@ -8,6 +8,7 @@ namespace eng
     {
         public:
         PlayerController() {}
+        shared_ptr<eng::Component> Clone();
         void OnInit();
         void Update();
         private:

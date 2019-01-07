@@ -8,9 +8,17 @@ ShapeMesh::ShapeMesh(shared_ptr<sf::Shape> shape) : currentShape(shape) {
 
 weak_ptr<sf::Drawable> ShapeMesh::GetDrawable()
 {
-    currentShape->setPosition(_owner.lock()->GetGlobalCoordinates());
+    if (auto owner = _owner.lock()) {
+        currentShape->setPosition(owner->GetGlobalCoordinates());
+    }
     return (weak_ptr<sf::Drawable>) currentShape;
 }
+
+
+shared_ptr<Component> ShapeMesh::Clone() {
+    return make_shared<ShapeMesh>(*this);
+}
+
 
 sf::RenderStates ShapeMesh::GetRenderStates() { return states; }
 

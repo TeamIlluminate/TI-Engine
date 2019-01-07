@@ -37,6 +37,9 @@ public:
     return GameMaster::Get().GetDeltaTime();
   };
 
+
+  virtual shared_ptr<Component> Clone() = 0;
+  
   weak_ptr<GameObject> _owner;
 };
 } // namespace eng

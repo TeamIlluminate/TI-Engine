@@ -4,6 +4,20 @@
 
 using namespace eng;
 
+// Camera::Camera(const Camera & camera) {
+
+//     this->maxScale = camera.maxScale;
+//     this->minScale = camera.minScale;
+//     this->scale = camera.scale;
+//     this->view = camera.view;
+//     this->isEnabled = camera.isEnabled;
+// }
+
+shared_ptr<Component> Camera::Clone()
+{
+    return make_shared<Camera>(*this);
+}
+
 void Camera::OnInit()
 {
     view.setSize(scale * 16, scale * 9);
@@ -46,3 +60,4 @@ void Camera::DrawEditor() {
         }
     }
 }
+

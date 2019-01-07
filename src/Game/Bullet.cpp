@@ -38,6 +38,11 @@ class Bullet : public Component
         }
     }
 
+
+shared_ptr<Component> Clone() {
+    return make_shared<Bullet>(*this);
+}
+
     void BeginContact(weak_ptr<GameObject> hit)
     {
         auto collision = hit.lock();

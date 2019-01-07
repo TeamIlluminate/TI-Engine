@@ -13,6 +13,7 @@ class GameObject : public enable_shared_from_this<GameObject>, public Editor
 {
   public:
     GameObject() : name("empty") {};
+    GameObject(const GameObject & gameObject);
     GameObject(std::string name) : name(name) {};
 
     //push reference to child in list and set reference on this gameobject in child
@@ -66,6 +67,7 @@ class GameObject : public enable_shared_from_this<GameObject>, public Editor
     int id = 0;
     
     std::string name;
+    
   protected:
     weak_ptr<Scene> scene;
 

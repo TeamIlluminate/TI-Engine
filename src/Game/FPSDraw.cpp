@@ -23,6 +23,11 @@ class FPSDraw : public Component
         fpsTime += DeltaTime();
     }
 
+    
+shared_ptr<Component> Clone() {
+    return make_shared<FPSDraw>(*this);
+}
+
     void GUI()
     {
         fpsCounter++;

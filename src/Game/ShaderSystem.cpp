@@ -85,3 +85,8 @@ void ShaderManager::GetGameObjectsWithShader()
         }
     }
 }
+
+shared_ptr<eng::Component> ShaderManager::Clone()
+{
+    return make_shared<ShaderManager>(*this);
+}

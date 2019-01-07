@@ -10,6 +10,8 @@ class EnemyAI : public Component
 
 public:
 
+shared_ptr<Component> Clone();
+
 void FixedUpdate();
 
 void BeginContact(weak_ptr<GameObject> hit);

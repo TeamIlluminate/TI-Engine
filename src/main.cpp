@@ -88,17 +88,15 @@ int main()
     shared_ptr<eng::Scene> mainScene = make_shared<eng::Scene>("MainScene");
     gameMaster.LoadScene(mainScene);
 
-    render->SetScene(mainScene);
-
-    mainScene->AddGameObject(createPlayer(600, 500));
+    mainScene->ForceGameObject(createPlayer(600, 500));
 
     for(int i = 0; i < 10; ++i)
     {
-        mainScene->AddGameObject(createEnemy(1 + i * 100, 100 + i * 10));
+        mainScene->ForceGameObject(createEnemy(300 + i * 50, 100));
     }
 
-    mainScene->AddGameObject(createStats());
-    mainScene->AddGameObject(createShaderManager());
+    mainScene->ForceGameObject(createStats());
+    mainScene->ForceGameObject(createShaderManager());
 
 
     while (eng::GameMaster::Get().IsGameStarted())

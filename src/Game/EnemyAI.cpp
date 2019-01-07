@@ -23,6 +23,11 @@ using namespace eng;
         }
     }
 
+
+shared_ptr<Component> EnemyAI::Clone() {
+    return make_shared<EnemyAI>(*this);
+}
+
     void EnemyAI::BeginContact(weak_ptr<GameObject> hit)
     {
         if (auto foundedObject = hit.lock()) {

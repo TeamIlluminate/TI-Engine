@@ -7,6 +7,7 @@ class ShapeMesh : public Mesh
 {
 public:
   ShapeMesh(shared_ptr<sf::Shape> shape);
+  shared_ptr<Component> Clone();
   weak_ptr<sf::Drawable> GetDrawable();
   sf::RenderStates GetRenderStates();
   void SetShader(shared_ptr<sf::Shader> shader);

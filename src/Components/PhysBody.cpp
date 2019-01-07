@@ -15,6 +15,12 @@ PhysBody::~PhysBody() {
 
 b2FixtureDef PhysBody::GetFixture() { return fixture; }
 
+shared_ptr<Component> PhysBody::Clone() {
+  //  auto newPhysBody = make_shared<PhysBody>(*this);
+
+    return make_shared<PhysBody>(*this);
+}
+
 void PhysBody::OnInit()
 {
     b2BodyDef defBody;
@@ -22,9 +28,14 @@ void PhysBody::OnInit()
     defBody.type = this->type;
     defBody.position.Set(_owner.lock()->transform.position.x, _owner.lock()->transform.position.y);
 
-    this->body = GameMaster::Get().GetCurrentScene().lock()->GetWorld().lock()->CreateBody(&defBody);
+    // if(auto owner = _owner.lock)
+    //     if(auto scene = owner->GetScene().lock)
+    //         if(auto world = scene->GetWorld().lock)
+    //             world->CreateBody(&defBody);
 
-    this->body->CreateFixture(&fixture);
+    this->body = _owner.lock()->GetScene().lock()->GetWorld().lock()->CreateBody(&defBody);
+
+    this->body->CreateFixture(&fixture);    
     this->body->SetGravityScale(0);
 }
 

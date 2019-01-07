@@ -1,16 +1,32 @@
 #include "GameObject.h"
 #include "Component.h"
+#include "Components/Camera.h"
 
 using namespace eng;
 
+GameObject::GameObject(const GameObject & gameObject) {
+    this->id = gameObject.id;
+    this->name = gameObject.name;
+    this->scene = gameObject.scene;
+    this->transform = gameObject.transform;
+
+    for (auto child : gameObject.childs) {
+        this->childs.push_back(make_shared<GameObject>(*child.get()));
+    }
+
+    for (auto component : gameObject.components) {
+        auto newComponent = component->Clone();
+        this->components.push_back(newComponent);
+    }
+}
+
 sf::Vector2f GameObject::GetGlobalCoordinates() const
 {
-    if (shared_ptr<GameObject> prn = parent.lock())
+    if (auto prn = parent.lock())
     {
-        transform.position + prn->GetGlobalCoordinates();
+        return transform.position + prn->GetGlobalCoordinates();
     }
-    else
-        return transform.position;
+    else return transform.position;
 }
 
 const std::string GameObject::GetName() const
@@ -90,7 +106,7 @@ void GameObject::SetScene(shared_ptr<Scene> scene)
 
 void GameObject::DrawEditor()
 {
-    if (ImGui::TreeNode(to_string(id).c_str())) {
+    if (ImGui::TreeNode( ("[" + to_string(id) + "] " + name).c_str())) {
         ImGui::Text(name.c_str());
         DrawVector2(transform.position);
         if (ImGui::TreeNode(("Components " + to_string(id)).c_str()))

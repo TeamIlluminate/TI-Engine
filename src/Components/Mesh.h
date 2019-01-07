@@ -8,6 +8,7 @@ namespace eng
 class Mesh : public Component
 {
   public:
+
     virtual weak_ptr<sf::Drawable> GetDrawable() = 0;
     virtual sf::RenderStates GetRenderStates() = 0;
 };

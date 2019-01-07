@@ -11,8 +11,6 @@ class CollisionEventManager : public b2ContactListener
     CollisionEventManager(Scene *scene);
     void BeginContact(b2Contact *contact);
     void EndContact(b2Contact *contact);
-
-  private:
     Scene *scene;
 };
 } // namespace eng

@@ -11,6 +11,7 @@ class ShaderManager : public eng::Component
     public:
     void OnInit();
     void GUI();
+    shared_ptr<eng::Component> Clone();
     private:
     void GetGameObjectsWithShader();
     void ApplyShaderTo(list<shared_ptr<eng::ShapeMesh>> shaders);
