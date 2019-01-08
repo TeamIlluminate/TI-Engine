@@ -96,7 +96,6 @@ int main()
     }
 
     mainScene->ForceGameObject(createStats());
-    mainScene->ForceGameObject(createShaderManager());
 
 
     while (eng::GameMaster::Get().IsGameStarted())

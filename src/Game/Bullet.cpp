@@ -17,31 +17,14 @@ class Bullet : public Component
         if (shared_ptr<GameObject> owner = _owner.lock())
         {
             _bodyComponent = owner->GetComponent<PhysBody>();
+            _bodyComponent.lock()->AddImpulse(direction * 100.f);
         }
     }
 
-    void Update()
+    shared_ptr<Component> Clone()
     {
-        auto bodyComponent = _bodyComponent.lock();
-        auto whoShoot = _whoShoot.lock();
-        auto owner = _owner.lock();
-
-        if (bodyComponent && whoShoot && owner)
-        {
-            sf::Vector2f position = direction * 8.f;
-            
-            bodyComponent->TransformPosition(position);
-            if (Magnitude(whoShoot->transform.position - owner->transform.position) > 3000)
-            {
-                owner->GetScene().lock()->Destroy(owner);
-            }
-        }
+        return make_shared<Bullet>(*this);
     }
-
-
-shared_ptr<Component> Clone() {
-    return make_shared<Bullet>(*this);
-}
 
     void BeginContact(weak_ptr<GameObject> hit)
     {
@@ -59,8 +42,6 @@ shared_ptr<Component> Clone() {
             owner->GetScene().lock()->Destroy(owner);
         }
     }
-
-   
 
   private:
     weak_ptr<PhysBody> _bodyComponent;

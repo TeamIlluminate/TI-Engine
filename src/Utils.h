@@ -5,8 +5,6 @@
 #include <string>
 #include <memory>
 #include <list>
-#include <functional>
-
 #pragma once
 
 using namespace std;
@@ -23,3 +21,6 @@ sf::Vector2<T> Normalize(const sf::Vector2<T> vector) {
     float magnitude = Magnitude(vector);
     return sf::Vector2<T>(vector.x / magnitude, vector.y / magnitude);
 }
+
+//Return coordinates of mouse relative to current window's view
+sf::Vector2f GetMouseCoordinates();

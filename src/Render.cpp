@@ -31,7 +31,7 @@ Render::Render(sf::VideoMode mode)
         //First - free space
         this->wThread->~thread(); // ->terminate(); //Terminate window drawning loop;
 
-        this->window =  make_shared<sf::RenderWindow>(mode, "TI Engine improved"); //I wanna make some spec file-descriptor like (Project name; Engine version; ... etc)
+        this->window = make_shared<sf::RenderWindow>(mode, "TI Engine improved"); //I wanna make some spec file-descriptor like (Project name; Engine version; ... etc)
         this->window->setActive(false);
 
         this->wThread = make_shared<std::thread>(&Render::WindowLoop, this); //Restart thread
@@ -42,12 +42,12 @@ Render::Render(sf::VideoMode mode)
 void Render::WindowLoop()
 {
     window->clear();
-
+    defaultView = window->getDefaultView();
     ImGui::SFML::Init(*window);
 
     sf::Clock deltaClock;
     float fixedDelta = 0;
-
+    GameMaster::Get().SetWindow(window);
     while (window->isOpen())
     {
 
@@ -59,13 +59,13 @@ void Render::WindowLoop()
 
         auto currentScene = GameMaster::Get().GetCurrentScene().lock();
 
-        if(fixedDelta < 0.02f)
-        fixedDelta += dTime;
+        if (fixedDelta < 0.02f)
+            fixedDelta += dTime;
         else
         {
-            if(currentScene && GameMaster::Get().state & GameMaster::_GAME)
-            currentScene->PhysicsLoop();
-            
+            if (currentScene && GameMaster::Get().state & GameMaster::_GAME)
+                currentScene->PhysicsLoop();
+
             fixedDelta = 0;
         }
 
@@ -77,6 +77,7 @@ void Render::WindowLoop()
             if (event.type == sf::Event::Closed)
             {
                 window->close();
+                GameMaster::Get().SetWindow();
                 GameMaster::Get().GameStarted(false);
             }
         }
@@ -88,30 +89,30 @@ void Render::WindowLoop()
             auto meshes = currentScene->Update();
             for (auto _mesh : meshes)
             {
-                if (auto mesh = _mesh.lock()) {            
-                    if(auto drawable = mesh->GetDrawable().lock())
-                    window->draw(*drawable.get(), mesh->GetRenderStates());
+                if (auto mesh = _mesh.lock())
+                {
+                    if (auto drawable = mesh->GetDrawable().lock())
+                        window->draw(*drawable.get(), mesh->GetRenderStates());
                 }
             }
-        
 
             auto references = currentScene->GetGameObjects();
 
-            if(GameMaster::Get().state & GameMaster::_DEVELOP)
+            if (GameMaster::Get().state & GameMaster::_DEVELOP)
             {
                 ImGuiWindowFlags flags = 0;
                 flags |= ImGuiWindowFlags_NoCollapse;
                 flags |= ImGuiWindowFlags_NoMove;
                 flags |= ImGuiWindowFlags_NoResize;
 
-                ImGui::Begin("Inspector", nullptr , flags);
+                ImGui::Begin("Inspector", nullptr, flags);
 
                 ImGui::SetWindowSize(sf::Vector2i(300, window->getSize().y));
-                ImGui::SetWindowPos(sf::Vector2i(0,0));
+                ImGui::SetWindowPos(sf::Vector2i(0, 0));
 
-                for(auto reference : references)
+                for (auto reference : references)
                 {
-                    if(auto _gameObject = reference.lock())
+                    if (auto _gameObject = reference.lock())
                     {
                         _gameObject->DrawEditor();
                     }
@@ -119,12 +120,12 @@ void Render::WindowLoop()
 
                 ImGui::End();
 
-                ImGui::Begin("Game State"); 
+                ImGui::Begin("Game State");
 
-                if(ImGui::Button("Play"))
+                if (ImGui::Button("Play"))
                 {
                     //Если игровой цикл не запущен.
-                    if(!(GameMaster::Get().state & GameMaster::_GAME) & !(GameMaster::Get().state & GameMaster::_PAUSE))
+                    if (!(GameMaster::Get().state & GameMaster::_GAME) & !(GameMaster::Get().state & GameMaster::_PAUSE))
                     {
                         GameMaster::Get().state = GameMaster::_DEVELOP + GameMaster::_GAME;
                         auto gameScene = make_shared<Scene>(*currentScene.get());
@@ -132,46 +133,48 @@ void Render::WindowLoop()
                         GameMaster::Get().LoadScene(gameScene);
                         gameScene->ResetScene();
                     }
-                    else if(GameMaster::Get().state & GameMaster::_PAUSE)
+                    else if (GameMaster::Get().state & GameMaster::_PAUSE)
                     {
-                        GameMaster::Get().state = GameMaster::_DEVELOP + GameMaster::_GAME;                       
+                        GameMaster::Get().state = GameMaster::_DEVELOP + GameMaster::_GAME;
                     }
                 }
 
-                if(ImGui::Button("Pause"))
+                if (ImGui::Button("Pause"))
                 {
-                    if(GameMaster::Get().state & GameMaster::_GAME)
+                    if (GameMaster::Get().state & GameMaster::_GAME)
                     {
-                        GameMaster::Get().state = GameMaster::_DEVELOP + GameMaster::_EDITOR + GameMaster::_PAUSE;             
-                    }                 
+                        GameMaster::Get().state = GameMaster::_DEVELOP + GameMaster::_EDITOR + GameMaster::_PAUSE;
+                    }
                 }
 
-                if(ImGui::Button("Stop"))
+                if (ImGui::Button("Stop"))
                 {
-                    if(GameMaster::Get().state & (GameMaster::_GAME | GameMaster::_PAUSE))
+                    if (GameMaster::Get().state & (GameMaster::_GAME | GameMaster::_PAUSE))
                     {
-                        GameMaster::Get().state = GameMaster::_DEVELOP + GameMaster::_EDITOR; 
-                        if(auto editScene = GameMaster::Get().GetEditableScene().lock())
-                        GameMaster::Get().LoadScene(editScene);
-                    }                 
+                        GameMaster::Get().state = GameMaster::_DEVELOP + GameMaster::_EDITOR;
+                        if (auto editScene = GameMaster::Get().GetEditableScene().lock())
+                            GameMaster::Get().LoadScene(editScene);
+                    }
                 }
 
-                ImGui::End();                
+                ImGui::End();
             }
 
-
-        ImGui::SFML::Render(*window);
-        auto cameras = currentScene->GetCameras();
-        for(auto _camera : cameras)
-        {
-            if(auto camera = _camera.lock())
+            ImGui::SFML::Render(*window);
+            if (GameMaster::Get().state & GameMaster::_GAME)
             {
-                if(camera->isEnabled)
-                window->setView(camera->view);
-            }
-        }
+                auto cameras = currentScene->GetCameras();
+                for (auto _camera : cameras)
+                {
+                    if (auto camera = _camera.lock())
+                    {
+                        if (camera->isEnabled)
+                            window->setView(camera->view);
+                    }
+                }
+            } else window->setView(defaultView);
 
-        window->display();
+            window->display();
         }
     }
     ImGui::SFML::Shutdown();

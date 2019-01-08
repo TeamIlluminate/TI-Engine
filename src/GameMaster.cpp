@@ -38,3 +38,17 @@ float GameMaster::UpdateDeltaTime(float dt)
 {
     deltaTime = dt;
 }
+
+//WINDOW
+
+weak_ptr<sf::RenderWindow> GameMaster::GetWindow() {
+    return window;
+}
+
+void GameMaster::SetWindow(shared_ptr<sf::RenderWindow> newWindow ) {
+    window = newWindow;
+}
+
+void GameMaster::SetWindow() {
+    window = nullptr;
+}

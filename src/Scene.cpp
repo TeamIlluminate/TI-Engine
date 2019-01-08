@@ -10,8 +10,7 @@ Scene::Scene(std::string name)
 {
     this->name = name;
     
-    b2Vec2 gravity;
-    world = make_shared<b2World>(gravity);
+    world = make_shared<b2World>(b2Vec2(0,0));
 
     collisionEventManager = new CollisionEventManager(this);
     world->SetContactListener(collisionEventManager);

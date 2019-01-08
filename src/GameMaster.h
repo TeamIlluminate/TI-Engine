@@ -28,6 +28,9 @@ class GameMaster
     void GameStarted(bool status);
     void SaveScene(shared_ptr<Scene> scene) {this->editorScene = scene; };
     void LoadScene(shared_ptr<Scene> scene);
+    weak_ptr<sf::RenderWindow> GetWindow();
+    void SetWindow();
+    void SetWindow(shared_ptr<sf::RenderWindow> window);
     float GetDeltaTime() const;
 
     float UpdateDeltaTime(float dt);
@@ -41,6 +44,7 @@ class GameMaster
     GameMaster &operator=(GameMaster const &) = delete;
 
     bool gameStatus = false;
+    shared_ptr<sf::RenderWindow> window;
     shared_ptr<Scene> currentScene;
     shared_ptr<Scene> editorScene;
     float deltaTime = 0;

@@ -24,19 +24,12 @@ shared_ptr<Component> PhysBody::Clone() {
 void PhysBody::OnInit()
 {
     b2BodyDef defBody;
-
     defBody.type = this->type;
     defBody.position.Set(_owner.lock()->transform.position.x, _owner.lock()->transform.position.y);
-
-    // if(auto owner = _owner.lock)
-    //     if(auto scene = owner->GetScene().lock)
-    //         if(auto world = scene->GetWorld().lock)
-    //             world->CreateBody(&defBody);
-
     this->body = _owner.lock()->GetScene().lock()->GetWorld().lock()->CreateBody(&defBody);
-
     this->body->CreateFixture(&fixture);    
-    this->body->SetGravityScale(0);
+    this->body->SetGravityScale(1);
+    this->body->SetLinearDamping(0.1f);
 }
 
 void PhysBody::FixedUpdate()
@@ -67,5 +60,5 @@ void PhysBody::TransformPosition(sf::Vector2f newPos)
 
 void PhysBody::AddImpulse(sf::Vector2f impulse)
 {
-    this->body->ApplyLinearImpulse(b2Vec2(impulse.x, impulse.y), b2Vec2(_owner.lock()->transform.position.x, _owner.lock()->transform.position.y), true);
+    this->body->SetLinearVelocity(b2Vec2(impulse.x, impulse.y));
 }

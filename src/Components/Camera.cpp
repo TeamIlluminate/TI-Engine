@@ -51,7 +51,7 @@ void Camera::DrawEditor() {
     auto gameObject = _owner.lock();
     if (gameObject) {
         int id = gameObject->id;
-        if (ImGui::TreeNode("Camera's of " + id)) {
+        if (ImGui::TreeNode("Camera of " + id)) {
             ImGui::InputInt("maxScale#" + id, &maxScale );
             ImGui::InputInt("minScale#" + id, &minScale );
             ImGui::InputInt("scale#" + id, &scale );

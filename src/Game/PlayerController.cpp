@@ -49,7 +49,7 @@ void PlayerController::Update()
                 {
                     shoot = 0;
                     isFiring != isFiring;
-                    sf::Vector2i currentPosition = sf::Mouse::getPosition();
+                    sf::Vector2f currentPosition = GetMouseCoordinates();
                     this->ShootIn(sf::Vector2f(currentPosition.x, currentPosition.y));
                 }
             }
@@ -89,8 +89,8 @@ void PlayerController::ShootIn(sf::Vector2f position)
             fixture.shape = b2circle;
             fixture.friction = 1.f;
             fixture.density = 2.f;
-
-            bullet->AddComponent(make_shared<eng::PhysBody>(fixture, b2BodyType::b2_dynamicBody));
+            auto bulletPhysBody = make_shared<eng::PhysBody>(fixture, b2BodyType::b2_dynamicBody);
+            bullet->AddComponent(bulletPhysBody);
             bullet->AddComponent(make_shared<Bullet>(Normalize(direction), owner));
             owner->GetScene().lock()->AddGameObject(bullet);
 

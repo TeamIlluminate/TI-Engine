@@ -14,7 +14,7 @@ public:
 
 private:
   shared_ptr<sf::RenderWindow> window;
-
+  sf::View defaultView;
   shared_ptr<std::thread> wThread;
 
 
