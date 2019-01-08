@@ -47,8 +47,7 @@ public:
 private:
 
   list<weak_ptr<Mesh>> Update(shared_ptr<GameObject> object);
-  
-  void PushGameobjects();
+  void Initialize(shared_ptr<GameObject> object);
   int idCounter = 0;
 
   shared_ptr<b2World> world;

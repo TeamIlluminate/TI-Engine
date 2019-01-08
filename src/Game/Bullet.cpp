@@ -10,14 +10,13 @@ namespace eng
 class Bullet : public Component
 {
   public:
-    Bullet(sf::Vector2f direction, shared_ptr<GameObject> whoShoot) : direction(direction), _whoShoot(whoShoot) {}
+    Bullet() {}
 
     void OnInit()
     {
         if (shared_ptr<GameObject> owner = _owner.lock())
         {
             _bodyComponent = owner->GetComponent<PhysBody>();
-            _bodyComponent.lock()->AddImpulse(direction * 100.f);
         }
     }
 
@@ -45,7 +44,5 @@ class Bullet : public Component
 
   private:
     weak_ptr<PhysBody> _bodyComponent;
-    weak_ptr<GameObject> _whoShoot;
-    sf::Vector2f direction;
 };
 } // namespace eng

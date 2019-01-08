@@ -91,8 +91,9 @@ void PlayerController::ShootIn(sf::Vector2f position)
             fixture.density = 2.f;
             auto bulletPhysBody = make_shared<eng::PhysBody>(fixture, b2BodyType::b2_dynamicBody);
             bullet->AddComponent(bulletPhysBody);
-            bullet->AddComponent(make_shared<Bullet>(Normalize(direction), owner));
+            bullet->AddComponent(make_shared<Bullet>());
             owner->GetScene().lock()->AddGameObject(bullet);
+            bulletPhysBody->AddImpulse(direction * 50.f);
 
             isFiring != isFiring;
         }

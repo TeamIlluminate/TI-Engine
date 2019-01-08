@@ -53,6 +53,7 @@ std::list<weak_ptr<GameObject>> Scene::GetGameObjects() const
 
 void Scene::AddGameObject(shared_ptr<GameObject> object)
 {
+    Initialize(object);
     this->neededToAdd.push_back(object);
 }
 
@@ -86,7 +87,12 @@ void Scene::Destroy(weak_ptr<GameObject> _gameObject)
 
 void Scene::PhysicsLoop()
 {
-    PushGameobjects();
+
+    for (auto gameObject : this->neededToAdd)
+    {
+        this->sceneObjects.push_back(gameObject);
+    }
+    neededToAdd.clear();
 
     float32 timeStep = 0.02f;
 
@@ -111,15 +117,13 @@ void Scene::PhysicsLoop()
     }
 }
 
-void Scene::PushGameobjects()
-{
-    for (auto gameObject : this->neededToAdd)
-    {
+void Scene::Initialize(shared_ptr<GameObject> gameObject) {
         gameObject->SetScene(shared_from_this());
         auto components = gameObject->GetComponents();
         for (auto refComponent : components)
         {
             auto concreteComponent = refComponent.lock();
+            concreteComponent->SetOwner(gameObject);
             concreteComponent->OnInit();
         }
         auto camera = gameObject->GetComponent<Camera>();
@@ -127,41 +131,22 @@ void Scene::PushGameobjects()
         {
             cameras.push_back(concreteCamera);
         }
-        this->sceneObjects.push_back(gameObject);
         gameObject->id = idCounter;
         idCounter++;
-    }
-    neededToAdd.clear();
 }
 
 void Scene::ForceGameObject(shared_ptr<GameObject> gameObject)
 {
+    Initialize(gameObject);
     sceneObjects.push_back(gameObject);
-    gameObject->SetScene(shared_from_this());
-    gameObject->id = idCounter;
-    idCounter++;
 }
 
 void Scene::ResetScene()
 {
+    idCounter = 0;
     for (auto gameObject : sceneObjects)
     {
-        gameObject->SetScene(shared_from_this());
-
-        auto components = gameObject->GetComponents();
-        for (auto component : components)
-        {
-            if (auto cmp = component.lock())
-            {
-                cmp->SetOwner(gameObject);
-                cmp->OnInit();
-            }
-        }
-        auto camera = gameObject->GetComponent<Camera>();
-        if (auto concreteCamera = camera.lock())
-        {
-            cameras.push_back(concreteCamera);
-        }
+        Initialize(gameObject);
     }
 }
 
