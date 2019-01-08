@@ -20,6 +20,8 @@ class PhysBody : public Component
 
     void FixedUpdate();
     void OnInit();
+
+    void DrawEditor();
     weak_ptr<GameObject> RayCast(sf::Vector2f to);
     void AddImpulse(sf::Vector2f vector);
     void TransformPosition(sf::Vector2f pos);

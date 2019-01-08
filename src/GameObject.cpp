@@ -106,17 +106,19 @@ void GameObject::SetScene(shared_ptr<Scene> scene)
 
 void GameObject::DrawEditor()
 {
-    if (ImGui::TreeNode( ("[" + to_string(id) + "] " + name).c_str())) {
+    if (ImGui::CollapsingHeader( ("[" + to_string(id) + "] " + name).c_str())) {
         ImGui::Text(name.c_str());
         DrawVector2(transform.position);
-        if (ImGui::TreeNode(("Components " + to_string(id)).c_str()))
+         ImGui::Separator();
+        if (ImGui::CollapsingHeader(("Components##" + to_string(id)).c_str()))
         {
             for (auto component : components)
             {
                 component->DrawEditor();
             }
-            ImGui::TreePop();
         }
-        ImGui::TreePop();
+        
+
+    ImGui::Separator();
     }
 }

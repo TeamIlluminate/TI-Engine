@@ -57,7 +57,6 @@ shared_ptr<Component> Clone() {
             ImGui::LabelText("<---DeltaTime", _dTime.c_str());
             ImGui::LabelText("<---Game time", _gameTime.c_str());
             ImGui::LabelText("<---Objects count", _objectCount.c_str());
-
             ImGui::Columns(2, "ObjectList", true);
             ImGui::Text("Object Name"); ImGui::NextColumn();
             ImGui::Text("Object Position"); ImGui::NextColumn();

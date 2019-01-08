@@ -11,13 +11,13 @@ class Editor {
     
     template<typename V>
     void DrawVector2(sf::Vector2<V>& vector) {
-        ImGui::InputFloat("X coord: ", &vector.x);
-        ImGui::InputFloat("Y coord: ", &vector.y);
+        ImGui::InputFloat("X ", &vector.x);
+        ImGui::InputFloat("Y ", &vector.y);
     };
 
     void DrawVector2(const b2Vec2 vector) {
-        ImGui::LabelText("X coord: ", to_string(vector.x).c_str());
-        ImGui::LabelText("Y coord: ", to_string(vector.y).c_str());
+        ImGui::LabelText("X ", to_string(vector.x).c_str());
+        ImGui::LabelText("Y ", to_string(vector.y).c_str());
     };
 
 };

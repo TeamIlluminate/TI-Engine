@@ -47,17 +47,18 @@ void Camera::Update()
     }
 }
 
-void Camera::DrawEditor() {
+void Camera::DrawEditor()
+{
     auto gameObject = _owner.lock();
-    if (gameObject) {
+    if (gameObject)
+    {
         int id = gameObject->id;
-        if (ImGui::TreeNode("Camera of " + id)) {
-            ImGui::InputInt("maxScale#" + id, &maxScale );
-            ImGui::InputInt("minScale#" + id, &minScale );
-            ImGui::InputInt("scale#" + id, &scale );
-            ImGui::Checkbox("Is enabled#" +id, &isEnabled);
-            ImGui::TreePop();
+        if (ImGui::CollapsingHeader(("Camera##" + to_string(id)).c_str()))
+        {
+            ImGui::InputInt("maxScale#" + id, &maxScale);
+            ImGui::InputInt("minScale#" + id, &minScale);
+            ImGui::InputInt("scale#" + id, &scale);
+            ImGui::Checkbox("Is enabled#" + id, &isEnabled);
         }
     }
 }
-
