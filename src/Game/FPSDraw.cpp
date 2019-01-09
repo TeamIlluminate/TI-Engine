@@ -42,11 +42,11 @@ shared_ptr<Component> Clone() {
         if(auto owner = _owner.lock())
         {
             objectsCount = owner->GetScene().lock()->GetGameObjects().size();
-
+            
             ImGui::Begin("Stats");
 
             ImGui::SetWindowPos(ImVec2(1500, 10));
-            ImGui::SetWindowSize(ImVec2(400, 600));
+            ImGui::SetWindowSize(ImVec2(400, 125));
 
             string _fps = to_string(fps);
             string _dTime = to_string(DeltaTime());
@@ -57,23 +57,6 @@ shared_ptr<Component> Clone() {
             ImGui::LabelText("<---DeltaTime", _dTime.c_str());
             ImGui::LabelText("<---Game time", _gameTime.c_str());
             ImGui::LabelText("<---Objects count", _objectCount.c_str());
-            ImGui::Columns(2, "ObjectList", true);
-            ImGui::Text("Object Name"); ImGui::NextColumn();
-            ImGui::Text("Object Position"); ImGui::NextColumn();
-            ImGui::Separator();
-
-
-            for(auto _gameObject : owner->GetScene().lock()->GetGameObjects())
-            {
-                if(auto gameObject = _gameObject.lock())
-                {        
-                    ImGui::Text(gameObject->GetName().c_str());   
-                    ImGui::NextColumn();
-                    DrawVector2(gameObject->transform.position);
-                    ImGui::NextColumn();
-                    ImGui::Separator();
-                }
-            }
             ImGui::End();
         }
     }

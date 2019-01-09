@@ -15,7 +15,7 @@ using namespace eng;
                     if(Magnitude(player->transform.position - owner->transform.position) < 250)
                     {
                         auto body = owner->GetComponent<PhysBody>();
-                        sf::Vector2f nPos = Normalize(player->transform.position - owner->transform.position) * 8.f * 0.1f;
+                        sf::Vector2f nPos = Normalize(player->transform.position - owner->transform.position) * 50.f * 0.1f;
                         body.lock()->TransformPosition(nPos);
                     }    
                 }

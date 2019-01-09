@@ -63,11 +63,6 @@ shared_ptr<eng::GameObject> createEnemy(float x, float y)
 shared_ptr<eng::GameObject> createStats()
 {
     shared_ptr<eng::GameObject> stats = make_shared<eng::GameObject>("stats");
-
-    shared_ptr<sf::CircleShape> shape = make_shared<sf::CircleShape>(0.f);
-    shape->setFillColor(sf::Color::Black);
-    stats->AddComponent(make_shared<eng::ShapeMesh>(shape));   
-
     stats->AddComponent(make_shared<eng::FPSDraw>());
     return stats;
 }
@@ -80,7 +75,9 @@ shared_ptr<eng::GameObject> createShaderManager() {
 
 int main()
 {
-    eng::Render *render = new eng::Render(sf::VideoMode::getFullscreenModes()[0]);
+    eng::Render *render = new eng::Render();
+    render->Init(sf::VideoMode::getFullscreenModes()[0]);
+
     eng::GameMaster::Get().GameStarted(true);
 
     eng::GameMaster &gameMaster = eng::GameMaster::Get();
@@ -88,14 +85,14 @@ int main()
     shared_ptr<eng::Scene> mainScene = make_shared<eng::Scene>("MainScene");
     gameMaster.LoadScene(mainScene);
 
-    mainScene->ForceGameObject(createPlayer(600, 500));
+    mainScene->CreateGameObject(createPlayer(600, 500));
 
     for(int i = 0; i < 10; ++i)
     {
-        mainScene->ForceGameObject(createEnemy(300 + i * 50, 100));
+        mainScene->CreateGameObject(createEnemy(300 + i * 50, 100));
     }
 
-    mainScene->ForceGameObject(createStats());
+    mainScene->CreateGameObject(createStats());
 
 
     while (eng::GameMaster::Get().IsGameStarted())

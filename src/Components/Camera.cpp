@@ -11,6 +11,9 @@ shared_ptr<Component> Camera::Clone()
 
 void Camera::OnInit()
 {
+    if (auto owner = _owner.lock()) {
+        owner->GetScene().lock()->RegCamera(shared_from_this());
+    }
     view.setSize(scale * 16, scale * 9);
 }
 

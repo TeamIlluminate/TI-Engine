@@ -92,7 +92,7 @@ class Editor
                 rectangle->setSize(size);
                 rectangle->setOrigin(size.x / 2, size.y / 2);
             }
-            
+
             savedRectangle->setSize(rectangle->getSize());
             savedRectangle->setOrigin(rectangle->getOrigin());
             savedRectangle->setFillColor(rectangle->getFillColor());
@@ -126,5 +126,7 @@ class Editor
             shape->setOutlineColor(sfOutlineColor);
         }
     }
+
+    static void DrawInspector();
 };
 } // namespace eng

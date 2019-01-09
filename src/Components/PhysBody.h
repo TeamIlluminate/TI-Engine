@@ -18,15 +18,14 @@ class PhysBody : public Component
 
     b2Body* body = nullptr;
 
-    void FixedUpdate();
-    void OnInit();
-
     void DrawEditor();
     weak_ptr<GameObject> RayCast(sf::Vector2f to);
     void AddImpulse(sf::Vector2f vector);
     void TransformPosition(sf::Vector2f pos);
 
   private:
+    void FixedUpdate();
+    void OnInit();
     b2FixtureDef fixtureDef;
     b2Fixture * fixture;
     b2BodyType type;

@@ -74,7 +74,7 @@ void PlayerController::ShootIn(sf::Vector2f position)
         {
             direction = Normalize(direction);
 
-            shared_ptr<GameObject> bullet = std::make_shared<eng::GameObject>("BULLER");
+            auto bullet = owner->GetScene().lock()->CreateGameObject("BULLET");
             bullet->transform.position = owner->transform.position + direction * 15.f;
 
             auto shape = make_shared<sf::CircleShape>(2.f);
@@ -90,7 +90,6 @@ void PlayerController::ShootIn(sf::Vector2f position)
             auto bulletPhysBody = make_shared<eng::PhysBody>(fixture, b2BodyType::b2_dynamicBody);
             bullet->AddComponent(bulletPhysBody);
             bullet->AddComponent(make_shared<Bullet>());
-            owner->GetScene().lock()->AddGameObject(bullet);
             bulletPhysBody->AddImpulse(direction * bulletForce);
 
             isFiring != isFiring;

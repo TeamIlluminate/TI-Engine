@@ -4,7 +4,7 @@
 namespace eng
 {
 
-class Camera : public Component
+class Camera : public Component, public enable_shared_from_this<Camera>
 {
   public:
     Camera(){};

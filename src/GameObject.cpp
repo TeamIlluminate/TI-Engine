@@ -1,8 +1,48 @@
 #include "GameObject.h"
+#include "GameMaster.h"
 #include "Component.h"
 #include "Components/Camera.h"
 
 using namespace eng;
+
+GameObject::GameObject()
+{
+    name = "empty";
+    if (auto currentScene = GameMaster::Get().GetCurrentScene().lock())
+    {
+        this->scene = currentScene;
+    }
+    else
+    {
+        throw invalid_argument("Scene has not exists!");
+    }
+}
+
+GameObject::GameObject(std::string name) : name(name)
+{
+
+    if (auto currentScene = GameMaster::Get().GetCurrentScene().lock())
+    {
+        this->scene = currentScene;
+    }
+    else
+    {
+        throw invalid_argument("Scene has not exists!");
+    }
+}
+
+GameObject::GameObject(weak_ptr<Scene> _scene, string name)
+{
+    if(auto scene = _scene.lock())
+    {
+        this->scene = scene;
+        this->name = name;
+    }
+    else
+    {
+        throw invalid_argument("Scene already deleted!");
+    }
+} 
 
 GameObject::GameObject(const GameObject &gameObject)
 {
@@ -78,6 +118,7 @@ void GameObject::AddComponent(shared_ptr<Component> component)
 {
     component->SetOwner(weak_from_this());
     this->components.push_back(component);
+    component->OnInit();
 }
 
 std::list<weak_ptr<Component>> GameObject::GetComponents() const
@@ -125,9 +166,8 @@ void GameObject::DrawEditor()
             }
         }
 
-
         ImGui::Separator();
     }
 
-        ImGui::PopID();
+    ImGui::PopID();
 }

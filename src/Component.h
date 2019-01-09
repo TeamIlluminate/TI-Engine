@@ -9,7 +9,11 @@ namespace eng
 {
 class Component : public Editor
 {
-public:
+  public:
+
+  friend class Scene;
+  friend class CollisionEventManager;
+  friend class GameObject;
   //Use constructor only for initialize variables
   //Remember field owner is null by default
   //If you want code with using owner variable - put this code in OnInit()
@@ -19,6 +23,16 @@ public:
   {
     this->_owner = newOwner;
   }
+
+  virtual float DeltaTime()
+  {
+    return GameMaster::Get().GetDeltaTime();
+  };
+
+  weak_ptr<GameObject> _owner;
+
+  private:
+
   //Called when Component appears on scene with gameobject
   virtual void OnInit(){};
   //Called before frame render
@@ -32,14 +46,6 @@ public:
   //
   virtual void EndContact(weak_ptr<GameObject> gameObject){};
 
-  virtual float DeltaTime()
-  {
-    return GameMaster::Get().GetDeltaTime();
-  };
-
-
   virtual shared_ptr<Component> Clone() = 0;
-  
-  weak_ptr<GameObject> _owner;
 };
 } // namespace eng

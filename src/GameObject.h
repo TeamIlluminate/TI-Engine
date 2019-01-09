@@ -12,10 +12,10 @@ class Component;
 class GameObject : public enable_shared_from_this<GameObject>, public Editor
 {
   public:
-    GameObject() : name("empty") {};
+    GameObject();
     GameObject(const GameObject & gameObject);
-    GameObject(std::string name) : name(name) {};
-
+    GameObject(std::string name);
+    GameObject(weak_ptr<Scene> scene, std::string name);
     //push reference to child in list and set reference on this gameobject in child
     //delete reference on this child from previous parent of child
     void AddChild(shared_ptr<GameObject> childObject);

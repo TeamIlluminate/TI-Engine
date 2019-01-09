@@ -15,11 +15,17 @@ class Mesh;
 class Scene : public enable_shared_from_this<Scene>
 {
 public:
+
+  friend class Render;
+  friend class Editor;
+  friend class PhysBody;
+  friend class Camera;
+
   Scene(const std::string name); //Name 4r Serialization ability
- Scene(const Scene & scene);
+  Scene(const Scene & scene);
+
   std::list<weak_ptr<GameObject>> GetGameObjects() const; //Generaly 4r Render using or serializing
 
-  void AddGameObject(shared_ptr<GameObject> object);
 
   /* GameObjects GETTERS */
 
@@ -28,30 +34,29 @@ public:
 
   weak_ptr<b2World> GetWorld() const;
 
-  void AddB2BodyToDelete(b2Body *body);
+  void Destroy(weak_ptr<GameObject> objectToRemove); //Remove gameobject from current Scene
 
-  void PhysicsLoop();
+  shared_ptr<GameObject> CreateGameObject(std::string name);
+  shared_ptr<GameObject> CreateGameObject(shared_ptr<GameObject> gameObject);
+
+private:
+
+  int idCounter = 0;
+  void Rebind();
+  shared_ptr<b2World> world;
+  CollisionEventManager *collisionEventManager;
+
+  void DeleteB2B(b2Body *body);
+  void RegCamera(shared_ptr<Camera> camera) { this->cameras.push_back(camera); };
 
   list<weak_ptr<Mesh>> Update();
-
-  void Destroy(weak_ptr<GameObject> objectToRemove); //Remove gameobject from current Scene
+  void PhysicsLoop();
+  list<weak_ptr<Mesh>> Update(shared_ptr<GameObject> object);
 
   list<weak_ptr<Camera>> GetCameras()
   {
     return cameras;
   }
-
-  void ForceGameObject(shared_ptr<GameObject> gameObject);
-  void ResetScene();
-
-private:
-
-  list<weak_ptr<Mesh>> Update(shared_ptr<GameObject> object);
-  void Initialize(shared_ptr<GameObject> object);
-  int idCounter = 0;
-
-  shared_ptr<b2World> world;
-  CollisionEventManager *collisionEventManager;
 
   int timestep = 60;
   int velocityIterations = 6;

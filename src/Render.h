@@ -10,7 +10,7 @@ class GameObject;
 class Render
 {
 public:
-  Render(sf::VideoMode mode);
+  void Init(sf::VideoMode mode);
 
 private:
   shared_ptr<sf::RenderWindow> window;

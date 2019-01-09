@@ -11,7 +11,7 @@ PhysBody::~PhysBody()
 {
     if (auto scene = GameMaster::Get().GetCurrentScene().lock())
     {
-        scene->AddB2BodyToDelete(body);
+        scene->DeleteB2B(body);
     }
 }
 
@@ -19,8 +19,6 @@ b2Fixture *PhysBody::GetFixture() { return fixture; }
 
 shared_ptr<Component> PhysBody::Clone()
 {
-    //  auto newPhysBody = make_shared<PhysBody>(*this);
-
     return make_shared<PhysBody>(*this);
 }
 
@@ -29,7 +27,6 @@ void PhysBody::OnInit()
     b2BodyDef defBody;
     defBody.type = this->type;
     defBody.position.Set(_owner.lock()->transform.position.x, _owner.lock()->transform.position.y);
-    //Protection from memory leak by multiple calling OnInit()
     this->body = _owner.lock()->GetScene().lock()->GetWorld().lock()->CreateBody(&defBody);
     fixture = this->body->CreateFixture(&fixtureDef);
     this->body->SetGravityScale(1);
@@ -75,15 +72,18 @@ void PhysBody::DrawEditor()
     {
         ImGui::Text("Velocity");
         b2Vec2 velocity = this->body->GetLinearVelocity();
+
         if (ImGui::InputFloat("X ##velocity", &velocity.x) || (ImGui::InputFloat("Y ##velocity", &velocity.y)))
         {
             this->body->SetLinearVelocity(velocity);
         }
+
         float linearDamping = this->body->GetLinearDamping();
         if (ImGui::InputFloat("Linear Damping ", &linearDamping))
         {
             this->body->SetLinearDamping(linearDamping);
         }
+
         float mass = this->body->GetMass();
         if (ImGui::InputFloat("Mass ", &mass))
         {
@@ -101,63 +101,66 @@ void PhysBody::DrawEditor()
         {
             this->body->SetGravityScale(gravity);
         }
+
         ImGui::Text("Fixture");
         float density = this->fixture->GetDensity();
         if (ImGui::InputFloat("Density ", &density))
         {
             this->fixture->SetDensity(density);
         }
+
         float friction = this->fixture->GetFriction();
         if (ImGui::InputFloat("Friction ", &friction))
         {
             this->fixture->SetFriction(friction);
         }
+
         auto shape = this->fixture->GetShape();
         b2Shape::Type type = shape->GetType();
         switch (type)
         {
-        case b2Shape::Type::e_circle:
-        {
-            auto circleShape = dynamic_cast<b2CircleShape *>(shape);
-            if (auto window = GameMaster::Get().GetWindow().lock())
+            case b2Shape::Type::e_circle:
             {
-                ImGui::InputFloat("Collider Radius", &circleShape->m_radius);
-
-                sf::CircleShape collider(circleShape->m_radius);
-                collider.setOrigin(circleShape->m_radius, circleShape->m_radius);
-                collider.setFillColor(sf::Color(0.f, 0.f, 0.f, 0.f));
-                collider.setOutlineColor(sf::Color(0.f, 255.f, 0.f, 125.f));
-                collider.setOutlineThickness(1.f);
-                collider.setPosition(_owner.lock()->transform.position);
-                window->draw(collider);
-            }
-            break;
-        }
-        case b2Shape::Type::e_polygon:
-        {
-            auto polygonShape = dynamic_cast<b2PolygonShape *>(shape);
-            if (auto window = GameMaster::Get().GetWindow().lock())
-            {
-                int indexCount = polygonShape->GetVertexCount();
-
-                sf::ConvexShape collider(indexCount);
-                for (int i = 0; i < indexCount; ++i)
+                auto circleShape = dynamic_cast<b2CircleShape *>(shape);
+                if (auto window = GameMaster::Get().GetWindow().lock())
                 {
-                    auto point = polygonShape->GetVertex(i);
-                    auto name = ("Collider Point + [" + to_string(i) + "]");
-                    if (ImGui::InputFloat((name + " X").c_str(), &point.x) || ImGui::InputFloat((name + " Y").c_str(), &point.y))
-                    {
-                    }
-                    collider.setPoint(i, sf::Vector2f(point.x, point.y));
+                    ImGui::InputFloat("Collider Radius", &circleShape->m_radius);
+
+                    sf::CircleShape collider(circleShape->m_radius);
+                    collider.setOrigin(circleShape->m_radius, circleShape->m_radius);
+                    collider.setFillColor(sf::Color(0.f, 0.f, 0.f, 0.f));
+                    collider.setOutlineColor(sf::Color(0.f, 255.f, 0.f, 125.f));
+                    collider.setOutlineThickness(1.f);
+                    collider.setPosition(_owner.lock()->transform.position);
+                    window->draw(collider);
                 }
-                collider.setFillColor(sf::Color(0.f, 0.f, 0.f, 0.f));
-                collider.setOutlineColor(sf::Color(0.f, 255.f, 0.f, 125.f));
-                collider.setOutlineThickness(1.f);
-                collider.setPosition(_owner.lock()->transform.position);
-                window->draw(collider);
+                break;
             }
-            break;
-        }
+            case b2Shape::Type::e_polygon:
+            {
+                auto polygonShape = dynamic_cast<b2PolygonShape *>(shape);
+                if (auto window = GameMaster::Get().GetWindow().lock())
+                {
+                    int indexCount = polygonShape->GetVertexCount();
+
+                    sf::ConvexShape collider(indexCount);
+                    for (int i = 0; i < indexCount; ++i)
+                    {
+                        auto point = polygonShape->GetVertex(i);
+                        auto name = ("Collider Point + [" + to_string(i) + "]");
+                        if (ImGui::InputFloat((name + " X").c_str(), &point.x) || ImGui::InputFloat((name + " Y").c_str(), &point.y))
+                        {
+                        }
+                        collider.setPoint(i, sf::Vector2f(point.x, point.y));
+                    }
+                    collider.setFillColor(sf::Color(0.f, 0.f, 0.f, 0.f));
+                    collider.setOutlineColor(sf::Color(0.f, 255.f, 0.f, 125.f));
+                    collider.setOutlineThickness(1.f);
+                    collider.setPosition(_owner.lock()->transform.position);
+                    window->draw(collider);
+                }
+                break;
+            }
         }
     }
 }

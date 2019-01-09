@@ -11,15 +11,13 @@
 
 using namespace eng;
 
-//Initialization of the window. If we already have a window -> close current and create new.
-Render::Render(sf::VideoMode mode)
+void Render::Init(sf::VideoMode mode)
 {
     if (!this->window)
     {
         this->window = make_shared<sf::RenderWindow>(mode, "TI Engine improved");
         //window must be deactived in thread which it where created
         this->window->setActive(false);
-
         this->wThread = make_shared<std::thread>(&Render::WindowLoop, this);
         this->wThread->detach();
     }
@@ -30,10 +28,8 @@ Render::Render(sf::VideoMode mode)
 
         //First - free space
         this->wThread->~thread(); // ->terminate(); //Terminate window drawning loop;
-
         this->window = make_shared<sf::RenderWindow>(mode, "TI Engine improved"); //I wanna make some spec file-descriptor like (Project name; Engine version; ... etc)
         this->window->setActive(false);
-
         this->wThread = make_shared<std::thread>(&Render::WindowLoop, this); //Restart thread
         this->wThread->detach();
     }
@@ -41,19 +37,26 @@ Render::Render(sf::VideoMode mode)
 
 void Render::WindowLoop()
 {
-    window->clear();
-    defaultView = window->getDefaultView();
-    ImGui::SFML::Init(*window);
-    sf::Clock deltaClock;
-    float fixedDelta = 0;
     GameMaster::Get().SetWindow(window);
+
+    window->clear();
+
+    defaultView = window->getDefaultView(); //After change 2 def camera
+
+    ImGui::SFML::Init(*window);
+
+    sf::Clock deltaClock;
+    sf::Clock imGuiClock;
+
+    float fixedDelta = 0;
+
     while (window->isOpen())
     {
         window->clear();
-        sf::Clock DeltaClock;
         sf::Event event;
 
         float dTime = deltaClock.restart().asSeconds();
+        GameMaster::Get().UpdateDeltaTime(dTime);
 
         auto currentScene = GameMaster::Get().GetCurrentScene().lock();
 
@@ -63,11 +66,8 @@ void Render::WindowLoop()
         {
             if (currentScene && GameMaster::Get().state & GameMaster::_GAME)
                 currentScene->PhysicsLoop();
-
             fixedDelta = 0;
         }
-
-        GameMaster::Get().UpdateDeltaTime(dTime);
 
         while (window->pollEvent(event))
         {
@@ -80,9 +80,15 @@ void Render::WindowLoop()
             }
         }
 
+
         if (currentScene)
         {
-            ImGui::SFML::Update(*window, deltaClock.restart());
+            ImGui::SFML::Update(*window, imGuiClock.restart());
+
+            if (GameMaster::Get().state & GameMaster::_DEVELOP)
+            {
+                Editor::DrawInspector();
+            }
 
             auto meshes = currentScene->Update();
             for (auto _mesh : meshes)
@@ -94,71 +100,6 @@ void Render::WindowLoop()
                 }
             }
 
-            auto references = currentScene->GetGameObjects();
-
-            if (GameMaster::Get().state & GameMaster::_DEVELOP)
-            {
-                ImGuiWindowFlags flags = 0;
-                flags |= ImGuiWindowFlags_NoCollapse;
-                flags |= ImGuiWindowFlags_NoMove;
-                flags |= ImGuiWindowFlags_NoResize;
-
-                ImGui::Begin("Inspector", nullptr, flags);
-
-                ImGui::SetWindowSize(sf::Vector2i(300, window->getSize().y));
-                ImGui::SetWindowPos(sf::Vector2i(0, 0));
-
-                for (auto reference : references)
-                {
-                    if (auto _gameObject = reference.lock())
-                    {
-                        _gameObject->DrawEditor();
-                    }
-                }
-
-                ImGui::End();
-
-                ImGui::Begin("Game State");
-
-                if (ImGui::Button("Play"))
-                {
-                    //Если игровой цикл не запущен.
-                    if (!(GameMaster::Get().state & GameMaster::_GAME) & !(GameMaster::Get().state & GameMaster::_PAUSE))
-                    {
-                        GameMaster::Get().state = GameMaster::_DEVELOP + GameMaster::_GAME;
-                        auto gameScene = make_shared<Scene>(*currentScene.get());
-                        GameMaster::Get().SaveScene(currentScene);
-                        GameMaster::Get().LoadScene(gameScene);
-                        gameScene->ResetScene();
-                    }
-                    else if (GameMaster::Get().state & GameMaster::_PAUSE)
-                    {
-                        GameMaster::Get().state = GameMaster::_DEVELOP + GameMaster::_GAME;
-                    }
-                }
-
-                if (ImGui::Button("Pause"))
-                {
-                    if (GameMaster::Get().state & GameMaster::_GAME)
-                    {
-                        GameMaster::Get().state = GameMaster::_DEVELOP + GameMaster::_EDITOR + GameMaster::_PAUSE;
-                    }
-                }
-
-                if (ImGui::Button("Stop"))
-                {
-                    if (GameMaster::Get().state & (GameMaster::_GAME | GameMaster::_PAUSE))
-                    {
-                        GameMaster::Get().state = GameMaster::_DEVELOP + GameMaster::_EDITOR;
-                        if (auto editScene = GameMaster::Get().GetEditableScene().lock())
-                            GameMaster::Get().LoadScene(editScene);
-                    }
-                }
-
-                ImGui::End();
-            }
-
-            ImGui::SFML::Render(*window);
             if (GameMaster::Get().state & GameMaster::_GAME)
             {
                 auto cameras = currentScene->GetCameras();
@@ -172,6 +113,7 @@ void Render::WindowLoop()
                 }
             } else window->setView(defaultView);
 
+            ImGui::SFML::Render(*window);
             window->display();
         }
     }
