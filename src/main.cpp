@@ -18,7 +18,7 @@ shared_ptr<eng::GameObject> createPlayer(float x, float y) {
     player->transform.position = sf::Vector2f(x, y);
 
     shared_ptr<sf::CircleShape> shape = make_shared<sf::CircleShape>(5.f);
-    shape->setOrigin(2.5f, 2.5f);
+    shape->setOrigin(5.f, 5.f);
     shape->setFillColor(sf::Color::Blue);
     player->AddComponent(make_shared<eng::ShapeMesh>(shape));
     b2CircleShape * physShape = new b2CircleShape();

@@ -87,17 +87,12 @@ class Editor
             }
             sf::Vector2f size = rectangle->getSize();
 
-            if (ImGui::InputFloat("Width ", &size.x))
+            if (ImGui::InputFloat("Width ", &size.x) || ImGui::InputFloat("Height ", &size.y))
             {
                 rectangle->setSize(size);
                 rectangle->setOrigin(size.x / 2, size.y / 2);
             }
-            if (ImGui::InputFloat("Height ", &size.y))
-            {
-                rectangle->setSize(size);
-                rectangle->setOrigin(size.x / 2, size.y / 2);
-            }
-
+            
             savedRectangle->setSize(rectangle->getSize());
             savedRectangle->setOrigin(rectangle->getOrigin());
             savedRectangle->setFillColor(rectangle->getFillColor());
@@ -118,7 +113,8 @@ class Editor
         }
         sf::Color sfOutlineColor = shape->getOutlineColor();
         float outLineThickness = shape->getOutlineThickness();
-        if (ImGui::InputFloat("OutLineThickness", &outLineThickness)) {
+        if (ImGui::InputFloat("OutLineThickness", &outLineThickness))
+        {
             shape->setOutlineThickness(outLineThickness);
         }
         float colorOutline[3] = {sfOutlineColor.r / 255.f, sfOutlineColor.g / 255.f, sfOutlineColor.b / 255.f};

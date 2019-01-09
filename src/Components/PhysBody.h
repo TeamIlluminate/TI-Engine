@@ -14,7 +14,7 @@ class PhysBody : public Component
     PhysBody(b2FixtureDef fixture, b2BodyType type);
     ~PhysBody();
     shared_ptr<Component> Clone();
-    b2FixtureDef GetFixture();
+    b2Fixture * GetFixture();
 
     b2Body* body = nullptr;
 
@@ -27,7 +27,8 @@ class PhysBody : public Component
     void TransformPosition(sf::Vector2f pos);
 
   private:
-    b2FixtureDef fixture;
+    b2FixtureDef fixtureDef;
+    b2Fixture * fixture;
     b2BodyType type;
 };
 
