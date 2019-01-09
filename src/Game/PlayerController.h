@@ -11,15 +11,15 @@ namespace eng
         shared_ptr<eng::Component> Clone();
         void OnInit();
         void Update();
+        void DrawEditor();
         private:
         void MoveIn(sf::Vector2f position);
         void ShootIn(sf::Vector2f position);
         weak_ptr<PhysBody>  _bodyComponent;     
-
-        bool isFiring = false;
-        const float shootDeley = .1f;
+        float shootDelay = .1f;
+        float bulletForce = 50.f;
         float shoot = 0;
-    
+        bool isFiring = false;
         
     };
 } // namespace eng;

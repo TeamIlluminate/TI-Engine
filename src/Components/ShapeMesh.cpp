@@ -3,26 +3,40 @@
 
 using namespace eng;
 
-ShapeMesh::ShapeMesh(shared_ptr<sf::Shape> shape) : currentShape(shape) {
+ShapeMesh::ShapeMesh(shared_ptr<sf::Shape> shape) : currentShape(shape)
+{
 }
 
 weak_ptr<sf::Drawable> ShapeMesh::GetDrawable()
 {
-    if (auto owner = _owner.lock()) {
+    if (auto owner = _owner.lock())
+    {
         currentShape->setPosition(owner->GetGlobalCoordinates());
     }
-    return (weak_ptr<sf::Drawable>) currentShape;
+    return (weak_ptr<sf::Drawable>)currentShape;
 }
 
-
-shared_ptr<Component> ShapeMesh::Clone() {
+shared_ptr<Component> ShapeMesh::Clone()
+{
     return make_shared<ShapeMesh>(*this);
 }
 
+void ShapeMesh::DrawEditor()
+{
+    auto gameObject = _owner.lock();
+    if (gameObject)
+    {
+        if (ImGui::CollapsingHeader("ShapeMesh"))
+        {
+            DrawSfShape(currentShape);
+        }
+    }
+}
 
 sf::RenderStates ShapeMesh::GetRenderStates() { return states; }
 
-void ShapeMesh::SetShader(shared_ptr<sf::Shader> shader) {
+void ShapeMesh::SetShader(shared_ptr<sf::Shader> shader)
+{
     currentShader = shader;
     states.shader = shader.get();
 }

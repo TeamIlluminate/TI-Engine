@@ -11,7 +11,6 @@ Scene::Scene(std::string name)
     this->name = name;
     
     world = make_shared<b2World>(b2Vec2(0,0));
-
     collisionEventManager = new CollisionEventManager(this);
     world->SetContactListener(collisionEventManager);
 }

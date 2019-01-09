@@ -29,6 +29,11 @@ void PhysBody::OnInit()
     b2BodyDef defBody;
     defBody.type = this->type;
     defBody.position.Set(_owner.lock()->transform.position.x, _owner.lock()->transform.position.y);
+    //Protection from memory leak by multiple calling OnInit()
+    if (this->body && this->body->GetWorld()->GetBodyCount() > 0)
+    {
+        this->body->GetWorld()->DestroyBody(this->body);
+    }
     this->body = _owner.lock()->GetScene().lock()->GetWorld().lock()->CreateBody(&defBody);
     this->body->CreateFixture(&fixture);
     this->body->SetGravityScale(1);
@@ -70,16 +75,11 @@ void PhysBody::AddImpulse(sf::Vector2f impulse)
 
 void PhysBody::DrawEditor()
 {
-    auto gameObject = _owner.lock();
-    if (gameObject)
+    if (ImGui::CollapsingHeader("PhysBody"))
     {
-        int id = gameObject->id;
-        if (ImGui::CollapsingHeader(("PhysBody##" + to_string(id)).c_str()))
-        {
-            ImGui::Text("Velocity");
-            DrawVector2(this->body->GetLinearVelocity());
-            ImGui::Text(("Linear Damping " + to_string(this->body->GetLinearDamping())).c_str());
-            ImGui::Text(("Mass " + to_string(this->body->GetMass())).c_str());
-        }
+        ImGui::Text("Velocity");
+        DrawVector2(this->body->GetLinearVelocity());
+        ImGui::Text(("Linear Damping " + to_string(this->body->GetLinearDamping())).c_str());
+        ImGui::Text(("Mass " + to_string(this->body->GetMass())).c_str());
     }
 }

@@ -12,7 +12,8 @@ void PlayerController::OnInit()
     }
 }
 
-shared_ptr<Component> PlayerController::Clone() {
+shared_ptr<Component> PlayerController::Clone()
+{
     return make_shared<PlayerController>(*this);
 }
 
@@ -22,8 +23,7 @@ void PlayerController::Update()
     {
         if (!bodyComponent->body->GetWorld()->IsLocked())
         {
-
-            if (shoot < shootDeley)
+            if (shoot < shootDelay)
                 shoot += DeltaTime();
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -45,7 +45,7 @@ void PlayerController::Update()
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
             {
-                if (!isFiring && shoot >= shootDeley)
+                if (!isFiring && shoot >= shootDelay)
                 {
                     shoot = 0;
                     isFiring != isFiring;
@@ -87,15 +87,22 @@ void PlayerController::ShootIn(sf::Vector2f position)
 
             b2FixtureDef fixture;
             fixture.shape = b2circle;
-            fixture.friction = 1.f;
-            fixture.density = 2.f;
             auto bulletPhysBody = make_shared<eng::PhysBody>(fixture, b2BodyType::b2_dynamicBody);
             bullet->AddComponent(bulletPhysBody);
             bullet->AddComponent(make_shared<Bullet>());
             owner->GetScene().lock()->AddGameObject(bullet);
-            bulletPhysBody->AddImpulse(direction * 50.f);
+            bulletPhysBody->AddImpulse(direction * bulletForce);
 
             isFiring != isFiring;
         }
+    }
+}
+
+void PlayerController::DrawEditor()
+{
+    if (ImGui::CollapsingHeader("PlayerController"))
+    {
+        ImGui::InputFloat("Shoot Delay", &shootDelay);
+        ImGui::InputFloat("Bullet Force", &bulletForce);
     }
 }

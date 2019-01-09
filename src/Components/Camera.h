@@ -9,11 +9,9 @@ class Camera : public Component
   public:
     Camera(){};
     shared_ptr<Component> Clone();
-    //Camera(const Camera & camera);
     void OnInit();
     void Update();
     void DrawEditor();
-    //shared_ptr<Component> Clone();
     int maxScale = 120;
     int minScale = 30;
     int scale = 120;

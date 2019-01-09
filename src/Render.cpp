@@ -44,13 +44,11 @@ void Render::WindowLoop()
     window->clear();
     defaultView = window->getDefaultView();
     ImGui::SFML::Init(*window);
-
     sf::Clock deltaClock;
     float fixedDelta = 0;
     GameMaster::Get().SetWindow(window);
     while (window->isOpen())
     {
-
         window->clear();
         sf::Clock DeltaClock;
         sf::Event event;

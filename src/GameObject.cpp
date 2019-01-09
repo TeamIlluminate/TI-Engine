@@ -4,17 +4,20 @@
 
 using namespace eng;
 
-GameObject::GameObject(const GameObject & gameObject) {
+GameObject::GameObject(const GameObject &gameObject)
+{
     this->id = gameObject.id;
     this->name = gameObject.name;
     this->scene = gameObject.scene;
     this->transform = gameObject.transform;
 
-    for (auto child : gameObject.childs) {
+    for (auto child : gameObject.childs)
+    {
         this->childs.push_back(make_shared<GameObject>(*child.get()));
     }
 
-    for (auto component : gameObject.components) {
+    for (auto component : gameObject.components)
+    {
         auto newComponent = component->Clone();
         this->components.push_back(newComponent);
     }
@@ -26,7 +29,8 @@ sf::Vector2f GameObject::GetGlobalCoordinates() const
     {
         return transform.position + prn->GetGlobalCoordinates();
     }
-    else return transform.position;
+    else
+        return transform.position;
 }
 
 const std::string GameObject::GetName() const
@@ -106,19 +110,24 @@ void GameObject::SetScene(shared_ptr<Scene> scene)
 
 void GameObject::DrawEditor()
 {
-    if (ImGui::CollapsingHeader( ("[" + to_string(id) + "] " + name).c_str())) {
+
+    ImGui::PushID(id);
+    if (ImGui::CollapsingHeader(("[" + to_string(id) + "] " + name).c_str()))
+    {
         ImGui::Text(name.c_str());
         DrawVector2(transform.position);
-         ImGui::Separator();
-        if (ImGui::CollapsingHeader(("Components##" + to_string(id)).c_str()))
+        ImGui::Separator();
+        if (ImGui::CollapsingHeader("Components"))
         {
             for (auto component : components)
             {
                 component->DrawEditor();
             }
         }
-        
 
-    ImGui::Separator();
+
+        ImGui::Separator();
     }
+
+        ImGui::PopID();
 }

@@ -16,7 +16,7 @@ class PhysBody : public Component
     shared_ptr<Component> Clone();
     b2FixtureDef GetFixture();
 
-    b2Body* body;
+    b2Body* body = nullptr;
 
     void FixedUpdate();
     void OnInit();

@@ -4,15 +4,6 @@
 
 using namespace eng;
 
-// Camera::Camera(const Camera & camera) {
-
-//     this->maxScale = camera.maxScale;
-//     this->minScale = camera.minScale;
-//     this->scale = camera.scale;
-//     this->view = camera.view;
-//     this->isEnabled = camera.isEnabled;
-// }
-
 shared_ptr<Component> Camera::Clone()
 {
     return make_shared<Camera>(*this);
@@ -49,16 +40,20 @@ void Camera::Update()
 
 void Camera::DrawEditor()
 {
-    auto gameObject = _owner.lock();
-    if (gameObject)
+    if (ImGui::CollapsingHeader("Camera"))
     {
-        int id = gameObject->id;
-        if (ImGui::CollapsingHeader(("Camera##" + to_string(id)).c_str()))
+        ImGui::InputInt("maxScale", &maxScale);
+        ImGui::InputInt("minScale", &minScale);
+        ImGui::InputInt("scale", &scale);
+        if (scale < minScale)
         {
-            ImGui::InputInt("maxScale#" + id, &maxScale);
-            ImGui::InputInt("minScale#" + id, &minScale);
-            ImGui::InputInt("scale#" + id, &scale);
-            ImGui::Checkbox("Is enabled#" + id, &isEnabled);
+            scale = minScale;
         }
+        else if (scale > maxScale)
+        {
+            scale = maxScale;
+        }
+        view.setSize(scale * 16, scale * 9);
+        ImGui::Checkbox("Is enabled", &isEnabled);
     }
 }
