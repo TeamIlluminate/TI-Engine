@@ -18,5 +18,6 @@ private:
   shared_ptr<sf::Shape> currentShape;
   shared_ptr<sf::Shader> currentShader;
   sf::RenderStates states;
+  bool OFD = false;
 };
 } // namespace eng

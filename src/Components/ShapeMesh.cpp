@@ -40,12 +40,10 @@ void ShapeMesh::DrawEditor()
         }
     }
 
-    static bool open = false;
-
     if(ImGui::Button("OpenFileDialog"))
     {
-        open = true;
+        OFD = true;
     }
 
-    string file = DrawOpenFileDialog("Resource", open);
+    string file = DrawOpenFileDialog("Resource", OFD, _owner.lock()->id);
 }
