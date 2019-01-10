@@ -85,73 +85,62 @@ void Editor::DrawInspector()
 
 
         ImGui::End();
-
-        static string s;
-        static bool close = false;
-
-        if(!close)
-        if(DrawOpenFileDialog("Resource", s))
-        {
-            if(s != "")
-            {
-                std::cout << "Choosed file is: " << s << '\n';
-                close = true;
-            }
-        }
     }
 }
 
-bool Editor::DrawOpenFileDialog(fs::path path, string &file)
+string Editor::DrawOpenFileDialog(fs::path path, bool &open)
 {
-    bool exit = false;
+    string file = "";
 
-    ImGui::Begin("Choose file:");
-
-    if (!fs::exists(path))
-        fs::create_directory(path);
+    if(open)
     {
+        ImGui::Begin("Choose file:");
+
+        if (!fs::exists(path))
+            fs::create_directory(path);
+        {
+            fs::recursive_directory_iterator begin(path);
+            fs::recursive_directory_iterator end;
+
+            std::vector<fs::path> subdirs;
+            std::copy_if(begin, end, std::back_inserter(subdirs), [](const fs::path &path) {
+                return fs::is_directory(path);
+            });
+        }
+
         fs::recursive_directory_iterator begin(path);
         fs::recursive_directory_iterator end;
 
-        std::vector<fs::path> subdirs;
-        std::copy_if(begin, end, std::back_inserter(subdirs), [](const fs::path &path) {
-            return fs::is_directory(path);
+        std::vector<fs::path> files;
+        std::copy_if(begin, end, std::back_inserter(files), [](const fs::path &path_) {
+            return fs::is_regular_file(path_);
         });
-    }
 
-    fs::recursive_directory_iterator begin(path);
-    fs::recursive_directory_iterator end;
+        static int select = -1;
+        int file_iterator = 0;
 
-    std::vector<fs::path> files;
-    std::copy_if(begin, end, std::back_inserter(files), [](const fs::path &path_) {
-        return fs::is_regular_file(path_);
-    });
-
-    static int select = -1;
-    int file_iterator = 0;
-
-    for (auto file_ : files)
-    {
-        if (ImGui::Selectable(file_.c_str(), select == file_iterator))
+        for (auto file_ : files)
         {
-            file = file_;
-            select = file_iterator;
+            if (ImGui::Selectable(file_.c_str(), select == file_iterator))
+            {
+                file = file_;
+                select = file_iterator;
+            }
+            file_iterator++;
         }
-        file_iterator++;
+
+        if(ImGui::Button("OK"))
+        {
+            open = false;
+        }
+
+        if(ImGui::Button("Cancel"))
+        {
+            file = "";
+            open = false;
+        }
+
+        ImGui::End();
     }
-
-    if(ImGui::Button("OK"))
-    {
-        exit = true;
-    }
-
-    if(ImGui::Button("Cancel"))
-    {
-        file = "";
-        exit = true;
-    }
-
-    ImGui::End();
-
-    return exit;
+    return file;
 }

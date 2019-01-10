@@ -21,6 +21,14 @@ shared_ptr<Component> ShapeMesh::Clone()
     return make_shared<ShapeMesh>(*this);
 }
 
+sf::RenderStates ShapeMesh::GetRenderStates() { return states; }
+
+void ShapeMesh::SetShader(shared_ptr<sf::Shader> shader)
+{
+    currentShader = shader;
+    states.shader = shader.get();
+}
+
 void ShapeMesh::DrawEditor()
 {
     auto gameObject = _owner.lock();
@@ -31,12 +39,13 @@ void ShapeMesh::DrawEditor()
             DrawSfShape(currentShape);
         }
     }
-}
 
-sf::RenderStates ShapeMesh::GetRenderStates() { return states; }
+    static bool open = false;
 
-void ShapeMesh::SetShader(shared_ptr<sf::Shader> shader)
-{
-    currentShader = shader;
-    states.shader = shader.get();
+    if(ImGui::Button("OpenFileDialog"))
+    {
+        open = true;
+    }
+
+    string file = DrawOpenFileDialog("Resource", open);
 }
