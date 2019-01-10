@@ -13,6 +13,7 @@ namespace eng
         void Update();
         void DrawEditor();
         private:
+        float speed = 5.f;
         void MoveIn(sf::Vector2f position);
         void ShootIn(sf::Vector2f position);
         weak_ptr<PhysBody>  _bodyComponent;     

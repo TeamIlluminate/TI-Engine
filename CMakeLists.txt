@@ -11,7 +11,7 @@ aux_source_directory(Libraries/ImGUI ImGUI)
 
 add_executable(main src/main.cpp ${SRC} ${CMP} ${GAM} ${ImGUI})
 find_package(OpenGL REQUIRED)
-target_link_libraries (main -lsfml-graphics -lsfml-window -lsfml-system -lBox2D -lpthread ${OPENGL_LIBRARIES} )
+target_link_libraries (main -lsfml-graphics -lsfml-window -lsfml-system -lBox2D -lpthread -lstdc++fs ${OPENGL_LIBRARIES} )
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)

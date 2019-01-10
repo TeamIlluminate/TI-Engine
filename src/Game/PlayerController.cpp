@@ -28,19 +28,19 @@ void PlayerController::Update()
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
-                this->MoveIn(sf::Vector2f(0, -5));
+                this->MoveIn(sf::Vector2f(0, -speed));
             }
             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
-                this->MoveIn(sf::Vector2f(0, 5));
+                this->MoveIn(sf::Vector2f(0, speed));
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
-                this->MoveIn(sf::Vector2f(-5, 0));
+                this->MoveIn(sf::Vector2f(-speed, 0));
             }
             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
-                this->MoveIn(sf::Vector2f(5, 0));
+                this->MoveIn(sf::Vector2f(speed, 0));
             }
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
@@ -101,6 +101,7 @@ void PlayerController::DrawEditor()
 {
     if (ImGui::CollapsingHeader("PlayerController"))
     {
+        ImGui::InputFloat("Player speed: ", &speed);
         ImGui::InputFloat("Shoot Delay", &shootDelay);
         ImGui::InputFloat("Bullet Force", &bulletForce);
     }

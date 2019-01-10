@@ -1,10 +1,14 @@
 #include "Utils.h"
 #include <Box2D/Box2D.h>
+#include <experimental/filesystem>
+
 #pragma once
 
 namespace eng
-
 {
+
+namespace fs = std::experimental::filesystem;
+
 class Editor
 {
   public:
@@ -128,5 +132,6 @@ class Editor
     }
 
     static void DrawInspector();
+    static bool DrawOpenFileDialog(fs::path path, string& file);
 };
 } // namespace eng
