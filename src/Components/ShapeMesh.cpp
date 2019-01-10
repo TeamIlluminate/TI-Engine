@@ -45,5 +45,5 @@ void ShapeMesh::DrawEditor()
         OFD = true;
     }
 
-    string file = DrawOpenFileDialog("Resource", OFD, _owner.lock()->id);
+    string file = DrawOpenFileDialog("Resource", OFD, "ShapeMash_" + to_string(_owner.lock()->id));
 }
