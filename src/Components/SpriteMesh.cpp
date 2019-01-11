@@ -10,7 +10,6 @@ void SpriteMesh::DrawEditor()
         if(ImGui::Button("Choose"))
         {
             open = true;
-            load = !open;
         }
 
         sf::Texture texture;

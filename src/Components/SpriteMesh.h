@@ -15,7 +15,6 @@ class SpriteMesh : public Mesh
     void DrawEditor();
     shared_ptr<sf::Sprite> sprite;
     bool open = false;
-    bool load = false;
     sf::RenderStates renderStates;
 };
 } // namespace eng
