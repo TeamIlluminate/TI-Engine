@@ -11,6 +11,7 @@
 #include "Game/EnemyAI.h"
 #include "Game/FPSDraw.cpp"
 #include "Game/ShaderSystem.h"
+#include "Components/SpriteMesh.h"
 #include "Editor.hpp"
 
 shared_ptr<eng::GameObject> createPlayer(float x, float y) {
@@ -29,6 +30,7 @@ shared_ptr<eng::GameObject> createPlayer(float x, float y) {
     player->AddComponent(make_shared<eng::PhysBody>(fixture, b2_dynamicBody));
     player->AddComponent(make_shared<eng::PlayerController>()); 
     player->AddComponent(make_shared<eng::Camera>());
+    player->AddComponent(make_shared<eng::SpriteMesh>());
     player->GetComponent<eng::Camera>().lock()->isEnabled = true;
     return player;                                                             
 }

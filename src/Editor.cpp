@@ -88,15 +88,15 @@ void Editor::DrawInspector()
     }
 }
 
-string Editor::DrawOpenFileDialog(fs::path path, bool &open, string id)
+bool Editor::DrawOpenFileDialog(fs::path path, bool &open,string &file, string id)
 {
-    string file = "";
+    bool OK = false;
 
     if(open)
     {
         string label = "Choose file:##" + id;
         ImGui::Begin(label.c_str());
-        ImGui::Text(id.c_str());
+
         if (!fs::exists(path))
             fs::create_directory(path);
         {
@@ -133,6 +133,8 @@ string Editor::DrawOpenFileDialog(fs::path path, bool &open, string id)
         if(ImGui::Button("OK"))
         {
             open = false;
+            OK = true;
+            file = files[file_iterator-1];
         }
 
         if(ImGui::Button("Cancel"))
@@ -143,5 +145,5 @@ string Editor::DrawOpenFileDialog(fs::path path, bool &open, string id)
 
         ImGui::End();
     }
-    return file;
+    return OK;
 }
