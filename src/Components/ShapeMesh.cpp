@@ -39,11 +39,4 @@ void ShapeMesh::DrawEditor()
             DrawSfShape(currentShape);
         }
     }
-
-    if(ImGui::Button("OpenFileDialog"))
-    {
-        OFD = true;
-    }
-
-    string file = DrawOpenFileDialog("Resource", OFD, "ShapeMash_" + to_string(_owner.lock()->id));
 }

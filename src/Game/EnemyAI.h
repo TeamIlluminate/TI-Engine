@@ -18,8 +18,11 @@ void BeginContact(weak_ptr<GameObject> hit);
 
 private:
 
-list<weak_ptr<GameObject> > players;
+void DrawEditor();
 
+list<weak_ptr<GameObject> > players;
+float speed = 5.f;
+float range = 200.f;
 };
 
 }

@@ -32,7 +32,7 @@ class GameMaster
     void SetWindow();
     void SetWindow(shared_ptr<sf::RenderWindow> window);
     float GetDeltaTime() const;
-    string GetGUI_ID() { return "ImID" + to_string(GuiElementCounter); GuiElementCounter++;};
+
     float UpdateDeltaTime(float dt);
 
     sf::VideoMode mode;
@@ -48,7 +48,6 @@ class GameMaster
     shared_ptr<Scene> currentScene;
     shared_ptr<Scene> editorScene;
     float deltaTime = 0;
-    int GuiElementCounter = 0;
 };
 
 } // namespace eng
