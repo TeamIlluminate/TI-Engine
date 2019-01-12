@@ -132,6 +132,6 @@ class Editor
     }
 
     static void DrawInspector();
-    bool DrawOpenFileDialog(fs::path path, bool &open,string &file, string id);
+    string DrawOpenFileDialog(fs::path path, bool &open, string id);
 };
 } // namespace eng

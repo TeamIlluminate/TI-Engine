@@ -12,6 +12,9 @@ class Component;
 class GameObject : public enable_shared_from_this<GameObject>, public Editor
 {
   public:
+
+    friend class Scene;
+
     GameObject();
     GameObject(const GameObject & gameObject);
     GameObject(std::string name);

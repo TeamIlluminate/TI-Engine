@@ -88,9 +88,9 @@ void Editor::DrawInspector()
     }
 }
 
-bool Editor::DrawOpenFileDialog(fs::path path, bool &open,string &file, string id)
+string Editor::DrawOpenFileDialog(fs::path path, bool &open, string id)
 {
-    bool OK = false;
+    string file = "";
 
     if(open)
     {
@@ -124,7 +124,6 @@ bool Editor::DrawOpenFileDialog(fs::path path, bool &open,string &file, string i
         {
             if (ImGui::Selectable(file_.c_str(), select == file_iterator))
             {
-                file = file_;
                 select = file_iterator;
             }
             file_iterator++;
@@ -133,7 +132,6 @@ bool Editor::DrawOpenFileDialog(fs::path path, bool &open,string &file, string i
         if(ImGui::Button("OK"))
         {
             open = false;
-            OK = true;
             file = files[file_iterator-1];
         }
 
@@ -145,5 +143,5 @@ bool Editor::DrawOpenFileDialog(fs::path path, bool &open,string &file, string i
 
         ImGui::End();
     }
-    return OK;
+    return file;
 }

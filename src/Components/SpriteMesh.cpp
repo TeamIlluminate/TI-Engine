@@ -15,7 +15,7 @@ void SpriteMesh::DrawEditor()
         sf::Texture texture;
         string file;
 
-        if(DrawOpenFileDialog("Resource", open, file, "SpriteMesh_" + to_string(_owner.lock()->id)))
+        if( (file = DrawOpenFileDialog("Resource", open, "SpriteMesh_" + to_string(_owner.lock()->id))) != "")
         {
             if(texture.loadFromFile(file))
             {     

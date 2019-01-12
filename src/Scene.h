@@ -15,17 +15,15 @@ class Mesh;
 class Scene : public enable_shared_from_this<Scene>
 {
 public:
-
   friend class Render;
   friend class Editor;
   friend class PhysBody;
   friend class Camera;
 
   Scene(const std::string name); //Name 4r Serialization ability
-  Scene(const Scene & scene);
+  Scene(const Scene &scene);
 
   std::list<weak_ptr<GameObject>> GetGameObjects() const; //Generaly 4r Render using or serializing
-
 
   /* GameObjects GETTERS */
 
@@ -39,8 +37,38 @@ public:
   shared_ptr<GameObject> CreateGameObject(std::string name);
   shared_ptr<GameObject> CreateGameObject(shared_ptr<GameObject> gameObject);
 
-private:
+  template <typename _Predicate>
+  list<weak_ptr<GameObject>> GetGameObjects_if(_Predicate _pred)
+  {
+    list<weak_ptr<GameObject>> validObjects;
 
+    auto gameObjects = sceneObjects;
+    for (auto gameObject : gameObjects)
+    {
+      auto gameObjectIerarchyList = GetIerarchyGameObject_if(gameObject, _pred);
+      validObjects.insert(validObjects.end(), gameObjectIerarchyList.begin(), gameObjectIerarchyList.end());
+    }
+    return validObjects;
+  };
+
+  template <typename _Predicate>
+  list<weak_ptr<GameObject>> GetIerarchyGameObject_if(shared_ptr<GameObject> object, _Predicate _pred)
+  {
+    list<weak_ptr<GameObject>> currentIerarchyList;
+
+    if (_pred(object))
+      currentIerarchyList.push_back(object);
+
+    auto childObjects = object->childs;
+    for (auto gameObject : childObjects)
+    {
+      auto gameObjectIerarchyList = GetIerarchyGameObject_if(gameObject, _pred);
+      currentIerarchyList.insert(currentIerarchyList.end(), gameObjectIerarchyList.begin(), gameObjectIerarchyList.end());
+    }
+    return currentIerarchyList;
+  };
+
+private:
   int idCounter = 0;
   void Rebind();
   shared_ptr<b2World> world;
