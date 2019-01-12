@@ -79,7 +79,6 @@ private:
 
   list<weak_ptr<Mesh>> Update();
   void PhysicsLoop();
-  list<weak_ptr<Mesh>> Update(shared_ptr<GameObject> object);
 
   list<weak_ptr<Camera>> GetCameras()
   {

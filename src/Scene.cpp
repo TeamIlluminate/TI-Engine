@@ -33,18 +33,25 @@ Scene::Scene(const Scene &scene)
 
 void Scene::Rebind()
 {
-    auto gameObjects = sceneObjects;
-    for (auto gameObject : gameObjects)
+    auto gameObjects = GetGameObjects_if([] (shared_ptr<GameObject>)
     {
-        gameObject->SetScene(shared_from_this());
+        return true;
+    });
 
-        auto _components = gameObject->GetComponents();
-        for (auto _component : _components)
+    for (auto _gameObject : gameObjects)
+    {
+        if(auto gameObject = _gameObject.lock())
         {
-            if (auto component = _component.lock())
+            gameObject->SetScene(shared_from_this());
+
+            auto _components = gameObject->GetComponents();
+            for (auto _component : _components)
             {
-                component->SetOwner(gameObject);
-                component->OnInit();
+                if (auto component = _component.lock())
+                {
+                    component->SetOwner(gameObject);
+                    component->OnInit();
+                }
             }
         }
     }
@@ -78,46 +85,33 @@ void Scene::PhysicsLoop()
 list<weak_ptr<Mesh>> Scene::Update()
 {
     list<weak_ptr<Mesh>> meshs;
-    auto gameObjects = sceneObjects;
-
-    for (auto gameObject : gameObjects)
+    auto gameObjects = GetGameObjects_if([] (shared_ptr<GameObject>)
     {
+        return true;
+    });
 
-        auto list = Update(gameObject);
-        meshs.insert(meshs.end(), list.begin(), list.end());
+    for(auto _gameObject : gameObjects)
+    {
+        if(auto gameObject = _gameObject.lock())
+        {
+            auto components = gameObject->components;
+
+            if(GameMaster::Get().state & GameMaster::_GAME)
+            {
+                for(auto component : components)
+                {
+                    component->Update();
+                    component->GUI();
+                }
+            }
+
+            if(auto mesh = gameObject->GetComponent<Mesh>().lock())
+            meshs.push_back(mesh);
+        }
     }
 
     return meshs;
 }
-
-list<weak_ptr<Mesh>> Scene::Update(shared_ptr<GameObject> gameObject)
-{
-    if (GameMaster::Get().state & GameMaster::_GAME)
-    {
-        auto components = gameObject->GetComponents();
-        for (auto _component : components)
-        {
-            if (auto component = _component.lock())
-            {
-                component->Update();
-                component->GUI();
-            }
-        }
-    }
-
-    auto childs = gameObject->GetChilds();
-    list<weak_ptr<Mesh>> childMeshs;
-    for (auto _child : childs)
-    {
-        auto list = Update(_child.lock());
-        childMeshs.insert(childMeshs.end(), list.begin(), list.end());
-    }
-
-    auto _mesh = gameObject->GetComponent<Mesh>();
-    childMeshs.push_front(_mesh);
-    return childMeshs;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 shared_ptr<GameObject> Scene::CreateGameObject(string name = "empty")
