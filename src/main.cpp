@@ -1,8 +1,6 @@
 #include "GameMaster.h"
 #include "Render.h"
 #include "Scene.h"
-#include "Components/PhysBody.h"
-#include "Components/ShapeMesh.h"
 #include "Component.h"
 #include "GameObject.h"
 #include <Box2D/Box2D.h>
@@ -11,9 +9,18 @@
 #include "Game/EnemyAI.h"
 #include "Game/FPSDraw.cpp"
 #include "Game/ShaderSystem.h"
-#include "Components/SpriteMesh.h"
 #include "Editor.hpp"
+#include "Components/Mesh.h"
 
+shared_ptr<eng::GameObject> createTest()
+{
+    auto test = make_shared<eng::GameObject>("TestObject");
+    test->transform.position = sf::Vector2f(600, 400);
+    test->AddComponent(make_shared<eng::Mesh>());
+    return test;
+}
+
+/*
 shared_ptr<eng::GameObject> createPlayer(float x, float y) {
     shared_ptr<eng::GameObject> player = make_shared<eng::GameObject>("Player");
     player->transform.position = sf::Vector2f(x, y);
@@ -21,7 +28,7 @@ shared_ptr<eng::GameObject> createPlayer(float x, float y) {
     shared_ptr<sf::CircleShape> shape = make_shared<sf::CircleShape>(5.f);
     shape->setOrigin(5.f, 5.f);
     shape->setFillColor(sf::Color::Blue);
-    player->AddComponent(make_shared<eng::ShapeMesh>(shape));
+    //player->AddComponent(make_shared<eng::ShapeMesh>(shape));
     b2CircleShape * physShape = new b2CircleShape();
     physShape->m_radius = 5.f;
     b2FixtureDef fixture;
@@ -47,7 +54,7 @@ shared_ptr<eng::GameObject> createEnemy(float x, float y)
     enemy->AddComponent(make_shared<eng::ShapeMesh>(shape));
 
     b2PolygonShape *rect = new b2PolygonShape();
-    rect->SetAsBox(10.f, 12.5f); 
+    rect->SetAsBox(10.f, 12.5f);
 
     b2FixtureDef fixture;
     fixture.density = 5;
@@ -62,6 +69,13 @@ shared_ptr<eng::GameObject> createEnemy(float x, float y)
 
 }
 
+shared_ptr<eng::GameObject> createShaderManager() {
+    shared_ptr<eng::GameObject> shaderManager = make_shared<eng::GameObject>("shaderManager");
+    shaderManager->AddComponent(make_shared<gm::ShaderManager>());
+    return shaderManager;
+}
+*/
+
 shared_ptr<eng::GameObject> createStats()
 {
     shared_ptr<eng::GameObject> stats = make_shared<eng::GameObject>("stats");
@@ -69,11 +83,6 @@ shared_ptr<eng::GameObject> createStats()
     return stats;
 }
 
-shared_ptr<eng::GameObject> createShaderManager() {
-    shared_ptr<eng::GameObject> shaderManager = make_shared<eng::GameObject>("shaderManager");
-    shaderManager->AddComponent(make_shared<gm::ShaderManager>());
-    return shaderManager;
-}
 
 int main()
 {
@@ -86,16 +95,16 @@ int main()
 
     shared_ptr<eng::Scene> mainScene = make_shared<eng::Scene>("MainScene");
     gameMaster.LoadScene(mainScene);
-
-    mainScene->CreateGameObject(createPlayer(600, 500));
+    mainScene->CreateGameObject(createTest());
+    /*mainScene->CreateGameObject(createPlayer(600, 500));
 
     for(int i = 0; i < 10; ++i)
     {
         mainScene->CreateGameObject(createEnemy(300 + i * 50, 100));
     }
-
+*/
     mainScene->CreateGameObject(createStats());
-
+    
 
     while (eng::GameMaster::Get().IsGameStarted())
     {

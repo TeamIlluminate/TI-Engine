@@ -12,7 +12,7 @@ class GameObject;
 class Camera;
 class Mesh;
 
-class Scene : public enable_shared_from_this<Scene>
+class Scene final : public enable_shared_from_this<Scene>
 {
 public:
   friend class Render;

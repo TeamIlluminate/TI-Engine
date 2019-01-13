@@ -2,28 +2,48 @@
 
 using namespace eng;
 
+void SpriteMesh::OnInit()
+{
+   
+}
+
+shared_ptr<sf::Sprite> SpriteMesh::loadSprite(string file)
+{
+    texture.loadFromFile(file);
+    auto size = texture.getSize();
+
+    auto sprt = make_shared<sf::Sprite>(texture);
+    auto newSprite = make_shared<sf::Sprite>(texture);
+    auto newSize = sf::Vector2f(64.f / size.x, 64.f / size.y);
+
+    sprt->setScale(newSize);
+    sprt->setOrigin(size.x / 2.f , size.y / 2.f);
+
+    newSprite->setScale(newSize);
+    newSprite->setOrigin(size.x / 2.f , size.y / 2.f);
+    
+
+    e_sprite = sprt;
+
+    return newSprite;
+}
+
 void SpriteMesh::DrawEditor()
 {
     if(ImGui::CollapsingHeader("SpriteMesh"))
     {
-        if(sprite) ImGui::Image(*sprite.get(), sf::Color::Transparent);
+        if(sprite) ImGui::Image(*e_sprite.get());
+
         if(ImGui::Button("Choose"))
         {
-            open = true;
+            OpenFD();
         }
 
-        sf::Texture texture;
         string file;
 
-        if( (file = DrawOpenFileDialog("Resource", open, "SpriteMesh_" + to_string(_owner.lock()->id))) != "")
+        if( (file = DrawOpenFileDialog("Resource", this)) != "")
         {
-            if(texture.loadFromFile(file))
-            {     
-                sprite->setColor(sf::Color::Transparent);
-                sprite->setTexture(texture);
-                sprite->setPosition(500, 500);
-                GameMaster::Get().GetWindow().lock()->draw(*sprite.get());
-            } 
+            sprite = loadSprite(file);
         }
     }
 }

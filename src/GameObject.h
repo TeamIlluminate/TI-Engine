@@ -9,7 +9,7 @@ namespace eng
 
 class Component;
 
-class GameObject : public enable_shared_from_this<GameObject>, public Editor
+class GameObject final : public enable_shared_from_this<GameObject>, public Editor
 {
   public:
 

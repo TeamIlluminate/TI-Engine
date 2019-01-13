@@ -8,7 +8,7 @@ namespace eng
 
 class GameObject;
 
-class PhysBody : public Component
+class PhysBody final : public Component
 {
   public:
     PhysBody(b2FixtureDef fixture, b2BodyType type);

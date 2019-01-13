@@ -5,7 +5,7 @@ namespace eng
 
 class Scene;
 
-class CollisionEventManager : public b2ContactListener
+class CollisionEventManager final: public b2ContactListener
 {
   public:
     CollisionEventManager(Scene *scene);

@@ -2,6 +2,7 @@
 #include "GameMaster.h"
 #include "Scene.h"
 #include "GameObject.h"
+#include "Component.h"
 
 using namespace eng;
 
@@ -88,14 +89,22 @@ void Editor::DrawInspector()
     }
 }
 
-string Editor::DrawOpenFileDialog(fs::path path, bool &open, string id)
+void Editor::OpenFD()
+{
+    OFD_open = true;
+}
+
+string Editor::DrawOpenFileDialog(fs::path path, Component* cmp)
 {
     string file = "";
+    string name = typeid(*cmp).name();
 
-    if(open)
+    if(OFD_open)
     {
-        string label = "Choose file:##" + id;
-        ImGui::Begin(label.c_str());
+        string label = "Choose file:##" + name + "_" + to_string(cmp->_owner.lock()->id);
+
+        ImGui::SetNextWindowPosCenter(ImGuiCond_Appearing);
+        ImGui::Begin(label.c_str(), nullptr, sf::Vector2i(500, 500));
 
         if (!fs::exists(path))
             fs::create_directory(path);
@@ -131,14 +140,16 @@ string Editor::DrawOpenFileDialog(fs::path path, bool &open, string id)
 
         if(ImGui::Button("OK"))
         {
-            open = false;
-            file = files[file_iterator-1];
+            OFD_open = false;
+            file = files[select];
         }
+
+        ImGui::SameLine();
 
         if(ImGui::Button("Cancel"))
         {
             file = "";
-            open = false;
+            OFD_open = false;
         }
 
         ImGui::End();

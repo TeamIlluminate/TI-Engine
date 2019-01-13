@@ -153,6 +153,7 @@ void GameObject::DrawEditor()
 {
 
     ImGui::PushID(id);
+
     if (ImGui::CollapsingHeader(("[" + to_string(id) + "] " + name).c_str()))
     {
         ImGui::Text(name.c_str());
@@ -164,8 +165,7 @@ void GameObject::DrawEditor()
             {
                 component->DrawEditor();
             }
-        }
-
+        } 
         ImGui::Separator();
     }
 

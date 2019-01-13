@@ -34,9 +34,16 @@ void ShapeMesh::DrawEditor()
     auto gameObject = _owner.lock();
     if (gameObject)
     {
+
+    ImGui::PushStyleColor(ImGuiCol_Header, (ImVec4) ImColor::HSV(0.7f, 0.9f, 0.5f)); 
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)ImColor::HSV(0.7f, 1.f, 0.5f)); 
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered    , (ImVec4)ImColor::HSV(0.3f, 1.f, 0.5f)); 
         if (ImGui::CollapsingHeader("ShapeMesh"))
         {
+            ImGui::PopStyleColor(3);
             DrawSfShape(currentShape);
+        } else {
+            ImGui::PopStyleColor(3);
         }
     }
 }

@@ -99,10 +99,17 @@ void PlayerController::ShootIn(sf::Vector2f position)
 
 void PlayerController::DrawEditor()
 {
+
+    ImGui::PushStyleColor(ImGuiCol_Header, (ImVec4) ImColor::HSV(0.4f, 0.9f, 0.5f)); 
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)ImColor::HSV(0.5f, 1.f, 0.5f)); 
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered    , (ImVec4)ImColor::HSV(0.3f, 1.f, 0.5f)); 
     if (ImGui::CollapsingHeader("PlayerController"))
     {
+        ImGui::PopStyleColor(3);
         ImGui::InputFloat("Player speed: ", &speed);
         ImGui::InputFloat("Shoot Delay", &shootDelay);
         ImGui::InputFloat("Bullet Force", &bulletForce);
+    } else {
+        ImGui::PopStyleColor(3);
     }
 }

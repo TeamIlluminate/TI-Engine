@@ -9,6 +9,8 @@ namespace eng
 
 namespace fs = std::experimental::filesystem;
 
+class Component;
+
 class Editor
 {
   public:
@@ -51,7 +53,6 @@ class Editor
         {
         case 0:
         {
-
             if (!circle)
             {
                 circle = make_shared<sf::CircleShape>();
@@ -132,6 +133,12 @@ class Editor
     }
 
     static void DrawInspector();
-    string DrawOpenFileDialog(fs::path path, bool &open, string id);
+    string DrawOpenFileDialog(fs::path path, Component* cmp);
+
+    private:
+    bool OFD_open = false;
+    
+    protected:
+    void OpenFD();
 };
 } // namespace eng

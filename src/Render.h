@@ -7,7 +7,7 @@ namespace eng
 class Scene;
 class GameObject;
 
-class Render
+class Render final
 {
 public:
   void Init(sf::VideoMode mode);

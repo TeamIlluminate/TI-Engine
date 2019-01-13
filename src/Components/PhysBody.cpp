@@ -68,8 +68,13 @@ void PhysBody::AddImpulse(sf::Vector2f impulse)
 
 void PhysBody::DrawEditor()
 {
+
+    ImGui::PushStyleColor(ImGuiCol_Header, (ImVec4) ImColor::HSV(0.9f, 0.9f, 0.5f)); 
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)ImColor::HSV(0.95f, 1.f, 0.5f)); 
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered    , (ImVec4)ImColor::HSV(0.3f, 1.f, 0.5f)); 
     if (ImGui::CollapsingHeader("PhysBody"))
     {
+        ImGui::PopStyleColor(3);
         ImGui::Text("Velocity");
         b2Vec2 velocity = this->body->GetLinearVelocity();
 
@@ -162,5 +167,5 @@ void PhysBody::DrawEditor()
                 break;
             }
         }
-    }
+    } else ImGui::PopStyleColor(3);
 }
