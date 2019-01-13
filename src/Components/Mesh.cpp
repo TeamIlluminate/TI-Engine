@@ -53,22 +53,24 @@ void Mesh::DrawEditor()
 
         switch (static_cast<MeshType>(type))
         {
-        case Circle:
-        {
-            EditorCircle();
-            break;
+            case Circle:
+            {
+                EditorCircle();
+                break;
+            }
+            case Rectangle:
+            {
+                EditorRect();
+                break;
+            }
+            case Sprite:
+            {
+                EditorSprite();
+                break;
+            }
         }
-        case Rectangle:
-        {
-            EditorRect();
-            break;
-        }
-        case Sprite:
-        {
-            EditorSprite();
-            break;
-        }
-        }
+        ImGui::Checkbox("Enable physics?", &physEnable);
+        if(physEnable) EditorPhysics();
     }
 }
 
@@ -204,16 +206,15 @@ void Mesh::EditorSprite()
         OpenFD();
     }
 
-    string file;
-    if ((file = DrawOpenFileDialog("Resource", this)) != "")
-    {
-        texture->loadFromFile(file);        
-    }
-
-    ImGui::SameLine();
-    if (ImGui::Button("Apply"))
+    if(texture->loadFromFile(DrawOpenFileDialog("Resource", this)))
     {
         editable->setTexture(texture.get(), true);
         shape = editable;
     }
+}
+
+void Mesh::EditorPhysics()
+{
+    ImGui::Separator();
+    ImGui::Text("Here's physics editor");
 }

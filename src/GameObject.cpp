@@ -154,7 +154,9 @@ void GameObject::DrawEditor()
 
     ImGui::PushID(id);
 
-    if (ImGui::CollapsingHeader(("[" + to_string(id) + "] " + name).c_str()))
+    string headerLabel = name + "##" + to_string(id);
+
+    if (ImGui::CollapsingHeader(headerLabel.c_str()))
     {
         ImGui::Text(name.c_str());
         DrawVector2(transform.position);

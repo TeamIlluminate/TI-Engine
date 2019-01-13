@@ -19,6 +19,8 @@ public:
     Sprite = 2
   };
 
+  bool physEnable = false;
+
   b2Body *GetBody();
   MeshType GetType();
 
@@ -55,5 +57,6 @@ private:
   void EditorCircle();
   void EditorRect();
   void EditorSprite();
+  void EditorPhysics();
 };
 } // namespace eng
