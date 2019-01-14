@@ -18,6 +18,7 @@ public:
   friend class Render;
   friend class Editor;
   friend class PhysBody;
+  friend class Mesh;
   friend class Camera;
 
   Scene(const std::string name); //Name 4r Serialization ability
@@ -36,6 +37,7 @@ public:
 
   shared_ptr<GameObject> CreateGameObject(std::string name);
   shared_ptr<GameObject> CreateGameObject(shared_ptr<GameObject> gameObject);
+  shared_ptr<GameObject> CloneGameObject(shared_ptr<GameObject> gameObject);
 
   template <typename _Predicate>
   list<weak_ptr<GameObject>> GetGameObjects_if(_Predicate _pred)

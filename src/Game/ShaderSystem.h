@@ -1,6 +1,6 @@
-#include "Component.h"
+/*#include "Component.h"
 #include "GameObject.h"
-#include "Components/ShapeMesh.h"
+#include "Components/Mesh.h"
 #include "imgui.h"
 #include <SFML/Graphics.hpp>
 #pragma once
@@ -14,7 +14,7 @@ class ShaderManager : public eng::Component
     shared_ptr<eng::Component> Clone();
     private:
     void GetGameObjectsWithShader();
-    void ApplyShaderTo(list<shared_ptr<eng::ShapeMesh>> shaders);
+    void ApplyShaderTo(list<shared_ptr<eng::Mesh>> shaders);
     ImGuiInputTextFlags flags;
     char code[1024*16] = 
     "#version 130\n"
@@ -23,9 +23,9 @@ class ShaderManager : public eng::Component
             "colorOut = vec4(1.0, 0.0, 0.0, 1.0);\n"
             " \n"
             "}";
-    list<weak_ptr<eng::ShapeMesh>> meshs;
+    list<weak_ptr<eng::Mesh>> meshs;
 
 };
 
-} // namespace eng
+} // namespace eng */
 

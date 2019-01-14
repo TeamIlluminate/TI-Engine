@@ -1,6 +1,6 @@
 #include "RayCastHandler.h"
 #include "GameMaster.h"
-#include "Components/PhysBody.h"
+#include "Components/Mesh.h"
 #include "Scene.h"
 
 using namespace eng;
@@ -12,8 +12,8 @@ float32 RayCastHandler::ReportFixture(b2Fixture *fixture, const b2Vec2 &point, c
     auto gameObjects = GameMaster::Get().GetCurrentScene().lock()->GetGameObjects();
     for (auto gameObject : gameObjects)
     {
-        auto physBody = gameObject.lock()->GetComponent<PhysBody>();
-        if (foundedBody == physBody.lock()->body)
+        auto physBody = gameObject.lock()->GetComponent<Mesh>();
+        if (foundedBody == physBody.lock()->GetBody())
         {
             foundedObject = gameObject;
             return 0;

@@ -33,14 +33,13 @@ Scene::Scene(const Scene &scene)
 
 void Scene::Rebind()
 {
-    auto gameObjects = GetGameObjects_if([] (shared_ptr<GameObject>)
-    {
+    auto gameObjects = GetGameObjects_if([](shared_ptr<GameObject>) {
         return true;
     });
 
     for (auto _gameObject : gameObjects)
     {
-        if(auto gameObject = _gameObject.lock())
+        if (auto gameObject = _gameObject.lock())
         {
             gameObject->SetScene(shared_from_this());
 
@@ -85,28 +84,27 @@ void Scene::PhysicsLoop()
 list<weak_ptr<Mesh>> Scene::Update()
 {
     list<weak_ptr<Mesh>> meshs;
-    auto gameObjects = GetGameObjects_if([] (shared_ptr<GameObject>)
-    {
+    auto gameObjects = GetGameObjects_if([](shared_ptr<GameObject>) {
         return true;
     });
 
-    for(auto _gameObject : gameObjects)
+    for (auto _gameObject : gameObjects)
     {
-        if(auto gameObject = _gameObject.lock())
+        if (auto gameObject = _gameObject.lock())
         {
             auto components = gameObject->components;
 
-            if(GameMaster::Get().state & GameMaster::_GAME)
+            if (GameMaster::Get().state & GameMaster::_GAME)
             {
-                for(auto component : components)
+                for (auto component : components)
                 {
                     component->Update();
                     component->GUI();
                 }
             }
 
-            if(auto mesh = gameObject->GetComponent<Mesh>().lock())
-            meshs.push_back(mesh);
+            if (auto mesh = gameObject->GetComponent<Mesh>().lock())
+                meshs.push_back(mesh);
         }
     }
 
@@ -130,6 +128,22 @@ shared_ptr<GameObject> Scene::CreateGameObject(shared_ptr<GameObject> gameObject
     idCounter++;
     this->sceneObjects.push_back(gameObject);
     return gameObject;
+}
+
+shared_ptr<GameObject> Scene::CloneGameObject(shared_ptr<GameObject> gameObject)
+{
+    auto clone = make_shared<GameObject>(*gameObject.get());
+    CreateGameObject(clone);
+    auto components = clone->GetComponents();
+    for (auto _component : components)
+    {
+        if (auto component = _component.lock())
+        {
+            component->SetOwner(clone);
+            component->OnInit();
+        }
+    }
+    return clone;
 }
 
 void Scene::Destroy(weak_ptr<GameObject> _gameObject)

@@ -33,7 +33,7 @@ GameObject::GameObject(std::string name) : name(name)
 
 GameObject::GameObject(weak_ptr<Scene> _scene, string name)
 {
-    if(auto scene = _scene.lock())
+    if (auto scene = _scene.lock())
     {
         this->scene = scene;
         this->name = name;
@@ -42,7 +42,7 @@ GameObject::GameObject(weak_ptr<Scene> _scene, string name)
     {
         throw invalid_argument("Scene already deleted!");
     }
-} 
+}
 
 GameObject::GameObject(const GameObject &gameObject)
 {
@@ -161,13 +161,32 @@ void GameObject::DrawEditor()
         ImGui::Text(name.c_str());
         DrawVector2(transform.position);
         ImGui::Separator();
-        if (ImGui::CollapsingHeader("Components"))
+        if (ImGui::TreeNode("Components"))
         {
             for (auto component : components)
             {
                 component->DrawEditor();
             }
-        } 
+            ImGui::TreePop();
+        }
+
+        if (ImGui::IsMouseReleased(0) && buttonPressed)
+        {
+            auto newGameObject = GameMaster::Get().GetCurrentScene().lock()->CloneGameObject(shared_from_this());
+            newGameObject->transform.position = GetMouseCoordinates();
+            buttonPressed = false;
+        }
+        
+        if (ImGui::Button("Clone"))
+        {
+            buttonPressed = true;
+        }
+        ImGui::SameLine();
+
+        if (ImGui::Button("Delete"))
+        {
+            scene.lock()->Destroy(weak_from_this());
+        }
         ImGui::Separator();
     }
 

@@ -1,4 +1,4 @@
-#include "Components/PhysBody.h"
+#include "Components/Mesh.h"
 #include "Game/EnemyAI.h"
 
 using namespace eng;
@@ -15,9 +15,9 @@ void EnemyAI::FixedUpdate()
             {
                 if (Magnitude(player->transform.position - owner->transform.position) < range)
                 {
-                    auto body = owner->GetComponent<PhysBody>();
+                    auto mesh = owner->GetComponent<Mesh>();
                     sf::Vector2f nPos = Normalize(player->transform.position - owner->transform.position) * speed * 0.1f;
-                    body.lock()->TransformPosition(nPos);
+                    mesh.lock()->TransformPosition(nPos);
                 }
             }
         }

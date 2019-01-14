@@ -1,5 +1,4 @@
 #include "Component.h"
-#include "PhysBody.h"
 #include <SFML/Graphics.hpp>
 namespace eng
 {

@@ -1,5 +1,5 @@
 #include "Game/PlayerController.h"
-#include "Components/ShapeMesh.h"
+#include "Components/Mesh.h"
 #include "Game/Bullet.cpp"
 
 using namespace eng;
@@ -8,7 +8,7 @@ void PlayerController::OnInit()
 {
     if (auto owner = _owner.lock())
     {
-        _bodyComponent = owner->GetComponent<PhysBody>();
+        _mesh = owner->GetComponent<Mesh>();
     }
 }
 
@@ -19,38 +19,41 @@ shared_ptr<Component> PlayerController::Clone()
 
 void PlayerController::Update()
 {
-    if (auto bodyComponent = _bodyComponent.lock())
+    if (auto mesh = _mesh.lock())
     {
-        if (!bodyComponent->body->GetWorld()->IsLocked())
+        if(mesh->GetBody())
         {
-            if (shoot < shootDelay)
-                shoot += DeltaTime();
+            if (!mesh->GetBody()->GetWorld()->IsLocked())
+            {
+                if (shoot < shootDelay)
+                    shoot += DeltaTime();
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            {
-                this->MoveIn(sf::Vector2f(0, -speed));
-            }
-            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            {
-                this->MoveIn(sf::Vector2f(0, speed));
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            {
-                this->MoveIn(sf::Vector2f(-speed, 0));
-            }
-            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            {
-                this->MoveIn(sf::Vector2f(speed, 0));
-            }
-
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-            {
-                if (!isFiring && shoot >= shootDelay)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
                 {
-                    shoot = 0;
-                    isFiring != isFiring;
-                    sf::Vector2f currentPosition = GetMouseCoordinates();
-                    this->ShootIn(sf::Vector2f(currentPosition.x, currentPosition.y));
+                    this->MoveIn(sf::Vector2f(0, -speed));
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                {
+                    this->MoveIn(sf::Vector2f(0, speed));
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                {
+                    this->MoveIn(sf::Vector2f(-speed, 0));
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+                {
+                    this->MoveIn(sf::Vector2f(speed, 0));
+                }
+
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+                {
+                    if (!isFiring && shoot >= shootDelay)
+                    {
+                        shoot = 0;
+                        isFiring != isFiring;
+                        sf::Vector2f currentPosition = GetMouseCoordinates();
+                        this->ShootIn(sf::Vector2f(currentPosition.x, currentPosition.y));
+                    }
                 }
             }
         }
@@ -59,9 +62,9 @@ void PlayerController::Update()
 
 void PlayerController::MoveIn(sf::Vector2f position)
 {
-    if (auto bodyComponent = _bodyComponent.lock())
+    if (auto mesh = _mesh.lock())
     {
-        bodyComponent->TransformPosition(position);
+        mesh->TransformPosition(position);
     }
 }
 
@@ -80,17 +83,15 @@ void PlayerController::ShootIn(sf::Vector2f position)
             auto shape = make_shared<sf::CircleShape>(2.f);
             shape->setOrigin(1.f, 1.f);
             shape->setFillColor(sf::Color::Yellow);
-            bullet->AddComponent(make_shared<eng::ShapeMesh>(shape));
 
-            b2CircleShape *b2circle = new b2CircleShape();
-            b2circle->m_radius = 2.f;
+            auto mesh = make_shared<eng::Mesh>();
 
-            b2FixtureDef fixture;
-            fixture.shape = b2circle;
-            auto bulletPhysBody = make_shared<eng::PhysBody>(fixture, b2BodyType::b2_dynamicBody);
-            bullet->AddComponent(bulletPhysBody);
+            bullet->AddComponent(mesh);
+            mesh->physEnable = true;
+            mesh->Configure(shape);
+
             bullet->AddComponent(make_shared<Bullet>());
-            bulletPhysBody->AddImpulse(direction * bulletForce);
+            mesh->AddImpulse(direction * bulletForce);
 
             isFiring != isFiring;
         }

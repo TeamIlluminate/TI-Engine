@@ -20,24 +20,23 @@ shared_ptr<eng::GameObject> createTest()
     return test;
 }
 
-/*
+
 shared_ptr<eng::GameObject> createPlayer(float x, float y) {
     shared_ptr<eng::GameObject> player = make_shared<eng::GameObject>("Player");
     player->transform.position = sf::Vector2f(x, y);
 
-    shared_ptr<sf::CircleShape> shape = make_shared<sf::CircleShape>(5.f);
-    shape->setOrigin(5.f, 5.f);
-    shape->setFillColor(sf::Color::Blue);
-    //player->AddComponent(make_shared<eng::ShapeMesh>(shape));
-    b2CircleShape * physShape = new b2CircleShape();
-    physShape->m_radius = 5.f;
-    b2FixtureDef fixture;
-    fixture.shape = physShape;
-    fixture.density = 1;    
-    player->AddComponent(make_shared<eng::PhysBody>(fixture, b2_dynamicBody));
+    auto mesh = make_shared<eng::Mesh>();
+    auto circle = make_shared<sf::CircleShape>(5.f);
+    circle->setFillColor(sf::Color::Blue);
+
+    player->AddComponent(mesh);
+    mesh->physEnable = true;
+
+    mesh->Configure(circle);
+    //я знаю в чем дело. надо вот так
+//щас не было овнера. из за этого была ошибка.  
     player->AddComponent(make_shared<eng::PlayerController>()); 
     player->AddComponent(make_shared<eng::Camera>());
-    player->AddComponent(make_shared<eng::SpriteMesh>());
     player->GetComponent<eng::Camera>().lock()->isEnabled = true;
     return player;                                                             
 }
@@ -51,17 +50,12 @@ shared_ptr<eng::GameObject> createEnemy(float x, float y)
     shared_ptr<sf::RectangleShape> shape = make_shared<sf::RectangleShape>(sf::Vector2f(20, 25));
     shape->setFillColor(sf::Color::Red);
     shape->setOrigin(10, 12.5);
-    enemy->AddComponent(make_shared<eng::ShapeMesh>(shape));
+    auto mesh = make_shared<eng::Mesh>();
 
-    b2PolygonShape *rect = new b2PolygonShape();
-    rect->SetAsBox(10.f, 12.5f);
+    enemy->AddComponent(mesh);
 
-    b2FixtureDef fixture;
-    fixture.density = 5;
-    fixture.friction = 1;
-    fixture.shape = rect;
-
-    enemy->AddComponent(make_shared<eng::PhysBody>(fixture, b2_dynamicBody));
+    mesh->physEnable = true;
+    mesh->Configure(shape);
     enemy->AddComponent(make_shared<eng::EnemyAI>());
 
     
@@ -71,10 +65,10 @@ shared_ptr<eng::GameObject> createEnemy(float x, float y)
 
 shared_ptr<eng::GameObject> createShaderManager() {
     shared_ptr<eng::GameObject> shaderManager = make_shared<eng::GameObject>("shaderManager");
-    shaderManager->AddComponent(make_shared<gm::ShaderManager>());
+    //shaderManager->AddComponent(make_shared<gm::ShaderManager>());
     return shaderManager;
 }
-*/
+
 
 shared_ptr<eng::GameObject> createStats()
 {
@@ -96,13 +90,13 @@ int main()
     shared_ptr<eng::Scene> mainScene = make_shared<eng::Scene>("MainScene");
     gameMaster.LoadScene(mainScene);
     mainScene->CreateGameObject(createTest());
-    /*mainScene->CreateGameObject(createPlayer(600, 500));
+    mainScene->CreateGameObject(createPlayer(600, 500));
 
-    for(int i = 0; i < 10; ++i)
-    {
-        mainScene->CreateGameObject(createEnemy(300 + i * 50, 100));
-    }
-*/
+     for(int i = 0; i < 10; ++i)
+     {
+         mainScene->CreateGameObject(createEnemy(300 + i * 50, 100));
+     }
+ 
     mainScene->CreateGameObject(createStats());
     
 

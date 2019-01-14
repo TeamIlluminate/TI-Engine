@@ -75,7 +75,7 @@ class GameObject final : public enable_shared_from_this<GameObject>, public Edit
     weak_ptr<Scene> scene;
 
     weak_ptr<GameObject> parent;
-
+    bool buttonPressed = false;
     std::list<shared_ptr<GameObject> > childs;
     std::list<shared_ptr<Component> > components;
 

@@ -15,9 +15,9 @@ void Editor::DrawInspector()
         ImGuiWindowFlags flags = 0;
         flags |= ImGuiWindowFlags_NoCollapse;
         flags |= ImGuiWindowFlags_NoMove;
-        flags |= ImGuiWindowFlags_NoResize;
         flags |= ImGuiWindowFlags_MenuBar;
 
+        ImGui::SetNextWindowSize(sf::Vector2i(300, window->getSize().y), ImGuiCond_Appearing);
         ImGui::Begin("Inspector", nullptr, flags);
 
         ImGui::BeginMenuBar();
@@ -66,7 +66,6 @@ void Editor::DrawInspector()
 
         ImGui::EndMenuBar();
 
-        ImGui::SetWindowSize(sf::Vector2i(300, window->getSize().y));
         ImGui::SetWindowPos(sf::Vector2i(0, 0));
 
         auto _c_Scene = GameMaster::Get().GetCurrentScene();

@@ -1,5 +1,4 @@
 #include "Component.h"
-#include "Components/PhysBody.h"
 #include "Scene.h"
 
 #pragma once
@@ -11,14 +10,6 @@ class Bullet : public Component
 {
   public:
     Bullet() {}
-
-    void OnInit()
-    {
-        if (shared_ptr<GameObject> owner = _owner.lock())
-        {
-            _bodyComponent = owner->GetComponent<PhysBody>();
-        }
-    }
 
     shared_ptr<Component> Clone()
     {
@@ -42,7 +33,5 @@ class Bullet : public Component
         }
     }
 
-  private:
-    weak_ptr<PhysBody> _bodyComponent;
 };
 } // namespace eng

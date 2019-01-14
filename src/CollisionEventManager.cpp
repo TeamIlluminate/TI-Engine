@@ -1,6 +1,6 @@
 #include "CollisionEventManager.h"
 #include "Scene.h"
-#include "Components/PhysBody.h"
+#include "Components/Mesh.h"
 
 using namespace eng;
 
@@ -20,15 +20,15 @@ void CollisionEventManager::BeginContact(b2Contact *contact)
     for (auto gameObject : gameObjects)
     {
 
-        auto body = gameObject.lock()->GetComponent<PhysBody>();
+        auto body = gameObject.lock()->GetComponent<Mesh>();
 
         if (auto bodyShare = body.lock())
         {
-            if (bodyShare->body == first)
+            if (bodyShare->GetBody() == first)
             {
                 firstObject = gameObject;
             }
-            if (bodyShare->body == second)
+            if (bodyShare->GetBody() == second)
             {
                 secondObject = gameObject;
             }
@@ -72,15 +72,15 @@ void CollisionEventManager::EndContact(b2Contact *contact)
     for (auto gameObject : gameObjects)
     {
 
-        auto body = gameObject.lock()->GetComponent<PhysBody>();
+        auto body = gameObject.lock()->GetComponent<Mesh>();
 
         if (auto bodyShare = body.lock())
         {
-            if (bodyShare->body == first)
+            if (bodyShare->GetBody() == first)
             {
                 firstObject = gameObject;
             }
-            if (bodyShare->body == second)
+            if (bodyShare->GetBody() == second)
             {
                 secondObject = gameObject;
             }
