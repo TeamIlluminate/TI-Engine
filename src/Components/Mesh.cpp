@@ -24,10 +24,11 @@ void Mesh::OnInit()
         }
     }
 
-    if(physEnable)
-    if (this->body) {
-        CreatePhysics();
-    }
+    if (physEnable)
+        if (this->body)
+        {
+            CreatePhysics();
+        }
 }
 
 void Mesh::Configure(shared_ptr<sf::Shape> inShape)
@@ -49,8 +50,10 @@ void Mesh::Configure(shared_ptr<sf::Shape> inShape)
 
 void Mesh::CreatePhysics()
 {
-    if (this->body) {
-        if (this->body->GetWorld() == GameMaster::Get().GetCurrentScene().lock()->GetWorld().lock().get()) {
+    if (this->body)
+    {
+        if (this->body->GetWorld() == GameMaster::Get().GetCurrentScene().lock()->GetWorld().lock().get())
+        {
             this->body->GetWorld()->DestroyBody(this->body);
         }
     }
@@ -416,5 +419,111 @@ void Mesh::EditorPhysics()
         }
         break;
     }
+    }
+}
+
+json Mesh::Serialize()
+{
+    json meshok;
+    meshok["type"] = "Mesh";
+    meshok["physEnable"] = physEnable;
+    if (auto circle = dynamic_pointer_cast<sf::CircleShape>(shape))
+    {
+        meshok["shape"]["type"] = "Circle";
+        meshok["shape"]["radius"] = circle->getRadius();
+    }
+    else if (auto rectangle = dynamic_pointer_cast<sf::RectangleShape>(shape))
+    {
+        meshok["shape"]["type"] = "Rectangle";
+        auto size = rectangle->getSize();
+        meshok["shape"]["width"] = size.x;
+        meshok["shape"]["height"] = size.y;
+    }
+    auto origin = shape->getOrigin();
+    meshok["shape"]["origin"]["x"] = origin.x;
+    meshok["shape"]["origin"]["y"] = origin.y;
+
+    meshok["shape"]["color"]["r"] = shape->getFillColor().r;
+    meshok["shape"]["color"]["g"] = shape->getFillColor().g;
+    meshok["shape"]["color"]["b"] = shape->getFillColor().b;
+    meshok["shape"]["color"]["a"] = shape->getFillColor().a;
+
+    if (physEnable)
+    {
+
+        meshok["body"]["transform"]["x"] = body->GetPosition().x;
+        meshok["body"]["transform"]["y"] = body->GetPosition().y;
+
+        meshok["body"]["velocity"]["x"] = body->GetLinearVelocity().x;
+        meshok["body"]["velocity"]["y"] = body->GetLinearVelocity().y;
+        //more and more parameters
+
+        auto collider = fixture->GetShape();
+        switch (collider->m_type)
+        {
+        case b2Shape::Type::e_circle:
+        {
+            meshok["fixture"]["shape"]["type"] = "e_circle";
+            meshok["fixture"]["shape"]["m_radius"] = collider->m_radius;
+            break;
+        }
+
+        case b2Shape::Type::e_polygon:
+        {
+            auto polygonShape = dynamic_cast<b2PolygonShape *>(collider);
+            meshok["fixture"]["shape"]["type"] = "e_polygon";
+            auto size = polygonShape->GetVertex(2);
+            meshok["fixture"]["shape"]["width"] = size.x;
+            meshok["fixture"]["shape"]["height"] = size.y;
+            break;
+        }
+        }
+    }
+    return meshok;
+}
+
+void Mesh::Deserialize(json s)
+{
+    std::string shapeType = s["shape"]["type"];
+    physEnable = s["physEnable"];
+    if (shapeType == "Circle")
+    {
+        auto circle = make_shared<sf::CircleShape>(s["shape"]["radius"]);
+        shape = circle;
+    }
+    else if (shapeType == "Rectangle")
+    {
+        auto rectangle = make_shared<sf::RectangleShape>();
+        rectangle->setSize(sf::Vector2f(s["shape"]["width"], s["shape"]["height"]));
+        shape = rectangle;
+    }
+
+    shape->setOrigin(s["shape"]["origin"]["x"], s["shape"]["origin"]["y"]);
+    shape->setFillColor(sf::Color(s["shape"]["color"]["r"], s["shape"]["color"]["g"], s["shape"]["color"]["b"], s["shape"]["color"]["a"]));
+
+    if (s["physEnable"])
+    {
+        b2BodyDef def;
+        def.type = b2_dynamicBody;
+        def.position = b2Vec2(s["body"]["transform"]["x"], s["body"]["transform"]["y"]);
+
+        b2FixtureDef fixtureDef;
+        auto jsonShape = s["fixture"]["shape"];
+        if (jsonShape["type"] == "e_circle")
+        {
+            b2CircleShape * circleShape = new b2CircleShape();
+            circleShape->m_radius = jsonShape["m_radius"];
+            fixtureDef.shape = circleShape;
+        }
+        else if (jsonShape["type"] == "e_polygon")
+        {
+            b2PolygonShape * rectShape = new b2PolygonShape();
+            rectShape->SetAsBox(jsonShape["width"], jsonShape["height"]);
+            fixtureDef.shape = rectShape;
+        }
+
+       auto world = _owner.lock()->GetScene().lock()->GetWorld().lock();
+       this->body = world->CreateBody(&def);
+       this->fixture = this->body->CreateFixture(&fixtureDef);
     }
 }

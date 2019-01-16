@@ -8,6 +8,7 @@ namespace eng
 class Mesh : public Component
 {
 public:
+
   friend class Render;
 
   ~Mesh();
@@ -34,6 +35,9 @@ public:
     weak_ptr<GameObject> RayCast(sf::Vector2f to);
     void AddImpulse(sf::Vector2f vector);
     void TransformPosition(sf::Vector2f pos);
+
+  json Serialize();
+  void Deserialize(json j);
 
 private:
 void FixedUpdate();

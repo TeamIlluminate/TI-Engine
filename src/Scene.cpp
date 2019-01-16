@@ -195,3 +195,32 @@ std::list<weak_ptr<GameObject>> Scene::GetGameObjects() const
     }
     return _gameObjects;
 }
+
+////////////////////
+
+json Scene::Serialize()
+{
+    json jsonScene;
+    jsonScene["name"] = name;
+    auto gameObjects = sceneObjects;
+    for (auto gameObject : sceneObjects)
+    {
+        jsonScene["sceneObjects"][gameObject->id] = gameObject->Serialize();
+    }
+    jsonScene["world"]["gravity"]["x"] = world->GetGravity().x;
+    jsonScene["world"]["gravity"]["y"] = world->GetGravity().y;
+    return jsonScene;
+}
+
+void Scene::Deserialize(json obj)
+{
+    std::cout << obj << '\n';
+    name = obj["name"];
+    this->world = make_shared<b2World>(b2Vec2(obj["world"]["gravity"]["x"], obj["world"]["gravity"]["x"]));
+    auto jsonSceneObjects = obj["sceneObjects"];
+    for (auto jsonGameObject : jsonSceneObjects) { 
+        auto newGameObject = CreateGameObject();
+        newGameObject->Deserialize(jsonGameObject);
+    } 
+    this->Rebind();
+}

@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "imgui.h"
+#include "json.hpp"
 #include "imgui-SFML.h"
 #include <math.h>
 #include <iostream>
@@ -9,6 +10,7 @@
 #pragma once
 
 using namespace std;
+using namespace nlohmann;
 
 // &|----> <-----|& ({*..*}) |-----> {8...8} <-----|
 

@@ -2,12 +2,13 @@
 #include "GameObject.h"
 #include "Editor.hpp"
 #include "GameMaster.h"
+#include "Serializable.h"
 
 #pragma once
 
 namespace eng
 {
-class Component : public Editor
+class Component : public Editor, public Serializable
 {
   public:
 

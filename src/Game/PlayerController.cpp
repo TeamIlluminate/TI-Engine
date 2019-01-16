@@ -60,6 +60,16 @@ void PlayerController::Update()
     }
 }
 
+json PlayerController::Serialize() {
+    json jsonPc;
+    jsonPc["type"] = "PlayerController";
+    return jsonPc;
+}
+
+void PlayerController::Deserialize(json obt) {
+
+}
+
 void PlayerController::MoveIn(sf::Vector2f position)
 {
     if (auto mesh = _mesh.lock())

@@ -3,7 +3,8 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "Component.h"
-
+#include "Serializable.h"
+#include <fstream>
 using namespace eng;
 
 void Editor::DrawInspector()
@@ -64,6 +65,37 @@ void Editor::DrawInspector()
             }
         }
 
+        if (ImGui::MenuItem("Save", "bibanatrii", false))
+        {
+            if (auto currentScene = GameMaster::Get().GetCurrentScene().lock())
+            {
+                auto data = currentScene->Serialize();
+                ofstream save;
+                save.open(currentScene->name + ".sb");
+                save << data;
+                save.close();
+            }
+        }
+        
+        if (ImGui::MenuItem("Open", "bibanatrii", false))
+        {
+            if (auto currentScene = GameMaster::Get().GetCurrentScene().lock())
+            {               
+                ifstream open; 
+                open.open("MainScene.sb");
+                string source;
+                string line;
+                while( getline(open, line)) {
+                    source += line;
+                } 
+                open.close();
+                auto scene = make_shared<Scene>();
+                json data = json::parse(source);
+                scene->Deserialize(data);
+                GameMaster::Get().LoadScene(scene);
+            }
+        }
+
         ImGui::EndMenuBar();
 
         ImGui::SetWindowPos(sf::Vector2i(0, 0));
@@ -83,7 +115,6 @@ void Editor::DrawInspector()
             }
         }
 
-
         ImGui::End();
     }
 }
@@ -93,12 +124,12 @@ void Editor::OpenFD()
     OFD_open = true;
 }
 
-string Editor::DrawOpenFileDialog(fs::path path, Component* cmp)
+string Editor::DrawOpenFileDialog(fs::path path, Component *cmp)
 {
     string file = "";
     string name = typeid(*cmp).name();
 
-    if(OFD_open)
+    if (OFD_open)
     {
         string label = "Choose file:##" + name + "_" + to_string(cmp->_owner.lock()->id);
 
@@ -137,7 +168,7 @@ string Editor::DrawOpenFileDialog(fs::path path, Component* cmp)
             file_iterator++;
         }
 
-        if(ImGui::Button("OK"))
+        if (ImGui::Button("OK"))
         {
             OFD_open = false;
             file = files[select];
@@ -145,7 +176,7 @@ string Editor::DrawOpenFileDialog(fs::path path, Component* cmp)
 
         ImGui::SameLine();
 
-        if(ImGui::Button("Cancel"))
+        if (ImGui::Button("Cancel"))
         {
             file = "";
             OFD_open = false;

@@ -8,9 +8,12 @@ include_directories(src)
 
 include_directories(Libraries/ImGUI)
 aux_source_directory(Libraries/ImGUI ImGUI)
+
+include_directories(Libraries)
+aux_source_directory(Libraries JSON)
 SET(FLAGS "-Wformat-security")
 
-add_executable(TI-Engine src/main.cpp ${SRC} ${CMP} ${GAM} ${ImGUI})
+add_executable(TI-Engine src/main.cpp ${SRC} ${CMP} ${GAM} ${ImGUI} ${JSON})
 add_definitions(${FLAGS})
 find_package(OpenGL REQUIRED)
 target_link_libraries (TI-Engine -lsfml-graphics -lsfml-window -lsfml-system -lBox2D -lpthread -lstdc++fs ${OPENGL_LIBRARIES} )

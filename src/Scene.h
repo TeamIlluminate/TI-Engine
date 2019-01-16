@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include "Serializable.h"
 #include "CollisionEventManager.h"
 #include <Box2D/Box2D.h>
 #include <thread>
@@ -12,7 +13,7 @@ class GameObject;
 class Camera;
 class Mesh;
 
-class Scene final : public enable_shared_from_this<Scene>
+class Scene final : public enable_shared_from_this<Scene>, public Serializable
 {
 public:
   friend class Render;
@@ -21,8 +22,12 @@ public:
   friend class Mesh;
   friend class Camera;
 
+  Scene(){};
   Scene(const std::string name); //Name 4r Serialization ability
   Scene(const Scene &scene);
+
+  json Serialize();
+  void Deserialize(json obj);
 
   std::list<weak_ptr<GameObject>> GetGameObjects() const; //Generaly 4r Render using or serializing
 

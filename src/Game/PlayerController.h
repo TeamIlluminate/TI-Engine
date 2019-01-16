@@ -12,6 +12,9 @@ namespace eng
         void OnInit();
         void Update();
         void DrawEditor();
+
+        json Serialize();
+        void Deserialize(json obj);
         private:
         float speed = 5.f;
         void MoveIn(sf::Vector2f position);

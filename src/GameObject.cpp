@@ -192,3 +192,37 @@ void GameObject::DrawEditor()
 
     ImGui::PopID();
 }
+
+json GameObject::Serialize() 
+{
+    json gameObject;
+    gameObject["name"] = name;
+    gameObject["id"] = id;
+    gameObject["transform"]["position"]["x"] = transform.position.x;
+    gameObject["transform"]["position"]["y"] = transform.position.y;
+    gameObject["transform"]["angle"] = transform.angle;
+    auto copyComponents = this->components;
+    int i = 0;
+    for (auto component : copyComponents) {
+        gameObject["components"][i] = component->Serialize();
+        i++;
+    }
+    return gameObject;
+}
+
+void GameObject::Deserialize(json j) 
+{
+    name = j["name"];
+    id = j["id"];
+    transform.position.x = j["transform"]["position"]["x"];
+    transform.position.y = j["transform"]["position"]["y"];
+    transform.angle = j["transform"]["angle"];
+    auto jsonComponents = j["components"];
+    for (auto jsonComponent : jsonComponents) {
+        auto component = Serializable::GetComponent(jsonComponent);
+        this->AddComponent(component);
+        component->Deserialize(jsonComponent);
+    }
+
+
+}
