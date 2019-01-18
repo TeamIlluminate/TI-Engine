@@ -1,17 +1,8 @@
 #include "GameMaster.h"
 #include "Render.h"
 #include "Scene.h"
-#include "Component.h"
-#include "GameObject.h"
 #include <Box2D/Box2D.h>
-#include "Components/Camera.h"
-#include "Game/PlayerController.h"
-#include "Game/EnemyAI.h"
-#include "Game/FPSDraw.cpp"
-#include "Game/ShaderSystem.h"
-#include "Editor.hpp"
-#include "Components/Mesh.h"
-
+#include "SerializableGenerator.cpp"
 
 int main()
 {
@@ -22,8 +13,10 @@ int main()
 
     eng::GameMaster &gameMaster = eng::GameMaster::Get();
 
-    shared_ptr<eng::Scene> loadScene = make_shared<eng::Scene>();
+    shared_ptr<eng::Scene> loadScene = make_shared<eng::Scene>("scene4rLoad");
     gameMaster.LoadScene(loadScene);
+
+    eng::SerializableGenerator* sgen = new eng::SerializableGenerator();
 
     while (eng::GameMaster::Get().IsGameStarted())
     {

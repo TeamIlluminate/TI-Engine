@@ -5,6 +5,7 @@
 namespace eng
 {
 
+//[Serializable]
 class Mesh : public Component
 {
 public:

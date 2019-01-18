@@ -5,6 +5,7 @@
 
 namespace eng{
 
+//[Serializable]
 class EnemyAI : public Component
 {
 
@@ -23,6 +24,22 @@ void DrawEditor();
 list<weak_ptr<GameObject> > players;
 float speed = 5.f;
 float range = 200.f;
+
+json Serialize() 
+{
+    json jAI;
+    jAI["type"] = "EAI";
+    jAI["speed"] = speed;
+    jAI["range"] = range;
+    return jAI;
+};
+
+void Deserialize(json obj)
+{
+    speed = obj["speed"];
+    range = obj["range"];
+};
+
 };
 
 }

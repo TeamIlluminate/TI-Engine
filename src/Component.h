@@ -19,7 +19,7 @@ class Component : public Editor, public Serializable
   //Remember field owner is null by default
   //If you want code with using owner variable - put this code in OnInit()
   virtual ~Component(){};
-
+  
   void SetOwner(weak_ptr<GameObject> newOwner)
   {
     this->_owner = newOwner;
@@ -31,6 +31,8 @@ class Component : public Editor, public Serializable
   };
 
   weak_ptr<GameObject> _owner;
+
+  string name;
 
   private:
 

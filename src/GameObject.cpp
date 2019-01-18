@@ -223,6 +223,4 @@ void GameObject::Deserialize(json j)
         this->AddComponent(component);
         component->Deserialize(jsonComponent);
     }
-
-
 }

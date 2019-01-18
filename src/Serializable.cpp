@@ -1,27 +1,24 @@
 #include "Serializable.h"
-#include "Game/PlayerController.h"
+#include "Component.h"
 #include "Components/Mesh.h"
-#include "Components/Camera.h"
 
 using namespace eng;
 
 shared_ptr<Component> Serializable::GetComponent(json component)
 {
+    auto sss = constructorStorage;
     string name = component["type"];
-    shared_ptr<Component> returning;
-    if (name == "PlayerController")
-    {
-        returning = make_shared<PlayerController>();
-    }
-    if (name == "Mesh")
-    {
-        returning = make_shared<Mesh>();
-    }
-    if (name == "Camera")
-    {
-        returning = make_shared<Camera>();
-    }
+    return constructorStorage[name]();
+}
 
-  //  returning->Deserialize(component);
-    return returning;
+bool Serializable::VerifyRegister(string name)
+{
+    if (constructorStorage[name])
+        return true;
+    else
+        return false;
+}
+void Serializable::RegisterComponentConstructor(string typeName, shared_ptr<Component> (*cc)())
+{
+    constructorStorage.insert(pair<string, shared_ptr<Component> (*)()>(typeName, *cc));
 }

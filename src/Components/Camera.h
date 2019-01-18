@@ -2,11 +2,10 @@
 #include <SFML/Graphics.hpp>
 namespace eng
 {
-
+//[Serializable]
 class Camera : public Component, public enable_shared_from_this<Camera>
 {
   public:
-    Camera(){};
     shared_ptr<Component> Clone();
     void OnInit();
     void Update();
@@ -16,5 +15,8 @@ class Camera : public Component, public enable_shared_from_this<Camera>
     int scale = 120;
     sf::View view;
     bool isEnabled = false;
+    json Serialize();
+    void Deserialize(json obj);
+
 };
 } // namespace eng

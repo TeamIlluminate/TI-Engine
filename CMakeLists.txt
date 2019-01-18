@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(TI-Engine VERSION 0.1.0)
 enable_testing()
+execute_process(COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/TI-PreCompiler.exec")
+
+
 aux_source_directory(src/Components CMP)
 aux_source_directory(src SRC)
 aux_source_directory(src/Game GAM)

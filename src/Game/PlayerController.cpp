@@ -63,11 +63,16 @@ void PlayerController::Update()
 json PlayerController::Serialize() {
     json jsonPc;
     jsonPc["type"] = "PlayerController";
+    jsonPc["speed"] = speed;
+    jsonPc["shootDelay"] = shootDelay;
+    jsonPc["bulletForce"] = bulletForce;
     return jsonPc;
 }
 
-void PlayerController::Deserialize(json obt) {
-
+void PlayerController::Deserialize(json jsonPc) {
+   speed = jsonPc["speed"];
+   shootDelay = jsonPc["shootDelay"];
+   bulletForce = jsonPc["bulletForce"];
 }
 
 void PlayerController::MoveIn(sf::Vector2f position)

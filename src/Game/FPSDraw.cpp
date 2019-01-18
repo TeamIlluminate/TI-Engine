@@ -7,6 +7,7 @@
 namespace eng
 {
 
+//[Serializable]
 class FPSDraw : public Component
 {
     public:

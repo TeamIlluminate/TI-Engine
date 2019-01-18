@@ -60,3 +60,21 @@ void Camera::DrawEditor()
         ImGui::Checkbox("Is enabled", &isEnabled);
     }
 }
+
+json Camera::Serialize()
+{
+    json jCamera;
+    jCamera["type"] = "Camera";
+    jCamera["maxScale"] = maxScale;
+    jCamera["minScale"] = minScale;
+    jCamera["scale"] = scale;
+    return jCamera;
+}
+
+void Camera::Deserialize(json obj)
+{
+    maxScale = obj["maxScale"];
+    minScale = obj["minScale"];
+    scale = obj["scale"];
+    view.setSize(scale * 16, scale * 9);
+}

@@ -4,10 +4,10 @@
 #include <SFML/Graphics.hpp>
 namespace eng
 {
+    //[Serializable]
     class PlayerController : public Component
     {
-        public:
-        PlayerController() {}
+        public:        
         shared_ptr<eng::Component> Clone();
         void OnInit();
         void Update();
