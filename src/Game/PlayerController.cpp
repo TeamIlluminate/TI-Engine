@@ -79,7 +79,7 @@ void PlayerController::MoveIn(sf::Vector2f position)
 {
     if (auto mesh = _mesh.lock())
     {
-        mesh->TransformPosition(position);
+        mesh->TransformPosition(position * 0.1f);
     }
 }
 

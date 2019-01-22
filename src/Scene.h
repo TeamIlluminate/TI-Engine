@@ -23,7 +23,7 @@ public:
   friend class Camera;
 
   Scene(){};
-  Scene(const std::string name); //Name 4r Serialization ability
+  Scene(std::string name); //Name 4r Serialization ability
   Scene(const Scene &scene);
 
   json Serialize();
@@ -40,7 +40,7 @@ public:
 
   void Destroy(weak_ptr<GameObject> objectToRemove); //Remove gameobject from current Scene
 
-  shared_ptr<GameObject> CreateGameObject(std::string name);
+  shared_ptr<GameObject> CreateGameObject(std::string name = "emtpy");
   shared_ptr<GameObject> CreateGameObject(shared_ptr<GameObject> gameObject);
   shared_ptr<GameObject> CloneGameObject(shared_ptr<GameObject> gameObject);
 

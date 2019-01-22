@@ -73,10 +73,10 @@ void Mesh::CreatePhysics()
     }
 
     b2BodyDef defBody;
-    defBody.type = b2_dynamicBody;
-    defBody.position.Set(_owner.lock()->transform.position.x, _owner.lock()->transform.position.y);
+    defBody.type = b2_dynamicBody;//тут надо
+    defBody.position.Set(_owner.lock()->transform.position.x / 50.f, _owner.lock()->transform.position.y / 50.f);
     this->body = _owner.lock()->GetScene().lock()->GetWorld().lock()->CreateBody(&defBody);
-
+    this->body->SetLinearDamping(0.5f);
     b2FixtureDef defFixture;
     defFixture.shape = shape;
     this->fixture = this->body->CreateFixture(&defFixture);
@@ -118,9 +118,9 @@ void Mesh::TransformPosition(sf::Vector2f newPos)
     {
         if (auto owner = _owner.lock())
         {
-            newPos = newPos + owner->transform.position;
-            b2Vec2 toPos = b2Vec2(newPos.x, newPos.y);
-            this->body->SetTransform(toPos, 0);
+            newPos = newPos * 0.02f;
+            b2Vec2 position = body->GetPosition() + b2Vec2(newPos.x, newPos.y);
+            this->body->SetTransform(position, 0);
         }
     }
 }
@@ -130,7 +130,7 @@ void Mesh::FixedUpdate()
     if (this->body)
     {
         b2Vec2 position = body->GetPosition();
-        _owner.lock()->transform.position = sf::Vector2f(position.x, position.y);
+        _owner.lock()->transform.position = sf::Vector2f(position.x * 50, position.y * 50);
     }
 }
 

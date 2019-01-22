@@ -41,14 +41,51 @@ float GameMaster::UpdateDeltaTime(float dt)
 
 //WINDOW
 
-weak_ptr<sf::RenderWindow> GameMaster::GetWindow() {
+weak_ptr<sf::RenderWindow> GameMaster::GetWindow()
+{
     return window;
 }
 
-void GameMaster::SetWindow(shared_ptr<sf::RenderWindow> newWindow ) {
+void GameMaster::SetWindow(shared_ptr<sf::RenderWindow> newWindow)
+{
     window = newWindow;
 }
 
-void GameMaster::SetWindow() {
+void GameMaster::SetWindow()
+{
     window = nullptr;
+}
+
+shared_ptr<Component> GameMaster::GetComponent(json component)
+{
+    return constructorStorage[component["type"]]();
+}
+
+bool GameMaster::VerifyRegister(string name)
+{
+    if (constructorStorage[name])
+        return true;
+    else
+        return false;
+}
+void GameMaster::RegisterComponentConstructor(string typeName, shared_ptr<Component> (*cc)())
+{
+    constructorStorage.insert(pair<string, shared_ptr<Component> (*)()>(typeName, *cc));
+}
+
+string GameMaster::GetStorageNames()
+{
+    static string storageNames;
+
+    if(storageNames.empty())
+    {
+        storageNames = "";
+        auto allTypes = constructorStorage;
+        for(auto typePair : allTypes)
+        {
+            storageNames = storageNames + typePair.first + '\0';
+        }
+    }
+
+    return storageNames;
 }

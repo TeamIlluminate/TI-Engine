@@ -5,6 +5,7 @@ namespace eng
 {
 
 class Scene;
+class Component;
 
 class GameMaster
 {
@@ -32,7 +33,12 @@ class GameMaster
     void SetWindow();
     void SetWindow(shared_ptr<sf::RenderWindow> window);
     float GetDeltaTime() const;
-
+    
+    shared_ptr<Component> GetComponent(json component);
+    bool VerifyRegister(string name);
+    void RegisterComponentConstructor(string typeName, shared_ptr<Component> (*cc)());
+    map<string, shared_ptr<Component> (*)()> GetStorage() {return constructorStorage; };
+    string GetStorageNames();
     float UpdateDeltaTime(float dt);
 
     sf::VideoMode mode;
@@ -47,7 +53,10 @@ class GameMaster
     shared_ptr<sf::RenderWindow> window;
     shared_ptr<Scene> currentScene;
     shared_ptr<Scene> editorScene;
+
     float deltaTime = 0;
+    map<string, shared_ptr<Component> (*)()> constructorStorage;
+    char ** chars ;
 };
 
 } // namespace eng

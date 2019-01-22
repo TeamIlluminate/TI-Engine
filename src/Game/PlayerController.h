@@ -16,7 +16,7 @@ namespace eng
         json Serialize();
         void Deserialize(json obj);
         private:
-        float speed = 5.f;
+        float speed = 15.f;
         void MoveIn(sf::Vector2f position);
         void ShootIn(sf::Vector2f position);
         weak_ptr<Mesh>  _mesh;     

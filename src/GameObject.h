@@ -79,8 +79,8 @@ protected:
   weak_ptr<Scene> scene;
 
   weak_ptr<GameObject> parent;
-  bool buttonPressed = false;
   std::list<shared_ptr<GameObject>> childs;
   std::list<shared_ptr<Component>> components;
+  
 };
 } // namespace eng

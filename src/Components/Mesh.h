@@ -9,7 +9,6 @@ namespace eng
 class Mesh : public Component
 {
 public:
-
   friend class Render;
 
   ~Mesh();

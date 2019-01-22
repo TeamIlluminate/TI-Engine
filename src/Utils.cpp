@@ -8,3 +8,10 @@ sf::Vector2f GetMouseCoordinates() {
     return window->mapPixelToCoords(sf::Mouse::getPosition(*window));
     } else return sf::Vector2f(0,0);
 }
+
+sf::Vector2f GetCenterScreenCoordinates() {
+    if (auto window = GameMaster::Get().GetWindow().lock()) {
+        sf::Vector2u windowSize = window->getSize();
+        return window->mapPixelToCoords((sf::Vector2i(windowSize.x / 2.f, windowSize.y / 2.f)));
+    }
+}

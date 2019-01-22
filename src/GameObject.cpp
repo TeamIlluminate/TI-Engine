@@ -2,6 +2,7 @@
 #include "GameMaster.h"
 #include "Component.h"
 #include "Components/Camera.h"
+#include <iterator>
 
 using namespace eng;
 
@@ -154,11 +155,10 @@ void GameObject::DrawEditor()
 
     ImGui::PushID(id);
 
-    string headerLabel = name + "##" + to_string(id);
-
+    string headerLabel = name + "###" + to_string(id); //только айди у нас не меняется.    
     if (ImGui::CollapsingHeader(headerLabel.c_str()))
     {
-        ImGui::Text(name.c_str());
+        ImGui::InputText("NAME:", &name);
         DrawVector2(transform.position);
         ImGui::Separator();
         if (ImGui::TreeNode("Components"))
@@ -169,31 +169,36 @@ void GameObject::DrawEditor()
             }
             ImGui::TreePop();
         }
-
-        if (ImGui::IsMouseReleased(0) && buttonPressed)
-        {
-            auto newGameObject = GameMaster::Get().GetCurrentScene().lock()->CloneGameObject(shared_from_this());
-            newGameObject->transform.position = GetMouseCoordinates();
-            buttonPressed = false;
-        }
-        
         if (ImGui::Button("Clone"))
         {
-            buttonPressed = true;
+            auto newGameObject = GameMaster::Get().GetCurrentScene().lock()->CloneGameObject(shared_from_this());
+            newGameObject->transform.position = GetCenterScreenCoordinates();
         }
         ImGui::SameLine();
-
         if (ImGui::Button("Delete"))
         {
             scene.lock()->Destroy(weak_from_this());
-        }
+        }   
         ImGui::Separator();
+        if (ImGui::CollapsingHeader("Component management"))
+        {
+            static int type = 0;
+
+            ImGui::Combo("Component", &type, GameMaster::Get().GetStorageNames().c_str());
+            if (ImGui::Button("Add Component")) {
+                auto cIt = GameMaster::Get().GetStorage().begin();
+                advance(cIt, type);
+                this->AddComponent(cIt->second());
+            }                        
+
+            ImGui::SameLine();
+        }
     }
 
     ImGui::PopID();
 }
 
-json GameObject::Serialize() 
+json GameObject::Serialize()
 {
     json gameObject;
     gameObject["name"] = name;
@@ -203,14 +208,15 @@ json GameObject::Serialize()
     gameObject["transform"]["angle"] = transform.angle;
     auto copyComponents = this->components;
     int i = 0;
-    for (auto component : copyComponents) {
+    for (auto component : copyComponents)
+    {
         gameObject["components"][i] = component->Serialize();
         i++;
     }
     return gameObject;
 }
 
-void GameObject::Deserialize(json j) 
+void GameObject::Deserialize(json j)
 {
     name = j["name"];
     id = j["id"];
@@ -218,8 +224,9 @@ void GameObject::Deserialize(json j)
     transform.position.y = j["transform"]["position"]["y"];
     transform.angle = j["transform"]["angle"];
     auto jsonComponents = j["components"];
-    for (auto jsonComponent : jsonComponents) {
-        auto component = Serializable::GetComponent(jsonComponent);
+    for (auto jsonComponent : jsonComponents)
+    {
+        auto component = GameMaster::Get().GetComponent(jsonComponent);
         this->AddComponent(component);
         component->Deserialize(jsonComponent);
     }

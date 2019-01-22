@@ -76,18 +76,19 @@ void Editor::DrawInspector()
                 save.close();
             }
         }
-        
+
         if (ImGui::MenuItem("Open", "bibanatrii", false))
         {
             if (auto currentScene = GameMaster::Get().GetCurrentScene().lock())
-            {               
-                ifstream open; 
+            {
+                ifstream open;
                 open.open("MainScene.sb");
                 string source;
                 string line;
-                while( getline(open, line)) {
+                while (getline(open, line))
+                {
                     source += line;
-                } 
+                }
                 open.close();
                 auto scene = make_shared<Scene>();
                 json data = json::parse(source);
@@ -113,7 +114,15 @@ void Editor::DrawInspector()
                     gameObject->DrawEditor();
                 }
             }
+            ImGui::Separator();
+            if (ImGui::Button("Create new GameObject"))
+            {
+                auto newGameObject = c_Scene->CreateGameObject();
+                newGameObject->transform.position = GetCenterScreenCoordinates();
+            }
         }
+
+        ImGui::SameLine();
 
         ImGui::End();
     }

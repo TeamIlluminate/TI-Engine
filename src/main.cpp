@@ -16,8 +16,8 @@ int main()
     shared_ptr<eng::Scene> loadScene = make_shared<eng::Scene>("scene4rLoad");
     gameMaster.LoadScene(loadScene);
 
-    eng::SerializableGenerator* sgen = new eng::SerializableGenerator();
-
+    delete new eng::SerializableGenerator();
+     
     while (eng::GameMaster::Get().IsGameStarted())
     {
     } //Now imitate game\editor cycle

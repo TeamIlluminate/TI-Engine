@@ -112,7 +112,7 @@ list<weak_ptr<Mesh>> Scene::Update()
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-shared_ptr<GameObject> Scene::CreateGameObject(string name = "empty")
+shared_ptr<GameObject> Scene::CreateGameObject(string name)
 {
     auto gameObject = make_shared<GameObject>(weak_from_this(), name);
     gameObject->id = idCounter;
@@ -214,7 +214,6 @@ json Scene::Serialize()
 
 void Scene::Deserialize(json obj)
 {
-    std::cout << obj << '\n';
     name = obj["name"];
     this->world = make_shared<b2World>(b2Vec2(obj["world"]["gravity"]["x"], obj["world"]["gravity"]["x"]));
     auto jsonSceneObjects = obj["sceneObjects"];
