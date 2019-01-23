@@ -35,6 +35,7 @@ class Bullet : public Component
     }
 
   private:
+  
     void OnInit()
     {
         _mesh = _owner.lock()->GetComponent<Mesh>();
@@ -47,7 +48,7 @@ class Bullet : public Component
         {
             b2Body *body = mesh->GetBody();
             b2Vec2 velocity = body->GetLinearVelocity();
-            if (sqrt(velocity.x * velocity.x + velocity.y * velocity.y) < 5)
+            if (sqrt(velocity.x * velocity.x + velocity.y * velocity.y) < 1.f / mesh->physicsCoef)
             {
                 owner->GetScene().lock()->Destroy(owner);
             }

@@ -27,7 +27,7 @@ void Render::Init(sf::VideoMode mode)
         //////////////////////////////////////////////////////////
 
         //First - free space
-        this->wThread->~thread(); // ->terminate(); //Terminate window drawning loop;
+        this->wThread->~thread();                                                 // ->terminate(); //Terminate window drawning loop;
         this->window = make_shared<sf::RenderWindow>(mode, "TI Engine improved"); //I wanna make some spec file-descriptor like (Project name; Engine version; ... etc)
         this->window->setActive(false);
         this->wThread = make_shared<std::thread>(&Render::WindowLoop, this); //Restart thread
@@ -41,13 +41,10 @@ void Render::WindowLoop()
 
     window->clear();
 
-    defaultView = window->getDefaultView(); //After change 2 def camera
-
     ImGui::SFML::Init(*window);
-
+    defaultView.setSize(sf::Vector2f(window->getDefaultView().getSize()));
     sf::Clock deltaClock;
     sf::Clock imGuiClock;
-
     float fixedDelta = 0;
 
     while (window->isOpen())
@@ -78,8 +75,26 @@ void Render::WindowLoop()
                 GameMaster::Get().SetWindow();
                 GameMaster::Get().GameStarted(false);
             }
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::Up)
+                {
+                    defaultView.move(0, -1);
+                }
+                else if (event.key.code == sf::Keyboard::Down)
+                {
+                    defaultView.move(0, 1);
+                }
+                else if (event.key.code == sf::Keyboard::Left)
+                {
+                    defaultView.move(-1, 0);
+                }
+                else if (event.key.code == sf::Keyboard::Right)
+                {
+                    defaultView.move(1, 0);
+                }
+            }
         }
-
 
         if (currentScene)
         {
@@ -107,11 +122,15 @@ void Render::WindowLoop()
                 {
                     if (auto camera = _camera.lock())
                     {
-                        if (camera->isEnabled)
+                        if (camera->isEnabled) {
+                            defaultView.setCenter(sf::Vector2f(camera->view.getCenter()));
                             window->setView(camera->view);
+                        }
                     }
                 }
-            } else window->setView(defaultView);
+            }
+            else
+                window->setView(defaultView);
 
             ImGui::SFML::Render(*window);
             window->display();

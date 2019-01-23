@@ -62,21 +62,21 @@ void Mesh::CreatePhysics()
     if (auto circle = dynamic_pointer_cast<sf::CircleShape>(this->shape))
     {
         shape = new b2CircleShape();
-        shape->m_radius = circle->getRadius();
+        shape->m_radius = circle->getRadius() / physicsCoef;
     }
     else if (auto rectangle = dynamic_pointer_cast<sf::RectangleShape>(this->shape))
     {
         b2PolygonShape *rect = new b2PolygonShape();
         auto size = rectangle->getSize();
-        rect->SetAsBox(size.x / 2.f, size.y / 2.f);
+        rect->SetAsBox(size.x / (2.f * physicsCoef), size.y / (2.f * physicsCoef));
         shape = rect;
     }
 
     b2BodyDef defBody;
     defBody.type = b2_dynamicBody;//тут надо
-    defBody.position.Set(_owner.lock()->transform.position.x / 50.f, _owner.lock()->transform.position.y / 50.f);
+    defBody.position.Set(_owner.lock()->transform.position.x / physicsCoef, _owner.lock()->transform.position.y / physicsCoef);
     this->body = _owner.lock()->GetScene().lock()->GetWorld().lock()->CreateBody(&defBody);
-    this->body->SetLinearDamping(0.5f);
+    this->body->SetLinearDamping(1.f / physicsCoef);
     b2FixtureDef defFixture;
     defFixture.shape = shape;
     this->fixture = this->body->CreateFixture(&defFixture);
@@ -118,7 +118,7 @@ void Mesh::TransformPosition(sf::Vector2f newPos)
     {
         if (auto owner = _owner.lock())
         {
-            newPos = newPos * 0.02f;
+            newPos =  newPos / physicsCoef;
             b2Vec2 position = body->GetPosition() + b2Vec2(newPos.x, newPos.y);
             this->body->SetTransform(position, 0);
         }
@@ -130,13 +130,13 @@ void Mesh::FixedUpdate()
     if (this->body)
     {
         b2Vec2 position = body->GetPosition();
-        _owner.lock()->transform.position = sf::Vector2f(position.x * 50, position.y * 50);
+        _owner.lock()->transform.position = sf::Vector2f(position.x * physicsCoef, position.y * physicsCoef);
     }
 }
 
 void Mesh::AddImpulse(sf::Vector2f impulse)
 {
-    this->body->SetLinearVelocity(b2Vec2(impulse.x, impulse.y));
+    this->body->SetLinearVelocity(b2Vec2(impulse.x / physicsCoef, impulse.y / physicsCoef));
 }
 
 void Mesh::DrawEditor()
@@ -384,7 +384,7 @@ void Mesh::EditorPhysics()
         {
             ImGui::InputFloat("Collider Radius", &circleShape->m_radius);
 
-            sf::CircleShape collider(circleShape->m_radius);
+            sf::CircleShape collider(physicsCoef * circleShape->m_radius);
             collider.setOrigin(circleShape->m_radius, circleShape->m_radius);
             collider.setFillColor(sf::Color::Transparent);
             collider.setOutlineColor(sf::Color(0.f, 255.f, 0.f, 125.f));
@@ -405,7 +405,7 @@ void Mesh::EditorPhysics()
             ImGui::PushID("PHYSICS");
             if (ImGui::InputFloat("Width ", &size.x) || ImGui::InputFloat("Height ", &size.y))
             {
-                polygonShape->SetAsBox(size.x / 2.f, size.y / 2.f);
+                polygonShape->SetAsBox( physicsCoef * size.x / 2.f, physicsCoef * size.y / 2.f);
             }
             ImGui::PopID();
             sf::RectangleShape collider;

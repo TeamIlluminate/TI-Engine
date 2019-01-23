@@ -64,12 +64,13 @@ shared_ptr<Component> GameMaster::GetComponent(json component)
 bool GameMaster::VerifyRegister(string name)
 {
     if (constructorStorage[name])
-        return true;
-    else
         return false;
+    else
+        return true;
 }
 void GameMaster::RegisterComponentConstructor(string typeName, shared_ptr<Component> (*cc)())
 {
+    //if(VerifyRegister(typeName)) 
     constructorStorage.insert(pair<string, shared_ptr<Component> (*)()>(typeName, *cc));
 }
 

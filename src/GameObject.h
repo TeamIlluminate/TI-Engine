@@ -56,7 +56,7 @@ public:
 
   std::list<weak_ptr<Component>> GetComponents() const;
 
-  //Dont user per now
+  //Dont user per nowasdasdasdasd
   void RemoveComponent(Component *component);
 
   const std::string GetName() const;

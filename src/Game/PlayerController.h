@@ -11,6 +11,7 @@ namespace eng
         shared_ptr<eng::Component> Clone();
         void OnInit();
         void Update();
+        void FixedUpdate();
         void DrawEditor();
 
         json Serialize();

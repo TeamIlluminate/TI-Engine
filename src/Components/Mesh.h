@@ -39,6 +39,8 @@ public:
   json Serialize();
   void Deserialize(json j);
 
+  float physicsCoef = 50.f;
+  
 private:
 void FixedUpdate();
   void CreatePhysics();
@@ -69,7 +71,6 @@ void FixedUpdate();
 
   shared_ptr<sf::Sprite> LoadSprite(string file);
   shared_ptr<sf::Texture> texture = make_shared<sf::Texture>();
-
 
 
   void EditorCircle();

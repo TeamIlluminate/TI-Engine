@@ -8,8 +8,7 @@ class Camera : public Component, public enable_shared_from_this<Camera>
   public:
     shared_ptr<Component> Clone();
     void OnInit();
-    void Update();
-    void DrawEditor();
+
     int maxScale = 120;
     int minScale = 30;
     int scale = 120;
@@ -18,5 +17,7 @@ class Camera : public Component, public enable_shared_from_this<Camera>
     json Serialize();
     void Deserialize(json obj);
 
+    void Update();
+    void DrawEditor();
 };
 } // namespace eng

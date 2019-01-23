@@ -17,8 +17,7 @@ shared_ptr<Component> PlayerController::Clone()
     return make_shared<PlayerController>(*this);
 }
 
-void PlayerController::Update()
-{
+void PlayerController::Update() {
     if (auto mesh = _mesh.lock())
     {
         if(mesh->GetBody())
@@ -28,6 +27,29 @@ void PlayerController::Update()
                 if (shoot < shootDelay)
                     shoot += DeltaTime();
 
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+                {
+                    if (!isFiring && shoot >= shootDelay)
+                    {
+                        shoot = 0;
+                        isFiring != isFiring;
+                        sf::Vector2f currentPosition = GetMouseCoordinates();
+                        this->ShootIn(sf::Vector2f(currentPosition.x, currentPosition.y));
+                    }
+                }
+            }
+        }
+    }
+}
+
+void PlayerController::FixedUpdate()
+{
+    if (auto mesh = _mesh.lock())
+    {
+        if(mesh->GetBody())
+        {
+            if (!mesh->GetBody()->GetWorld()->IsLocked())
+            {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
                 {
                     this->MoveIn(sf::Vector2f(0, -speed));
@@ -43,17 +65,6 @@ void PlayerController::Update()
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
                 {
                     this->MoveIn(sf::Vector2f(speed, 0));
-                }
-
-                if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-                {
-                    if (!isFiring && shoot >= shootDelay)
-                    {
-                        shoot = 0;
-                        isFiring != isFiring;
-                        sf::Vector2f currentPosition = GetMouseCoordinates();
-                        this->ShootIn(sf::Vector2f(currentPosition.x, currentPosition.y));
-                    }
                 }
             }
         }
@@ -79,7 +90,7 @@ void PlayerController::MoveIn(sf::Vector2f position)
 {
     if (auto mesh = _mesh.lock())
     {
-        mesh->TransformPosition(position * 0.1f);
+        mesh->TransformPosition(position * 0.02f);
     }
 }
 
@@ -93,7 +104,7 @@ void PlayerController::ShootIn(sf::Vector2f position)
             direction = Normalize(direction);
 
             auto bullet = owner->GetScene().lock()->CreateGameObject("BULLET");
-            bullet->transform.position = owner->transform.position + direction * 15.f;
+            bullet->transform.position = owner->transform.position + direction * 30.f;
 
             auto shape = make_shared<sf::CircleShape>(2.f);
             shape->setOrigin(1.f, 1.f);
