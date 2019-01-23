@@ -17,6 +17,13 @@ struct OFD_Data
     string extension;
 };
 
+struct SFD_Data
+{
+    string id;
+    fs::path path;
+    shared_ptr<string> output;
+};
+
 class Component;
 
 class Editor
@@ -152,20 +159,29 @@ class Editor
     };
 
     void DrawOpenFileDialog();
+    void DrawSaveFileDialog();
+
     OFD_Data OFD_data;
+    SFD_Data SFD_data;
+
     bool OFD_open = false;
+    bool SFD_open = false;
 
   protected:
     void OpenFileDialog(fs::path path, Component *cmp = nullptr, string extension = "");
+    void SaveFileDialog(fs::path pathStart, Component *cmp = nullptr);
+
+    bool SFD_Status()
+    {
+        if (SFD_data.output && !SFD_open)
+            return true;
+        return false;
+    }
+
     bool OFD_Status()
     {
-        if (OFD_data.output)
-        {
-            if (OFD_data.output && !OFD_open)
-            {
-                return true;
-            }
-        }
+        if (OFD_data.output && !OFD_open)
+            return true;
         return false;
     };
 
@@ -173,6 +189,13 @@ class Editor
     {
         auto myResult = make_shared<string>(*OFD_data.output);
         OFD_data.output = nullptr;
+        return myResult;
+    };
+
+    shared_ptr<string> GetSFD_Result()
+    {
+        auto myResult = make_shared<string>(*SFD_data.output);
+        SFD_data.output = nullptr;
         return myResult;
     };
 };

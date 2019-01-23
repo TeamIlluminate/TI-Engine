@@ -14,11 +14,11 @@ namespace eng
         fs::path filePath;
     };
 
-    struct Sound
+    struct SoundBuffer
     {
-        // string key;
-        // sf::Sound sf_sound;
-        // fs::path filePath;
+         string key;
+         shared_ptr<sf::SoundBuffer> sf_soundBuffer;
+         fs::path filePath;
     };
 
     class ResourceManager : public Serializable
@@ -29,13 +29,13 @@ namespace eng
         static ResourceManager& Get();
         
         weak_ptr<Texture> LoadTexture(fs::path pathToTexture);
-        Sound LoadSound(fs::path pathToSound);
+        weak_ptr<SoundBuffer> LoadSound(fs::path pathToSound);
 
         weak_ptr<Texture> GetTexture(string key);
-        sf::Sound GetSound(string key);
+        weak_ptr<SoundBuffer> GetSound(string key);
 
         list<Texture> GetAllTextures();
-        list<Sound> GetAllSounds();
+        list<SoundBuffer> GetAllSounds();
 
     private:
 
@@ -48,7 +48,7 @@ namespace eng
         void  Deserialize(json obj); 
 
         map<string, shared_ptr<Texture>> textures;
-        map<string, Sound> sounds;
+        map<string, shared_ptr<SoundBuffer>> sounds;
 
         string GenerateHash(string input);
         

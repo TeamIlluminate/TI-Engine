@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include "imgui.h"
 #include "json.hpp"
 #include "imgui-SFML.h"

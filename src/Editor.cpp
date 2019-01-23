@@ -101,15 +101,15 @@ void Editor::DrawInspector()
             }
             open.close();
             auto scene = make_shared<Scene>();
-            // try
-            // {
+            try
+            {
                 json data = json::parse(source);
                 scene->Deserialize(data);
                 GameMaster::Get().LoadScene(scene);
-            // }
-            // catch (exception)
-            // {
-            // }
+            }
+            catch (exception)
+            {
+            }
         }
 
         auto _c_Scene = GameMaster::Get().GetCurrentScene();
@@ -168,11 +168,41 @@ void Editor::OpenFileDialog(fs::path path, Component *cmp, string ext)
     }
 }
 
+void Editor::SaveFileDialog(fs::path pathStart, Component *cmp)
+{
+    if (!SFD_open)
+    {
+        string name;
+        string id;
+
+        if (pathStart == "")
+            pathStart = fs::current_path();
+
+        if (cmp)
+        {
+            name = typeid(*cmp).name();
+            id = "Choose file:##" + name + "_" + to_string(cmp->_owner.lock()->id);
+        }
+        else
+        {
+            name = "Inspector";
+            id = "Choose file:##" + name + "_0x00000";
+        }
+        SFD_Data data = {id, pathStart, make_shared<string>()};
+        SFD_data = data;
+        SFD_open = true;
+    }
+}
+
 void Editor::UpdateEditor()
 {
     if (OFD_open)
     {
         DrawOpenFileDialog();
+    }
+    if (SFD_open)
+    {
+        DrawSaveFileDialog();
     }
 }
 
@@ -226,6 +256,54 @@ void Editor::DrawOpenFileDialog()
     if (ImGui::Button("OK"))
     {
         *OFD_data.output = files[select];
+        OFD_open = false;
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Cancel"))
+    {
+        *OFD_data.output = "";
+        OFD_open = false;
+    }
+
+    ImGui::End();
+}
+
+void Editor::DrawSaveFileDialog()
+{
+    ImGui::SetNextWindowPosCenter(ImGuiCond_Appearing);
+    ImGui::Begin(SFD_data.id.c_str(), nullptr, sf::Vector2i(500, 500));
+
+    if (!fs::exists(SFD_data.path))
+        fs::create_directory(SFD_data.path);
+
+    fs::recursive_directory_iterator begin(OFD_data.path);
+    fs::recursive_directory_iterator end;
+
+    std::vector<fs::path> subdirs;
+    std::copy_if(begin, end, std::back_inserter(subdirs), [](const fs::path &path) {
+        return fs::is_directory(path);
+    });
+
+    static int select = -1;
+    int file_iterator = 0;
+
+    for (auto dir : subdirs)
+    {
+        if (ImGui::Selectable(dir.c_str(), select == file_iterator))
+        {
+            select = file_iterator;
+        }
+        file_iterator++;
+    }
+
+    ImGui::InputText("FileName: ", SFD_data.output.get());
+
+    if (ImGui::Button("OK"))
+    {
+        string path = "/" + *SFD_data.output;
+        *SFD_data.output = (string)subdirs[select] + path;
         OFD_open = false;
     }
 
