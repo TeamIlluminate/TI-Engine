@@ -106,14 +106,6 @@ void Render::WindowLoop()
             }
 
             auto meshes = currentScene->Update();
-            for (auto _mesh : meshes)
-            {
-                if (auto mesh = _mesh.lock())
-                {
-                    if (auto drawable = mesh->GetDrawable().lock())
-                        window->draw(*drawable.get(), mesh->GetRenderStates());
-                }
-            }
 
             if (GameMaster::Get().state & GameMaster::_GAME)
             {
@@ -122,7 +114,8 @@ void Render::WindowLoop()
                 {
                     if (auto camera = _camera.lock())
                     {
-                        if (camera->isEnabled) {
+                        if (camera->isEnabled)
+                        {
                             defaultView.setCenter(sf::Vector2f(camera->view.getCenter()));
                             window->setView(camera->view);
                         }
@@ -131,6 +124,15 @@ void Render::WindowLoop()
             }
             else
                 window->setView(defaultView);
+
+            for (auto _mesh : meshes)
+            {
+                if (auto mesh = _mesh.lock())
+                {
+                    if (auto drawable = mesh->GetDrawable().lock())
+                        window->draw(*drawable.get(), mesh->GetRenderStates());
+                }
+            }
 
             ImGui::SFML::Render(*window);
             window->display();

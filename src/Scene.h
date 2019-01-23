@@ -38,7 +38,7 @@ public:
 
   weak_ptr<b2World> GetWorld() const;
 
-  void Destroy(weak_ptr<GameObject> objectToRemove); //Remove gameobject from current Scene
+  void Destroy(shared_ptr<GameObject> objectToRemove); //Remove gameobject from current Scene
 
   shared_ptr<GameObject> CreateGameObject(std::string name = "emtpy");
   shared_ptr<GameObject> CreateGameObject(shared_ptr<GameObject> gameObject);

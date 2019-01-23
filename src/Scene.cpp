@@ -3,6 +3,7 @@
 #include "GameMaster.h"
 #include "Components/Camera.h"
 #include <Components/Mesh.h>
+#include "ResourceManager.h"
 
 using namespace eng;
 
@@ -146,9 +147,8 @@ shared_ptr<GameObject> Scene::CloneGameObject(shared_ptr<GameObject> gameObject)
     return clone;
 }
 
-void Scene::Destroy(weak_ptr<GameObject> _gameObject)
+void Scene::Destroy(shared_ptr<GameObject> gameObject)
 {
-    auto gameObject = _gameObject.lock();
     sceneObjects.remove(gameObject);
 }
 
@@ -202,10 +202,14 @@ json Scene::Serialize()
 {
     json jsonScene;
     jsonScene["name"] = name;
+    jsonScene["RManager"] = ResourceManager::Get().Serialize();
+
     auto gameObjects = sceneObjects;
-    for (auto gameObject : sceneObjects)
+    int i = 0;
+    for (auto gameObject : gameObjects)
     {
-        jsonScene["sceneObjects"][gameObject->id] = gameObject->Serialize();
+        jsonScene["sceneObjects"][i] = gameObject->Serialize();
+        i++;
     }
     jsonScene["world"]["gravity"]["x"] = world->GetGravity().x;
     jsonScene["world"]["gravity"]["y"] = world->GetGravity().y;
@@ -215,9 +219,11 @@ json Scene::Serialize()
 void Scene::Deserialize(json obj)
 {
     name = obj["name"];
+    ResourceManager::Get().Deserialize(obj["RManager"]);
     this->world = make_shared<b2World>(b2Vec2(obj["world"]["gravity"]["x"], obj["world"]["gravity"]["x"]));
     auto jsonSceneObjects = obj["sceneObjects"];
-    for (auto jsonGameObject : jsonSceneObjects) { 
+    for (auto jsonGameObject : jsonSceneObjects) 
+    { 
         auto newGameObject = CreateGameObject();
         newGameObject->Deserialize(jsonGameObject);
     } 

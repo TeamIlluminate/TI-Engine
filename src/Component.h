@@ -45,9 +45,9 @@ class Component : public Editor, public Serializable
   //Called on GUI
   virtual void GUI(){};
   //
-  virtual void BeginContact(weak_ptr<GameObject>  gameObject){};
+  virtual void BeginContact(shared_ptr<GameObject>  gameObject){};
   //
-  virtual void EndContact(weak_ptr<GameObject> gameObject){};
+  virtual void EndContact(shared_ptr<GameObject> gameObject){};
 
   virtual shared_ptr<Component> Clone() = 0;
 };

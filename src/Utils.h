@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "imgui.h"
 #include "json.hpp"
 #include "imgui-SFML.h"
@@ -8,6 +9,7 @@
 #include <string>
 #include <memory>
 #include <list>
+#include <map>
 #pragma once
 
 using namespace std;

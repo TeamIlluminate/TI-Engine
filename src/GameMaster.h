@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include "Editor.hpp"
 #pragma once
 
 namespace eng
@@ -40,8 +41,20 @@ class GameMaster
     map<string, shared_ptr<Component> (*)()> GetStorage() {return constructorStorage; };
     string GetStorageNames();
     float UpdateDeltaTime(float dt);
-
     sf::VideoMode mode;
+
+    Editor* GetEditorInst()
+    {
+      if(editor)
+      {
+        return editor;
+      }
+      else
+      {
+        editor = new Editor();
+        return editor;
+      }
+    };
 
   private:
     GameMaster(){};
@@ -53,7 +66,7 @@ class GameMaster
     shared_ptr<sf::RenderWindow> window;
     shared_ptr<Scene> currentScene;
     shared_ptr<Scene> editorScene;
-
+    Editor* editor;
     float deltaTime = 0;
     map<string, shared_ptr<Component> (*)()> constructorStorage;
     char ** chars ;

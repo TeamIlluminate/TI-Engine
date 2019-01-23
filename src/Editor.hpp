@@ -9,12 +9,22 @@ namespace eng
 
 namespace fs = std::experimental::filesystem;
 
+struct OFD_Data
+{
+    string id;
+    fs::path path;
+    shared_ptr<string> output;
+    string extension;
+};
+
 class Component;
 
 class Editor
 {
   public:
     virtual void DrawEditor(){};
+
+    void UpdateEditor();
 
     template <typename V>
     void DrawVector2(sf::Vector2<V> &vector)
@@ -133,12 +143,37 @@ class Editor
     }
 
     static void DrawInspector();
-    string DrawOpenFileDialog(fs::path path, Component* cmp);
 
-    private:
+  private:
+    Editor &EditorInst()
+    {
+        static Editor editor;
+        return editor;
+    };
+
+    void DrawOpenFileDialog();
+    OFD_Data OFD_data;
     bool OFD_open = false;
-    
-    protected:
-    void OpenFD();
+
+  protected:
+    void OpenFileDialog(fs::path path, Component *cmp = nullptr, string extension = "");
+    bool OFD_Status()
+    {
+        if (OFD_data.output)
+        {
+            if (OFD_data.output && !OFD_open)
+            {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    shared_ptr<string> GetOFD_Result()
+    {
+        auto myResult = make_shared<string>(*OFD_data.output);
+        OFD_data.output = nullptr;
+        return myResult;
+    };
 };
 } // namespace eng

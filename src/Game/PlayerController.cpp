@@ -116,6 +116,9 @@ void PlayerController::ShootIn(sf::Vector2f position)
             mesh->physEnable = true;
             mesh->Configure(shape);
 
+            b2Body * bulletBody = mesh->GetBody();
+            bulletBody->SetBullet(true);
+
             bullet->AddComponent(make_shared<Bullet>());
             mesh->AddImpulse(direction * bulletForce);
 

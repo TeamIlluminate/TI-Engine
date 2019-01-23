@@ -17,9 +17,9 @@ class Bullet : public Component
         return make_shared<Bullet>(*this);
     }
 
-    void BeginContact(weak_ptr<GameObject> hit)
+    void BeginContact(shared_ptr<GameObject> hit)
     {
-        auto collision = hit.lock();
+        auto collision = hit;
         auto owner = _owner.lock();
 
         string s = collision->GetName();

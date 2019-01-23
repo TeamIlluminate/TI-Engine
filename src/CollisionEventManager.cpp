@@ -44,7 +44,7 @@ void CollisionEventManager::BeginContact(b2Contact *contact)
         for (auto component : components)
         {
             if (auto comp = component.lock()) {            
-                comp->BeginContact(secondObject);
+                comp->BeginContact(secondObject.lock());
             }
         }
 
@@ -52,7 +52,7 @@ void CollisionEventManager::BeginContact(b2Contact *contact)
         for (auto component : components)
         {
             if (auto comp = component.lock()) {            
-                comp->BeginContact(firstObject);
+                comp->BeginContact(firstObject.lock());
             }
         }
     }
@@ -96,7 +96,7 @@ void CollisionEventManager::EndContact(b2Contact *contact)
         for (auto component : components)
         {
             if (auto comp = component.lock()) {            
-                comp->EndContact(secondObject);
+                comp->EndContact(secondObject.lock());
             }
         }
 
@@ -104,7 +104,7 @@ void CollisionEventManager::EndContact(b2Contact *contact)
         for (auto component : components)
         {
             if (auto comp = component.lock()) {            
-                comp->EndContact(firstObject);
+                comp->EndContact(firstObject.lock());
             }
         }
     }

@@ -1,5 +1,6 @@
 #include "Components/Mesh.h"
 #include "RayCastHandler.h"
+#include "ResourceManager.h"
 
 using namespace eng;
 
@@ -73,7 +74,7 @@ void Mesh::CreatePhysics()
     }
 
     b2BodyDef defBody;
-    defBody.type = b2_dynamicBody;//тут надо
+    defBody.type = b2_dynamicBody;
     defBody.position.Set(_owner.lock()->transform.position.x / physicsCoef, _owner.lock()->transform.position.y / physicsCoef);
     this->body = _owner.lock()->GetScene().lock()->GetWorld().lock()->CreateBody(&defBody);
     this->body->SetLinearDamping(1.f / physicsCoef);
@@ -94,8 +95,12 @@ shared_ptr<Component> Mesh::Clone()
         clone->shape = make_shared<sf::RectangleShape>(*rectangle.get());
         ;
     }
-    clone->texture = make_shared<sf::Texture>(*this->texture.get());
-    clone->shape->setTexture(clone->texture.get());
+
+    if(textureKey != "")
+    {
+        clone->textureKey = textureKey;
+        clone->shape->setTexture(ResourceManager::Get().GetTexture(textureKey).lock()->sf_texture.get(), true);
+    }
     return clone;
 }
 
@@ -310,16 +315,22 @@ void Mesh::EditorSprite()
 
     if (ImGui::Button("Choose"))
     {
-        OpenFD();
+        OpenFileDialog("Resource", this);
     }
 
-    if (texture->loadFromFile(DrawOpenFileDialog("Resource", this)))
+    if (OFD_Status())
     {
-        editable->setTexture(texture.get(), true);
-        shape = editable;
-        if (physEnable)
-            CreatePhysics();
+        if(auto txtr = ResourceManager::Get().LoadTexture(*GetOFD_Result()).lock())
+        {
+            auto texture = txtr->sf_texture.get();
+            editable->setTexture(texture, true);
+            textureKey = txtr->key;
+            shape = editable;
+            if (physEnable)
+                CreatePhysics();
+        }
     }
+    
 }
 
 void Mesh::EditorPhysics()
@@ -385,7 +396,7 @@ void Mesh::EditorPhysics()
             ImGui::InputFloat("Collider Radius", &circleShape->m_radius);
 
             sf::CircleShape collider(physicsCoef * circleShape->m_radius);
-            collider.setOrigin(circleShape->m_radius, circleShape->m_radius);
+            collider.setOrigin(physicsCoef * circleShape->m_radius, physicsCoef * circleShape->m_radius);
             collider.setFillColor(sf::Color::Transparent);
             collider.setOutlineColor(sf::Color(0.f, 255.f, 0.f, 125.f));
             collider.setOutlineThickness(1.f);
@@ -400,12 +411,12 @@ void Mesh::EditorPhysics()
         if (auto window = GameMaster::Get().GetWindow().lock())
         {
             auto size = polygonShape->GetVertex(2);
-            size.x = size.x * 2.f;
-            size.y = size.y * 2.f;
+            size.x = physicsCoef * size.x * 2.f;
+            size.y = physicsCoef * size.y * 2.f;
             ImGui::PushID("PHYSICS");
             if (ImGui::InputFloat("Width ", &size.x) || ImGui::InputFloat("Height ", &size.y))
             {
-                polygonShape->SetAsBox( physicsCoef * size.x / 2.f, physicsCoef * size.y / 2.f);
+                polygonShape->SetAsBox( size.x / (2.f * physicsCoef) , physicsCoef * size.y / (2.f * physicsCoef));
             }
             ImGui::PopID();
             sf::RectangleShape collider;
@@ -426,6 +437,7 @@ json Mesh::Serialize()
 {
     json meshok;
     meshok["type"] = "Mesh";
+    meshok["textureKey"] = textureKey;
     meshok["physEnable"] = physEnable;
     if (auto circle = dynamic_pointer_cast<sf::CircleShape>(shape))
     {
@@ -485,6 +497,7 @@ json Mesh::Serialize()
 void Mesh::Deserialize(json s)
 {
     std::string shapeType = s["shape"]["type"];
+    
     physEnable = s["physEnable"];
     if (shapeType == "Circle")
     {
@@ -500,6 +513,11 @@ void Mesh::Deserialize(json s)
 
     shape->setOrigin(s["shape"]["origin"]["x"], s["shape"]["origin"]["y"]);
     shape->setFillColor(sf::Color(s["shape"]["color"]["r"], s["shape"]["color"]["g"], s["shape"]["color"]["b"], s["shape"]["color"]["a"]));
+
+    textureKey = s["textureKey"];
+    if (textureKey != "") {
+        this->shape->setTexture(ResourceManager::Get().GetTexture(textureKey).lock()->sf_texture.get(), true);
+    }
 
     if (s["physEnable"])
     {

@@ -15,7 +15,7 @@ shared_ptr<Component> Clone();
 
 void FixedUpdate();
 
-void BeginContact(weak_ptr<GameObject> hit);
+void BeginContact(shared_ptr<GameObject> hit);
 
 private:
 

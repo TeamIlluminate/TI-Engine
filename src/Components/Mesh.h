@@ -70,7 +70,7 @@ void FixedUpdate();
   shared_ptr<sf::Shape> shape;
 
   shared_ptr<sf::Sprite> LoadSprite(string file);
-  shared_ptr<sf::Texture> texture = make_shared<sf::Texture>();
+  string textureKey;
 
 
   void EditorCircle();

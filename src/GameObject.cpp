@@ -134,10 +134,9 @@ std::list<weak_ptr<Component>> GameObject::GetComponents() const
     return weaks;
 }
 
-void GameObject::RemoveComponent(Component *component)
+void GameObject::RemoveComponent(shared_ptr<Component> component)
 {
-    // this->components.remove(component);
-    // component->~Component();
+    this->components.remove(component);
 }
 
 weak_ptr<Scene> GameObject::GetScene() const
@@ -166,6 +165,7 @@ void GameObject::DrawEditor()
             for (auto component : components)
             {
                 component->DrawEditor();
+                component->UpdateEditor();
             }
             ImGui::TreePop();
         }
@@ -177,7 +177,7 @@ void GameObject::DrawEditor()
         ImGui::SameLine();
         if (ImGui::Button("Delete"))
         {
-            scene.lock()->Destroy(weak_from_this());
+            scene.lock()->Destroy(shared_from_this());
         }   
         ImGui::Separator();
         if (ImGui::CollapsingHeader("Component management"))
@@ -230,4 +230,5 @@ void GameObject::Deserialize(json j)
         this->AddComponent(component);
         component->Deserialize(jsonComponent);
     }
+    
 }

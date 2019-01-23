@@ -56,8 +56,7 @@ public:
 
   std::list<weak_ptr<Component>> GetComponents() const;
 
-  //Dont user per nowasdasdasdasd
-  void RemoveComponent(Component *component);
+  void RemoveComponent(shared_ptr<Component> component);
 
   const std::string GetName() const;
 

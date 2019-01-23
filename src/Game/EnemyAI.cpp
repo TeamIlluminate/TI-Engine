@@ -29,16 +29,13 @@ shared_ptr<Component> EnemyAI::Clone()
     return make_shared<EnemyAI>(*this);
 }
 
-void EnemyAI::BeginContact(weak_ptr<GameObject> hit)
+void EnemyAI::BeginContact(shared_ptr<GameObject> hit)
 {
-    if (auto foundedObject = hit.lock())
-    {
-
-        if (foundedObject->GetName() == "Player")
+        if (hit->GetName() == "Player")
         {
             _owner.lock()->GetScene().lock()->Destroy(hit);
         }
-    }
+    
 }
 
 void EnemyAI::DrawEditor()

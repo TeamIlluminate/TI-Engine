@@ -9,6 +9,7 @@ using namespace eng;
 
 void Editor::DrawInspector()
 {
+    auto editor = GameMaster::Get().GetEditorInst();
     auto _window = GameMaster::Get().GetWindow();
 
     if (auto window = _window.lock())
@@ -79,27 +80,37 @@ void Editor::DrawInspector()
 
         if (ImGui::MenuItem("Open", "bibanatrii", false))
         {
-            if (auto currentScene = GameMaster::Get().GetCurrentScene().lock())
-            {
-                ifstream open;
-                open.open("MainScene.sb");
-                string source;
-                string line;
-                while (getline(open, line))
-                {
-                    source += line;
-                }
-                open.close();
-                auto scene = make_shared<Scene>();
-                json data = json::parse(source);
-                scene->Deserialize(data);
-                GameMaster::Get().LoadScene(scene);
-            }
+            editor->OpenFileDialog("Scenes");
         }
 
         ImGui::EndMenuBar();
 
         ImGui::SetWindowPos(sf::Vector2i(0, 0));
+
+        GameMaster::Get().GetEditorInst()->UpdateEditor();
+
+        if (editor->OFD_Status())
+        {
+            ifstream open;
+            open.open(*editor->GetOFD_Result());
+            string source;
+            string line;
+            while (getline(open, line))
+            {
+                source += line;
+            }
+            open.close();
+            auto scene = make_shared<Scene>();
+            // try
+            // {
+                json data = json::parse(source);
+                scene->Deserialize(data);
+                GameMaster::Get().LoadScene(scene);
+            // }
+            // catch (exception)
+            // {
+            // }
+        }
 
         auto _c_Scene = GameMaster::Get().GetCurrentScene();
 
@@ -112,6 +123,7 @@ void Editor::DrawInspector()
                 if (auto gameObject = _gameObject.lock())
                 {
                     gameObject->DrawEditor();
+                    gameObject->UpdateEditor();
                 }
             }
             ImGui::Separator();
@@ -128,70 +140,102 @@ void Editor::DrawInspector()
     }
 }
 
-void Editor::OpenFD()
+void Editor::OpenFileDialog(fs::path path, Component *cmp, string ext)
 {
-    OFD_open = true;
-}
-
-string Editor::DrawOpenFileDialog(fs::path path, Component *cmp)
-{
-    string file = "";
-    string name = typeid(*cmp).name();
-
-    if (OFD_open)
+    if (!OFD_open)
     {
-        string label = "Choose file:##" + name + "_" + to_string(cmp->_owner.lock()->id);
+        string name;
+        string id;
 
-        ImGui::SetNextWindowPosCenter(ImGuiCond_Appearing);
-        ImGui::Begin(label.c_str(), nullptr, sf::Vector2i(500, 500));
+        if (path == "")
+            path = fs::current_path();
 
-        if (!fs::exists(path))
-            fs::create_directory(path);
+        if (cmp)
         {
-            fs::recursive_directory_iterator begin(path);
-            fs::recursive_directory_iterator end;
-
-            std::vector<fs::path> subdirs;
-            std::copy_if(begin, end, std::back_inserter(subdirs), [](const fs::path &path) {
-                return fs::is_directory(path);
-            });
+            name = typeid(*cmp).name();
+            id = "Choose file:##" + name + "_" + to_string(cmp->_owner.lock()->id);
+        }
+        else
+        {
+            name = "Inspector";
+            id = "Choose file:##" + name + "_0x00000";
         }
 
-        fs::recursive_directory_iterator begin(path);
+        OFD_Data ofd_data = {id, path, make_shared<string>(), ext};
+        OFD_data = ofd_data;
+
+        OFD_open = true;
+    }
+}
+
+void Editor::UpdateEditor()
+{
+    if (OFD_open)
+    {
+        DrawOpenFileDialog();
+    }
+}
+
+void Editor::DrawOpenFileDialog()
+{
+    ImGui::SetNextWindowPosCenter(ImGuiCond_Appearing);
+    ImGui::Begin(OFD_data.id.c_str(), nullptr, sf::Vector2i(500, 500));
+
+    if (!fs::exists(OFD_data.path))
+        fs::create_directory(OFD_data.path);
+    {
+        fs::recursive_directory_iterator begin(OFD_data.path);
         fs::recursive_directory_iterator end;
 
-        std::vector<fs::path> files;
+        std::vector<fs::path> subdirs;
+        std::copy_if(begin, end, std::back_inserter(subdirs), [](const fs::path &path) {
+            return fs::is_directory(path);
+        });
+    }
+
+    fs::recursive_directory_iterator begin(OFD_data.path);
+    fs::recursive_directory_iterator end;
+
+    std::vector<fs::path> files;
+
+    if (OFD_data.extension == "")
+    {
         std::copy_if(begin, end, std::back_inserter(files), [](const fs::path &path_) {
             return fs::is_regular_file(path_);
         });
-
-        static int select = -1;
-        int file_iterator = 0;
-
-        for (auto file_ : files)
-        {
-            if (ImGui::Selectable(file_.c_str(), select == file_iterator))
-            {
-                select = file_iterator;
-            }
-            file_iterator++;
-        }
-
-        if (ImGui::Button("OK"))
-        {
-            OFD_open = false;
-            file = files[select];
-        }
-
-        ImGui::SameLine();
-
-        if (ImGui::Button("Cancel"))
-        {
-            file = "";
-            OFD_open = false;
-        }
-
-        ImGui::End();
     }
-    return file;
+    else
+    {
+        OFD_Data fd_data = OFD_data;
+        std::copy_if(begin, end, std::back_inserter(files), [fd_data](const fs::path &path_) {
+            return fs::is_regular_file(path_) && path_.extension() == fd_data.extension;
+        });
+    }
+    static int select = -1;
+    int file_iterator = 0;
+
+    for (auto file_ : files)
+    {
+        if (ImGui::Selectable(file_.c_str(), select == file_iterator))
+        {
+            select = file_iterator;
+        }
+        file_iterator++;
+    }
+
+    if (ImGui::Button("OK"))
+    {
+        *OFD_data.output = files[select];
+        OFD_open = false;
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Cancel"))
+    {
+        *OFD_data.output = "";
+        OFD_open = false;
+    }
+
+    ImGui::End();
 }
