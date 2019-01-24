@@ -68,14 +68,7 @@ void Editor::DrawInspector()
 
         if (ImGui::MenuItem("Save", "bibanatrii", false))
         {
-            if (auto currentScene = GameMaster::Get().GetCurrentScene().lock())
-            {
-                auto data = currentScene->Serialize();
-                ofstream save;
-                save.open(currentScene->name + ".sb");
-                save << data;
-                save.close();
-            }
+            editor->SaveFileDialog("Scenes");
         }
 
         if (ImGui::MenuItem("Open", "bibanatrii", false))
@@ -88,6 +81,24 @@ void Editor::DrawInspector()
         ImGui::SetWindowPos(sf::Vector2i(0, 0));
 
         GameMaster::Get().GetEditorInst()->UpdateEditor();
+
+        if (editor->SFD_Status())
+        {
+            if (auto currentScene = GameMaster::Get().GetCurrentScene().lock())
+            {
+                try
+                {
+                    auto data = currentScene->Serialize();
+                    ofstream save;
+                    save.open(*editor->GetSFD_Result() + ".sb");
+                    save << data;
+                    save.close();
+                }
+                catch (exception)
+                {
+                }
+            }
+        }
 
         if (editor->OFD_Status())
         {
@@ -278,7 +289,7 @@ void Editor::DrawSaveFileDialog()
     if (!fs::exists(SFD_data.path))
         fs::create_directory(SFD_data.path);
 
-    fs::recursive_directory_iterator begin(OFD_data.path);
+    fs::recursive_directory_iterator begin(SFD_data.path);
     fs::recursive_directory_iterator end;
 
     std::vector<fs::path> subdirs;
@@ -302,17 +313,21 @@ void Editor::DrawSaveFileDialog()
 
     if (ImGui::Button("OK"))
     {
-        string path = "/" + *SFD_data.output;
-        *SFD_data.output = (string)subdirs[select] + path;
-        OFD_open = false;
+        if(select == -1)
+        {   
+            string path = SFD_data.path;
+            string absPath = path + "/" + *SFD_data.output.get();
+            *SFD_data.output = absPath;
+            SFD_open = false;
+        }
     }
 
     ImGui::SameLine();
 
     if (ImGui::Button("Cancel"))
     {
-        *OFD_data.output = "";
-        OFD_open = false;
+        *SFD_data.output = "";
+        SFD_open = false;
     }
 
     ImGui::End();
