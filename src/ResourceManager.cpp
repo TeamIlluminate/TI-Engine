@@ -10,9 +10,12 @@ ResourceManager &ResourceManager::Get()
 
 weak_ptr<Texture> ResourceManager::LoadTexture(fs::path pathToTexture)
 {
+    auto key = GenerateHash(pathToTexture);
+    if (textures.find(key) != textures.end()) {
+        return textures.at(key);
+    }
     auto sf_texture = make_shared<sf::Texture>();
     weak_ptr<Texture> empty;
-
     if (sf_texture->loadFromFile(pathToTexture))
     {
         auto texture = make_shared<Texture>();
@@ -28,9 +31,12 @@ weak_ptr<Texture> ResourceManager::LoadTexture(fs::path pathToTexture)
 
 weak_ptr<SoundBuffer> ResourceManager::LoadSound(fs::path pathToSound)
 {
+    auto key = GenerateHash(pathToSound);
+    if (sounds.find(key) != sounds.end()) {
+        return sounds.at(key);
+    }
     auto sf_soundBuffer = make_shared<sf::SoundBuffer>();
     weak_ptr<SoundBuffer> empty;
-
     if (sf_soundBuffer->loadFromFile(pathToSound))
     {
         auto soundBuffer = make_shared<SoundBuffer>();
@@ -55,9 +61,12 @@ weak_ptr<SoundBuffer> ResourceManager::GetSound(string key)
 
 list<Texture> ResourceManager::GetAllTextures()
 {
+
 }
+
 list<SoundBuffer> ResourceManager::GetAllSounds()
 {
+
 }
 
 string ResourceManager::GenerateHash(string input)

@@ -33,7 +33,7 @@ void EnemyAI::BeginContact(shared_ptr<GameObject> hit)
 {
         if (hit->GetName() == "Player")
         {
-            _owner.lock()->GetScene().lock()->Destroy(hit);
+            //_owner.lock()->GetScene().lock()->Destroy(hit);
         }
     
 }

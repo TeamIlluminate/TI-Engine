@@ -73,7 +73,7 @@ void Editor::DrawInspector()
 
         if (ImGui::MenuItem("Open", "bibanatrii", false))
         {
-            editor->OpenFileDialog("Scenes");
+            editor->OpenFileDialog("");
         }
 
         ImGui::EndMenuBar();
@@ -222,22 +222,24 @@ void Editor::DrawOpenFileDialog()
     ImGui::SetNextWindowPosCenter(ImGuiCond_Appearing);
     ImGui::Begin(OFD_data.id.c_str(), nullptr, sf::Vector2i(500, 500));
 
+    ImGui::BeginChild("FileShooser", sf::Vector2f(500, 500));
+
+    std::vector<fs::path> subdirs;
+    std::vector<fs::path> files;
+
     if (!fs::exists(OFD_data.path))
         fs::create_directory(OFD_data.path);
     {
-        fs::recursive_directory_iterator begin(OFD_data.path);
-        fs::recursive_directory_iterator end;
+        fs::directory_iterator begin(OFD_data.path);
+        fs::directory_iterator end;
 
-        std::vector<fs::path> subdirs;
         std::copy_if(begin, end, std::back_inserter(subdirs), [](const fs::path &path) {
             return fs::is_directory(path);
         });
     }
 
-    fs::recursive_directory_iterator begin(OFD_data.path);
-    fs::recursive_directory_iterator end;
-
-    std::vector<fs::path> files;
+    fs::directory_iterator begin(OFD_data.path);
+    fs::directory_iterator end;
 
     if (OFD_data.extension == "")
     {
@@ -252,17 +254,41 @@ void Editor::DrawOpenFileDialog()
             return fs::is_regular_file(path_) && path_.extension() == fd_data.extension;
         });
     }
+
     static int select = -1;
     int file_iterator = 0;
 
+    for (auto dir : subdirs)
+    {
+        if (ImGui::Selectable(dir.generic_u8string().c_str(), select == file_iterator, ImGuiSelectableFlags_AllowDoubleClick))
+        {
+            if (ImGui::IsMouseDoubleClicked(0))
+            {
+                OFD_data.path = dir;
+            }
+        }
+    }
+
     for (auto file_ : files)
     {
-        if (ImGui::Selectable(file_.c_str(), select == file_iterator))
+        if (ImGui::Selectable(file_.c_str(), select == file_iterator, ImGuiSelectableFlags_AllowDoubleClick))
         {
-            select = file_iterator;
+            if (ImGui::IsMouseDoubleClicked(0))
+            {
+                *OFD_data.output = file_;
+                OFD_open = false;
+            }
+            else
+                select = file_iterator;
         }
         file_iterator++;
     }
+
+    file_iterator = 0;
+
+    ImGui::EndChild();
+
+    ImGui::BeginChild("ManageWindow");
 
     if (ImGui::Button("OK"))
     {
@@ -277,6 +303,8 @@ void Editor::DrawOpenFileDialog()
         *OFD_data.output = "";
         OFD_open = false;
     }
+
+    ImGui::EndChild();
 
     ImGui::End();
 }
@@ -313,8 +341,8 @@ void Editor::DrawSaveFileDialog()
 
     if (ImGui::Button("OK"))
     {
-        if(select == -1)
-        {   
+        if (select == -1)
+        {
             string path = SFD_data.path;
             string absPath = path + "/" + *SFD_data.output.get();
             *SFD_data.output = absPath;

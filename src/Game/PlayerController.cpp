@@ -131,8 +131,6 @@ void PlayerController::ShootIn(sf::Vector2f position)
             if (soundBufferKey != "")
             {
                 pew.stop();
-               // sf::Sound shoot;
-                //ukazatel' a cho ya esh    e mogu
                 pew.setBuffer(*ResourceManager::Get().GetSound(soundBufferKey).lock()->sf_soundBuffer.get());
                 pew.play();
             }
@@ -154,6 +152,7 @@ void PlayerController::DrawEditor()
         ImGui::InputFloat("Shoot Delay", &shootDelay);
         ImGui::InputFloat("Bullet Force", &bulletForce);
         ImGui::Text(("Selected sound " + soundBufferKey).c_str());
+        
         if (ImGui::Button("Choose Sound"))
         {
             OpenFileDialog("Resource", this);

@@ -30,7 +30,7 @@ public:
 
   //return summary of this gameobject position and him parents gameobject or just this gameobject position if hasnt parent
   sf::Vector2f GetGlobalCoordinates() const;
-
+  sf::Vector2f GetForwardVector();
   std::list<weak_ptr<GameObject>> GetChilds() const;
 
   json Serialize();
@@ -80,6 +80,5 @@ protected:
   weak_ptr<GameObject> parent;
   std::list<shared_ptr<GameObject>> childs;
   std::list<shared_ptr<Component>> components;
-  
 };
 } // namespace eng

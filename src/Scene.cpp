@@ -10,10 +10,9 @@ using namespace eng;
 Scene::Scene(std::string name)
 {
     this->name = name;
-
     world = make_shared<b2World>(b2Vec2(0, 0));
-    collisionEventManager = new CollisionEventManager(this);
-    world->SetContactListener(collisionEventManager);
+    collisionEventManager = make_shared<CollisionEventManager>(this);
+    world->SetContactListener(collisionEventManager.get());
 }
 
 Scene::Scene(const Scene &scene)
@@ -21,8 +20,8 @@ Scene::Scene(const Scene &scene)
     this->name = scene.name + "_c";
     this->idCounter = scene.idCounter;
     this->world = make_shared<b2World>(b2Vec2(0, 0));
-    this->collisionEventManager = new CollisionEventManager(this);
-    this->world->SetContactListener(this->collisionEventManager);
+    this->collisionEventManager = make_shared<CollisionEventManager>(this);
+    this->world->SetContactListener(this->collisionEventManager.get());
     auto _sceneObjects = scene.sceneObjects;
     for (auto sceneObject : _sceneObjects)
     {
@@ -202,6 +201,7 @@ json Scene::Serialize()
 {
     json jsonScene;
     jsonScene["name"] = name;
+    jsonScene["counter"] = idCounter;
     jsonScene["RManager"] = ResourceManager::Get().Serialize();
 
     auto gameObjects = sceneObjects;
@@ -219,9 +219,12 @@ json Scene::Serialize()
 void Scene::Deserialize(json obj)
 {
     name = obj["name"];
+    idCounter = obj["counter"];
     ResourceManager::Get().Deserialize(obj["RManager"]);
     this->world = make_shared<b2World>(b2Vec2(obj["world"]["gravity"]["x"], obj["world"]["gravity"]["x"]));
     auto jsonSceneObjects = obj["sceneObjects"];
+    this->collisionEventManager = make_shared<CollisionEventManager>(this);
+    this->world->SetContactListener(this->collisionEventManager.get());
     for (auto jsonGameObject : jsonSceneObjects) 
     { 
         auto newGameObject = CreateGameObject();

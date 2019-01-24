@@ -17,7 +17,6 @@ private:
   sf::View defaultView;
   shared_ptr<std::thread> wThread;
 
-
   void WindowLoop();
 
   bool isEditor = false;

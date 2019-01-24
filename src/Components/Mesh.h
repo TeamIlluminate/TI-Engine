@@ -22,7 +22,8 @@ public:
 
   bool physEnable = false;
 
-  b2Body *GetBody() {
+  b2Body *GetBody()
+  {
     return body;
   }
   MeshType GetType();
@@ -30,19 +31,18 @@ public:
 
   shared_ptr<Component> Clone();
 
-
-//Physics control center
-    weak_ptr<GameObject> RayCast(sf::Vector2f to);
-    void AddImpulse(sf::Vector2f vector);
-    void TransformPosition(sf::Vector2f pos);
+  //Physics control center
+  weak_ptr<GameObject> RayCast(sf::Vector2f to);
+  void AddImpulse(sf::Vector2f vector);
+  void TransformPosition(sf::Vector2f pos);
 
   json Serialize();
   void Deserialize(json j);
 
   float physicsCoef = 50.f;
-  
+
 private:
-void FixedUpdate();
+  void FixedUpdate();
   void CreatePhysics();
 
   weak_ptr<sf::Drawable> GetDrawable()
@@ -50,6 +50,7 @@ void FixedUpdate();
     if (auto owner = _owner.lock())
     {
       shape->setPosition(owner->GetGlobalCoordinates());
+      shape->setRotation(owner->transform.angle);
       return shape;
     }
   };
@@ -71,7 +72,6 @@ void FixedUpdate();
 
   shared_ptr<sf::Sprite> LoadSprite(string file);
   string textureKey;
-
 
   void EditorCircle();
   void EditorRect();

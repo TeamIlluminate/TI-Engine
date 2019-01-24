@@ -3,43 +3,41 @@
 #include "GameObject.h"
 #pragma once
 
-namespace eng{
+namespace eng
+{
 
 //[Serializable]
 class EnemyAI : public Component
 {
 
-public:
+  public:
+    shared_ptr<Component> Clone();
 
-shared_ptr<Component> Clone();
+    void FixedUpdate();
 
-void FixedUpdate();
+    void BeginContact(shared_ptr<GameObject> hit);
 
-void BeginContact(shared_ptr<GameObject> hit);
+  private:
+    void DrawEditor();
 
-private:
+    list<weak_ptr<GameObject>> players;
+    float speed = 5.f;
+    float range = 200.f;
 
-void DrawEditor();
+    json Serialize()
+    {
+        json jAI;
+        jAI["type"] = "EnemyAI";
+        jAI["speed"] = speed;
+        jAI["range"] = range;
+        return jAI;
+    };
 
-list<weak_ptr<GameObject> > players;
-float speed = 5.f;
-float range = 200.f;
-
-json Serialize() 
-{
-    json jAI;
-    jAI["type"] = "EAI";
-    jAI["speed"] = speed;
-    jAI["range"] = range;
-    return jAI;
+    void Deserialize(json obj)
+    {
+        speed = obj["speed"];
+        range = obj["range"];
+    };
 };
 
-void Deserialize(json obj)
-{
-    speed = obj["speed"];
-    range = obj["range"];
-};
-
-};
-
-}
+} // namespace eng

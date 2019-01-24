@@ -47,10 +47,12 @@ GameObject::GameObject(weak_ptr<Scene> _scene, string name)
 
 GameObject::GameObject(const GameObject &gameObject)
 {
-    this->id = gameObject.id;
     this->name = gameObject.name;
     this->scene = gameObject.scene;
-    this->transform = gameObject.transform;
+    this->id = gameObject.id;
+    this->transform.position = gameObject.transform.position;
+    this->transform.angle = gameObject.transform.angle;
+
 
     for (auto child : gameObject.childs)
     {
@@ -72,6 +74,10 @@ sf::Vector2f GameObject::GetGlobalCoordinates() const
     }
     else
         return transform.position;
+}
+
+sf::Vector2f GameObject::GetForwardVector() {
+    return Rotate(sf::Vector2f(0.f, -1.f), transform.angle); 
 }
 
 const std::string GameObject::GetName() const
@@ -154,11 +160,25 @@ void GameObject::DrawEditor()
 
     ImGui::PushID(id);
 
-    string headerLabel = name + "###" + to_string(id); //только айди у нас не меняется.    
-    if (ImGui::CollapsingHeader(headerLabel.c_str()))
+    string headerLabel = name + "###" + to_string(id); //только айди у нас не меняется.
+    if (ImGui::Button("X"))
     {
+        scene.lock()->Destroy(shared_from_this());
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("C"))
+    {
+        auto newGameObject = GameMaster::Get().GetCurrentScene().lock()->CloneGameObject(shared_from_this());
+        newGameObject->transform.position = GetCenterScreenCoordinates();
+    }
+    ImGui::SameLine();
+    bool headerActive = ImGui::CollapsingHeader(headerLabel.c_str());
+    if (headerActive)
+    {
+
         ImGui::InputText("NAME:", &name);
         DrawVector2(transform.position);
+        ImGui::InputFloat("Angle", &transform.angle);
         ImGui::Separator();
         if (ImGui::TreeNode("Components"))
         {
@@ -169,27 +189,18 @@ void GameObject::DrawEditor()
             }
             ImGui::TreePop();
         }
-        if (ImGui::Button("Clone"))
-        {
-            auto newGameObject = GameMaster::Get().GetCurrentScene().lock()->CloneGameObject(shared_from_this());
-            newGameObject->transform.position = GetCenterScreenCoordinates();
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Delete"))
-        {
-            scene.lock()->Destroy(shared_from_this());
-        }   
         ImGui::Separator();
         if (ImGui::CollapsingHeader("Component management"))
         {
             static int type = 0;
 
             ImGui::Combo("Component", &type, GameMaster::Get().GetStorageNames().c_str());
-            if (ImGui::Button("Add Component")) {
+            if (ImGui::Button("Add Component"))
+            {
                 auto cIt = GameMaster::Get().GetStorage().begin();
                 advance(cIt, type);
                 this->AddComponent(cIt->second());
-            }                        
+            }
 
             ImGui::SameLine();
         }
@@ -230,5 +241,4 @@ void GameObject::Deserialize(json j)
         this->AddComponent(component);
         component->Deserialize(jsonComponent);
     }
-    
 }

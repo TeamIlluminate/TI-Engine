@@ -76,8 +76,8 @@ void Mesh::CreatePhysics()
     b2BodyDef defBody;
     defBody.type = b2_dynamicBody;
     defBody.position.Set(_owner.lock()->transform.position.x / physicsCoef, _owner.lock()->transform.position.y / physicsCoef);
+    defBody.angle = _owner.lock()->transform.angle / b2_pi;
     this->body = _owner.lock()->GetScene().lock()->GetWorld().lock()->CreateBody(&defBody);
-    this->body->SetLinearDamping(1.f / physicsCoef);
     b2FixtureDef defFixture;
     defFixture.shape = shape;
     this->fixture = this->body->CreateFixture(&defFixture);
@@ -125,7 +125,7 @@ void Mesh::TransformPosition(sf::Vector2f newPos)
         {
             newPos =  newPos / physicsCoef;
             b2Vec2 position = body->GetPosition() + b2Vec2(newPos.x, newPos.y);
-            this->body->SetTransform(position, 0);
+            this->body->SetTransform(position, body->GetAngle());
         }
     }
 }
@@ -136,12 +136,13 @@ void Mesh::FixedUpdate()
     {
         b2Vec2 position = body->GetPosition();
         _owner.lock()->transform.position = sf::Vector2f(position.x * physicsCoef, position.y * physicsCoef);
+        _owner.lock()->transform.angle = body->GetAngle() * b2_pi;
     }
 }
 
 void Mesh::AddImpulse(sf::Vector2f impulse)
 {
-    this->body->SetLinearVelocity(b2Vec2(impulse.x / physicsCoef, impulse.y / physicsCoef));
+    this->body->ApplyLinearImpulse(b2Vec2(impulse.x / physicsCoef, impulse.y / physicsCoef), this->body->GetWorldCenter(), true);
 }
 
 void Mesh::DrawEditor()
@@ -401,6 +402,7 @@ void Mesh::EditorPhysics()
             collider.setOutlineColor(sf::Color(0.f, 255.f, 0.f, 125.f));
             collider.setOutlineThickness(1.f);
             collider.setPosition(_owner.lock()->transform.position);
+            collider.setRotation(_owner.lock()->transform.angle);
             window->draw(collider);
         }
         break;
@@ -416,7 +418,7 @@ void Mesh::EditorPhysics()
             ImGui::PushID("PHYSICS");
             if (ImGui::InputFloat("Width ", &size.x) || ImGui::InputFloat("Height ", &size.y))
             {
-                polygonShape->SetAsBox( size.x / (2.f * physicsCoef) , physicsCoef * size.y / (2.f * physicsCoef));
+                polygonShape->SetAsBox( size.x / (2.f * physicsCoef) , size.y / (2.f * physicsCoef));
             }
             ImGui::PopID();
             sf::RectangleShape collider;
@@ -426,6 +428,7 @@ void Mesh::EditorPhysics()
             collider.setOutlineColor(sf::Color(0.f, 255.f, 0.f, 125.f));
             collider.setOutlineThickness(1.f);
             collider.setPosition(_owner.lock()->transform.position);
+            collider.setRotation(_owner.lock()->transform.angle);
             window->draw(collider);
         }
         break;
@@ -465,11 +468,11 @@ json Mesh::Serialize()
 
         meshok["body"]["transform"]["x"] = body->GetPosition().x;
         meshok["body"]["transform"]["y"] = body->GetPosition().y;
+        meshok["body"]["angle"] = body->GetTransform().q.GetAngle();
 
         meshok["body"]["velocity"]["x"] = body->GetLinearVelocity().x;
         meshok["body"]["velocity"]["y"] = body->GetLinearVelocity().y;
-        //more and more parameters
-
+        
         auto collider = fixture->GetShape();
         switch (collider->m_type)
         {
@@ -524,6 +527,7 @@ void Mesh::Deserialize(json s)
         b2BodyDef def;
         def.type = b2_dynamicBody;
         def.position = b2Vec2(s["body"]["transform"]["x"], s["body"]["transform"]["y"]);
+        def.angle = s["body"]["angle"];
 
         b2FixtureDef fixtureDef;
         auto jsonShape = s["fixture"]["shape"];

@@ -38,15 +38,12 @@ void Render::Init(sf::VideoMode mode)
 void Render::WindowLoop()
 {
     GameMaster::Get().SetWindow(window);
-
     window->clear();
-
     ImGui::SFML::Init(*window);
     defaultView.setSize(sf::Vector2f(window->getDefaultView().getSize()));
     sf::Clock deltaClock;
     sf::Clock imGuiClock;
     float fixedDelta = 0;
-
     while (window->isOpen())
     {
         window->clear();
@@ -79,19 +76,19 @@ void Render::WindowLoop()
             {
                 if (event.key.code == sf::Keyboard::Up)
                 {
-                    defaultView.move(0, -1);
+                    defaultView.move(0, -10);
                 }
                 else if (event.key.code == sf::Keyboard::Down)
                 {
-                    defaultView.move(0, 1);
+                    defaultView.move(0, 10);
                 }
                 else if (event.key.code == sf::Keyboard::Left)
                 {
-                    defaultView.move(-1, 0);
+                    defaultView.move(-10, 0);
                 }
                 else if (event.key.code == sf::Keyboard::Right)
                 {
-                    defaultView.move(1, 0);
+                    defaultView.move(10, 0);
                 }
             }
         }

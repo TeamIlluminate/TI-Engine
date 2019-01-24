@@ -30,19 +30,17 @@ public:
   void Deserialize(json obj);
 
   std::list<weak_ptr<GameObject>> GetGameObjects() const; //Generaly 4r Render using or serializing
+  weak_ptr<b2World> GetWorld() const;
 
   /* GameObjects GETTERS */
 
   weak_ptr<GameObject> FindGameObject(std::string objectName) const;
   std::list<weak_ptr<GameObject>> FindGameObjects(std::string objectName) const;
 
-  weak_ptr<b2World> GetWorld() const;
-
-  void Destroy(shared_ptr<GameObject> objectToRemove); //Remove gameobject from current Scene
-
   shared_ptr<GameObject> CreateGameObject(std::string name = "emtpy");
   shared_ptr<GameObject> CreateGameObject(shared_ptr<GameObject> gameObject);
   shared_ptr<GameObject> CloneGameObject(shared_ptr<GameObject> gameObject);
+  void Destroy(shared_ptr<GameObject> objectToRemove); //Remove gameobject from current Scene
 
   template <typename _Predicate>
   list<weak_ptr<GameObject>> GetGameObjects_if(_Predicate _pred)
@@ -76,10 +74,11 @@ public:
   };
 
 private:
+
   int idCounter = 0;
   void Rebind();
   shared_ptr<b2World> world;
-  CollisionEventManager *collisionEventManager;
+  shared_ptr<CollisionEventManager> collisionEventManager;
 
   void DeleteB2B(b2Body *body);
   void RegCamera(shared_ptr<Camera> camera) { this->cameras.push_back(camera); };
@@ -101,8 +100,6 @@ private:
   std::list<b2Body *> toDelete;
   std::list<shared_ptr<GameObject>> neededToAdd;
   std::string name;
-
-  mutex mtx;
 };
 
 } // namespace eng
