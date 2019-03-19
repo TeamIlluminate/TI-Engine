@@ -113,11 +113,13 @@ json Car::Serialize()
 
 void Car::Deserialize(json j)
 {
-    maxSpeed = j["maxSpeed"];
-    deltaSpeed = j["deltaSpeed"];
-    skeyForce = j["keyForce"];
-    skeyIdle = j["keyIdle"];
-    skeyStart = j["keyStart"];
+    eng::DeserializeVar(maxSpeed, j["maxSpeed"]);
+    eng::DeserializeVar(deltaSpeed, j["deltaSpeed"]);
+    
+    eng::DeserializeVar(skeyForce, j["keyForce"]);   
+    eng::DeserializeVar(skeyIdle, j["keyIdle"]);
+    eng::DeserializeVar(skeyStart, j["keyStart"]);
+
     if (skeyIdle != "")
         this->soundIdle.setBuffer(*eng::ResourceManager::Get().GetSound(skeyIdle).lock()->sf_soundBuffer.get());
     if (skeyStart != "")

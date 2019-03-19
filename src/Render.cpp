@@ -8,6 +8,7 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "Components/Camera.h"
+#include "GUI/Grid.h"
 
 using namespace eng;
 
@@ -100,6 +101,10 @@ void Render::WindowLoop()
             if (GameMaster::Get().state & GameMaster::_DEVELOP)
             {
                 Editor::DrawInspector();
+                for(auto grid : GameMaster::Get().GetGrids())
+                {
+                    grid->Draw();
+                }
             }
 
             auto meshes = currentScene->Update();

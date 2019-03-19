@@ -2,6 +2,8 @@
 #include "Components/Mesh.h"
 #include "Game/Bullet.cpp"
 #include "ResourceManager.h"
+#include "GUI/Grid.h"
+#include "GUI/Button.h"
 
 using namespace eng;
 
@@ -11,6 +13,18 @@ void PlayerController::OnInit()
     {
         _mesh = owner->GetComponent<Mesh>();
     }
+
+   auto testGrid = make_shared<Grid>(sf::Vector2f(100, 100), "sqwer", sf::Vector2f(500, 600));
+   auto testButton = make_shared<Button>("TestButton", sf::Vector2f(100, 50));
+   testButton->SetClickHandler(bind(&PlayerController::HandleClick, this));
+   testGrid->AddControl(testButton);
+   GameMaster::Get().AddGrid(testGrid);
+    
+}
+
+void PlayerController::HandleClick()
+{
+    cout << "\nHandle worked!\n";
 }
 
 shared_ptr<Component> PlayerController::Clone()

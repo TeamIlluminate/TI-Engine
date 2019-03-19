@@ -1,0 +1,1 @@
+{"RManager":null,"counter":1,"name":"emptyScene","sceneObjects":[{"components":[{"bulletForce":50.0,"shootDelay":0.10000000149011612,"soundKey":"","speed":15.0,"type":"PlayerController"}],"id":0,"name":"emtpy","transform":{"angle":0.0,"position":{"x":500.0000305175781,"y":499.9999694824219}}}],"world":{"gravity":{"x":0.0,"y":0.0}}}

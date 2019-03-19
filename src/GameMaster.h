@@ -7,6 +7,7 @@ namespace eng
 
 class Scene;
 class Component;
+class Grid;
 
 class GameMaster
 {
@@ -43,6 +44,11 @@ class GameMaster
     float UpdateDeltaTime(float dt);
     sf::VideoMode mode;
 
+    string GetGID();
+    void AddGrid(shared_ptr<Grid> grid);
+    void RemoveGrid(shared_ptr<Grid> grid);
+    list<shared_ptr<Grid>> GetGrids();
+
     Editor* GetEditorInst()
     {
       if(editor)
@@ -69,7 +75,8 @@ class GameMaster
     Editor* editor;
     float deltaTime = 0;
     map<string, shared_ptr<Component> (*)()> constructorStorage;
-    char ** chars ;
+    int gid = -1;
+    list<shared_ptr<Grid>> grids;
 };
 
 } // namespace eng

@@ -96,7 +96,7 @@ shared_ptr<Component> Mesh::Clone()
         ;
     }
 
-    if(textureKey != "")
+    if (textureKey != "")
     {
         clone->textureKey = textureKey;
         clone->shape->setTexture(ResourceManager::Get().GetTexture(textureKey).lock()->sf_texture.get(), true);
@@ -123,7 +123,7 @@ void Mesh::TransformPosition(sf::Vector2f newPos)
     {
         if (auto owner = _owner.lock())
         {
-            newPos =  newPos / physicsCoef;
+            newPos = newPos / physicsCoef;
             b2Vec2 position = body->GetPosition() + b2Vec2(newPos.x, newPos.y);
             this->body->SetTransform(position, body->GetAngle());
         }
@@ -321,7 +321,7 @@ void Mesh::EditorSprite()
 
     if (OFD_Status())
     {
-        if(auto txtr = ResourceManager::Get().LoadTexture(*GetOFD_Result()).lock())
+        if (auto txtr = ResourceManager::Get().LoadTexture(*GetOFD_Result()).lock())
         {
             auto texture = txtr->sf_texture.get();
             editable->setTexture(texture, true);
@@ -331,7 +331,6 @@ void Mesh::EditorSprite()
                 CreatePhysics();
         }
     }
-    
 }
 
 void Mesh::EditorPhysics()
@@ -418,7 +417,7 @@ void Mesh::EditorPhysics()
             ImGui::PushID("PHYSICS");
             if (ImGui::InputFloat("Width ", &size.x) || ImGui::InputFloat("Height ", &size.y))
             {
-                polygonShape->SetAsBox( size.x / (2.f * physicsCoef) , size.y / (2.f * physicsCoef));
+                polygonShape->SetAsBox(size.x / (2.f * physicsCoef), size.y / (2.f * physicsCoef));
             }
             ImGui::PopID();
             sf::RectangleShape collider;
@@ -472,7 +471,7 @@ json Mesh::Serialize()
 
         meshok["body"]["velocity"]["x"] = body->GetLinearVelocity().x;
         meshok["body"]["velocity"]["y"] = body->GetLinearVelocity().y;
-        
+
         auto collider = fixture->GetShape();
         switch (collider->m_type)
         {
@@ -499,53 +498,86 @@ json Mesh::Serialize()
 
 void Mesh::Deserialize(json s)
 {
-    std::string shapeType = s["shape"]["type"];
-    
-    physEnable = s["physEnable"];
+    std::string shapeType;
+
+    eng::DeserializeVar(shapeType, s["shape"]["type"]);
+    eng::DeserializeVar(physEnable, s["physEnable"]);
+
     if (shapeType == "Circle")
     {
-        auto circle = make_shared<sf::CircleShape>(s["shape"]["radius"]);
+        float rad;
+        eng::DeserializeVar(rad, s["shape"]["radius"]);
+
+        auto circle = make_shared<sf::CircleShape>(rad);
         shape = circle;
     }
     else if (shapeType == "Rectangle")
     {
         auto rectangle = make_shared<sf::RectangleShape>();
-        rectangle->setSize(sf::Vector2f(s["shape"]["width"], s["shape"]["height"]));
+
+        float w, h;
+        eng::DeserializeVar(w, s["shape"]["width"]);
+        eng::DeserializeVar(h, s["shape"]["height"]);
+
+        rectangle->setSize(sf::Vector2f(w, h));
         shape = rectangle;
     }
 
-    shape->setOrigin(s["shape"]["origin"]["x"], s["shape"]["origin"]["y"]);
-    shape->setFillColor(sf::Color(s["shape"]["color"]["r"], s["shape"]["color"]["g"], s["shape"]["color"]["b"], s["shape"]["color"]["a"]));
+    float oX, oY;
+    eng::DeserializeVar(oX, s["shape"]["origin"]["x"]);
+    eng::DeserializeVar(oY, s["shape"]["origin"]["y"]);
 
-    textureKey = s["textureKey"];
-    if (textureKey != "") {
+    shape->setOrigin(oX, oY);
+
+    float cR, cG, cB, cA;
+
+    eng::DeserializeVar(cR, s["shape"]["color"]["r"]);
+    eng::DeserializeVar(cG, s["shape"]["color"]["g"]);
+    eng::DeserializeVar(cB, s["shape"]["color"]["b"]);
+    eng::DeserializeVar(cA, s["shape"]["color"]["a"]);
+
+    shape->setFillColor(sf::Color(cR, cG, cB, cA));
+
+    eng::DeserializeVar(textureKey, s["textureKey"]);
+    if (textureKey != "")
+    {
         this->shape->setTexture(ResourceManager::Get().GetTexture(textureKey).lock()->sf_texture.get(), true);
     }
 
-    if (s["physEnable"])
+    if (physEnable)
     {
         b2BodyDef def;
         def.type = b2_dynamicBody;
-        def.position = b2Vec2(s["body"]["transform"]["x"], s["body"]["transform"]["y"]);
-        def.angle = s["body"]["angle"];
+
+        float pX, pY, pAngle;
+        eng::DeserializeVar(pX, s["body"]["transform"]["x"]);
+        eng::DeserializeVar(pY, s["body"]["transform"]["y"]);
+        eng::DeserializeVar(pY, s["body"]["angle"]);
+
+        def.position = b2Vec2(pX, pY);
+
+        def.angle = pAngle;
 
         b2FixtureDef fixtureDef;
+
+        string shapeType;
+        //eng::DeserializeVar
         auto jsonShape = s["fixture"]["shape"];
         if (jsonShape["type"] == "e_circle")
         {
-            b2CircleShape * circleShape = new b2CircleShape();
+            b2CircleShape *circleShape = new b2CircleShape();
             circleShape->m_radius = jsonShape["m_radius"];
             fixtureDef.shape = circleShape;
         }
         else if (jsonShape["type"] == "e_polygon")
         {
-            b2PolygonShape * rectShape = new b2PolygonShape();
+            b2PolygonShape *rectShape = new b2PolygonShape();
             rectShape->SetAsBox(jsonShape["width"], jsonShape["height"]);
             fixtureDef.shape = rectShape;
         }
 
-       auto world = _owner.lock()->GetScene().lock()->GetWorld().lock();
-       this->body = world->CreateBody(&def);
-       this->fixture = this->body->CreateFixture(&fixtureDef);
+        auto world = _owner.lock()->GetScene().lock()->GetWorld().lock();
+        this->body = world->CreateBody(&def);
+        this->fixture = this->body->CreateFixture(&fixtureDef);
     }
 }

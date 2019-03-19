@@ -73,8 +73,9 @@ json Camera::Serialize()
 
 void Camera::Deserialize(json obj)
 {
-    maxScale = obj["maxScale"];
-    minScale = obj["minScale"];
-    scale = obj["scale"];
+    eng::DeserializeVar(maxScale, obj["maxScale"]);
+    eng::DeserializeVar(minScale, obj["minScale"]);
+    eng::DeserializeVar(scale, obj["scale"]);
+    
     view.setSize(scale * 16, scale * 9);
 }

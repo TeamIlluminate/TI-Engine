@@ -3,6 +3,7 @@
 #include "Components/Mesh.h"    
 #include <Box2D/Box2D.h>
 #include <SFML/Graphics.hpp>
+
 namespace eng
 {
     //[Serializable]
@@ -29,6 +30,7 @@ namespace eng
         float bulletForce = 50.f;
         float shoot = 0;
         bool isFiring = false;
+        void HandleClick();
         
     };
 } // namespace eng;

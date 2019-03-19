@@ -112,15 +112,15 @@ void Editor::DrawInspector()
             }
             open.close();
             auto scene = make_shared<Scene>();
-            try
-            {
+            // try
+            // {
                 json data = json::parse(source);
                 scene->Deserialize(data);
                 GameMaster::Get().LoadScene(scene);
-            }
-            catch (exception)
-            {
-            }
+            // }
+            // catch (exception)
+            // {
+            // }
         }
 
         auto _c_Scene = GameMaster::Get().GetCurrentScene();

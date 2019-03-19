@@ -1,5 +1,6 @@
 #include "GameMaster.h"
 #include "Scene.h"
+#include "GUI/Grid.h"
 
 using namespace eng;
 
@@ -70,7 +71,7 @@ bool GameMaster::VerifyRegister(string name)
 }
 void GameMaster::RegisterComponentConstructor(string typeName, shared_ptr<Component> (*cc)())
 {
-    //if(VerifyRegister(typeName)) 
+    //if(VerifyRegister(typeName))
     constructorStorage.insert(pair<string, shared_ptr<Component> (*)()>(typeName, *cc));
 }
 
@@ -78,15 +79,36 @@ string GameMaster::GetStorageNames()
 {
     static string storageNames;
 
-    if(storageNames.empty())
+    if (storageNames.empty())
     {
         storageNames = "";
         auto allTypes = constructorStorage;
-        for(auto typePair : allTypes)
+        for (auto typePair : allTypes)
         {
             storageNames = storageNames + typePair.first + '\0';
         }
     }
 
     return storageNames;
+}
+
+string GameMaster::GetGID()
+{
+    gid++;
+    return to_string(gid);
+}
+
+void GameMaster::AddGrid(shared_ptr<Grid> grid)
+{
+    grids.push_back(grid);
+}
+
+void GameMaster::RemoveGrid(shared_ptr<Grid> grid)
+{
+    grids.remove(grid);
+}
+
+list<shared_ptr<Grid>> GameMaster::GetGrids()
+{
+    return grids;
 }

@@ -22,5 +22,4 @@ class Car : public eng::Component {
     string skeyForce;
     string skeyIdle;
     string skeyStart;
-
 };
