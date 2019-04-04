@@ -29,3 +29,6 @@ if(NOT CMAKE_SIZEOF_VOID_P STREQUAL "8")
    set(PACKAGE_VERSION "${PACKAGE_VERSION} (${installedBits}bit)")
    set(PACKAGE_VERSION_UNSUITABLE TRUE)
 endif()
+
+include(${CMAKE_CURRENT_LIST_DIR}/TIECoreTargets.cmake)
+get_target_property(TIECore_LIBS eng::TIECore INTERFACE_LINK_LIBRARIES)

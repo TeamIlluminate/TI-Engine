@@ -1,6 +1,6 @@
-#include "Components/Mesh.h"
-#include "RayCastHandler.h"
-#include "ResourceManager.h"
+#include "Mesh.h"
+#include "../RayCastHandler.h"
+#include "../ResourceManager.h"
 
 using namespace eng;
 

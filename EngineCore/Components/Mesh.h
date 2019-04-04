@@ -1,5 +1,5 @@
-#include "Utils.h"
-#include "Component.h"
+#include "../Utils.h"
+#include "../Component.h"
 
 #pragma once
 namespace eng

@@ -1,5 +1,5 @@
-#include "Utils.h"
-#include "Components/Mesh.h"
+#include "../Utils.h"
+#include "../Components/Mesh.h"
 
 #pragma once
 

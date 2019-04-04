@@ -1,6 +1,6 @@
-#include "Component.h"
-#include "Scene.h"
-#include "Components/Mesh.h"
+#include "../Component.h"
+#include "../Scene.h"
+#include "../Components/Mesh.h"
 
 #pragma once
 

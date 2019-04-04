@@ -1,10 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
-#include "imgui.h"
-#include "json.hpp"
-#include "imgui-SFML.h"
-#include "imgui_stdlib.h"
+#include "Libraries/ImGUI/imgui.h"
+#include "Libraries/json.hpp"
+#include "Libraries/ImGUI/imgui-SFML.h"
+#include "Libraries/ImGUI/imgui_stdlib.h"
 #include <math.h>
 #include <iostream>
 #include <string>
@@ -15,6 +15,8 @@
 
 using namespace std;
 using namespace nlohmann;
+
+typedef std::function<void()> voidDelegate;
 
 // &|----> <-----|& ({*..*}) |-----> {8...8} <-----|
 //    << * || * >>

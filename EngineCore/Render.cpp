@@ -5,8 +5,6 @@
 #include "Components/Mesh.h"
 #include "GameObject.h"
 #include "Component.h"
-#include "imgui.h"
-#include "imgui-SFML.h"
 #include "Components/Camera.h"
 #include "GUI/Grid.h"
 

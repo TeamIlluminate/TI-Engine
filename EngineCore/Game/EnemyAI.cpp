@@ -1,5 +1,5 @@
-#include "Components/Mesh.h"
-#include "Game/EnemyAI.h"
+#include "../Components/Mesh.h"
+#include "EnemyAI.h"
 
 using namespace eng;
 

@@ -1,9 +1,9 @@
-#include "Game/PlayerController.h"
-#include "Components/Mesh.h"
-#include "Game/Bullet.cpp"
-#include "ResourceManager.h"
-#include "GUI/Grid.h"
-#include "GUI/Button.h"
+#include "PlayerController.h"
+#include "../Components/Mesh.h"
+#include "Bullet.cpp"
+#include "../ResourceManager.h"
+#include "../GUI/Grid.h"
+#include "../GUI/Button.h"
 
 using namespace eng;
 

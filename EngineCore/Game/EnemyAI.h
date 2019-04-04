@@ -1,6 +1,6 @@
-#include "Utils.h"
-#include "Component.h"
-#include "GameObject.h"
+#include "../Utils.h"
+#include "../Component.h"
+#include "../GameObject.h"
 #pragma once
 
 namespace eng

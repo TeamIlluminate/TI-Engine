@@ -1,7 +1,5 @@
-#include "Utils.h"
-#include "Component.h"
-#include "imgui.h"
-#include "imgui-SFML.h"
+#include "../Utils.h"
+#include "../Component.h"
 #include <algorithm>
 
 namespace eng

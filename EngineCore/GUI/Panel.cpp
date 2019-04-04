@@ -1,5 +1,5 @@
 #include "Panel.h"
-#include "GameMaster.h"
+#include "../GameMaster.h"
 using namespace eng;
 
 Panel::Panel(sf::Vector2f _size, string _name, sf::Vector2f _position, ImGuiWindowFlags flags) : Grid(_size, _name, _position, flags)

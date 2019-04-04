@@ -1,4 +1,4 @@
-#include "Component.h"
+#include "../Component.h"
 #include <SFML/Graphics.hpp>
 namespace eng
 {

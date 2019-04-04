@@ -1,6 +1,6 @@
-#include "Utils.h"
-#include "Component.h"
-#include "Components/Mesh.h"    
+#include "../Utils.h"
+#include "../Component.h"
+#include "../Components/Mesh.h"    
 #include <Box2D/Box2D.h>
 #include <SFML/Graphics.hpp>
 

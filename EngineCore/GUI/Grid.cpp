@@ -1,5 +1,5 @@
 #include "Grid.h"
-#include "GameMaster.h"
+#include "../GameMaster.h"
 
 using namespace eng;
 

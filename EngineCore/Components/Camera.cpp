@@ -1,6 +1,5 @@
 #include "Camera.h"
-#include "imgui.h"
-#include "GameObject.h"
+#include "../GameObject.h"
 
 using namespace eng;
 

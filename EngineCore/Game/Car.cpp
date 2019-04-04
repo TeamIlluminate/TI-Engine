@@ -1,5 +1,5 @@
-#include "Game/Car.h"
-#include "ResourceManager.h"
+#include "Car.h"
+#include "../ResourceManager.h"
 
 void Car::OnInit()
 {

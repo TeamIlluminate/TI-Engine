@@ -1,11 +1,8 @@
-#include "Utils.h"
+#include "../Utils.h"
 #pragma once
 
 namespace eng
 {
-
-typedef std::function<void()> voidDelegate;
-
 class Control
 {
   public:
