@@ -2,12 +2,13 @@ cmake_minimum_required(VERSION 3.0.0)
 project(TI-Engine VERSION 0.1.0)
 enable_testing()
 
-aux_source_directory(${PROJECT_SOURCE_DIR} SRC) 
-aux_source_directory(Components CMP)
-aux_source_directory(Game GAM)
-aux_source_directory(GUI GUI)
-aux_source_directory(${PROJECT_SOURCE_DIR}/Libraries/ImGUI ImGUI)
-aux_source_directory(${PROJECT_SOURCE_DIR}/Libraries JSON)
+
+aux_source_directory(${PROJECT_SOURCE_DIR}/CoreCode SRC) 
+aux_source_directory(${PROJECT_SOURCE_DIR}/CoreCode/Components CMP)
+aux_source_directory(${PROJECT_SOURCE_DIR}/CoreCode/Game GAM)
+aux_source_directory(${PROJECT_SOURCE_DIR}/CoreCode/GUI GUI)
+aux_source_directory(${PROJECT_SOURCE_DIR}/CoreCode/Libraries/ImGUI ImGUI)
+aux_source_directory(${PROJECT_SOURCE_DIR}/CoreCode/Libraries JSON)
 
 SET(FLAGS "-Wformat-security")
 
@@ -33,14 +34,14 @@ install(
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/TIECore/TIECoreConfigVersion.cmake"
+  "${PROJECT_SOURCE_DIR}/cmake/TIECore/TIECoreConfigVersion.cmake"
   VERSION ${PROJECT_VERSION}
   COMPATIBILITY AnyNewerVersion
 )
 
 export(
   EXPORT TIECoreTargets
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/TIECore/TIECoreTargets.cmake"
+  FILE "${PROJECT_SOURCE_DIR}/cmake/TIECore/TIECoreTargets.cmake"
   NAMESPACE eng::
 )
 
@@ -53,8 +54,8 @@ export(
 
 configure_package_config_file(
   cmake/TIECoreConfig.cmake
-  "${CMAKE_CURRENT_BINARY_DIR}/TIECore/TIECoreConfig.cmake"	
-  INSTALL_DESTINATION ${PROJECT_BINARY_DIR}
+  "${PROJECT_SOURCE_DIR}/cmake/TIECore/TIECoreConfig.cmake"
+  INSTALL_DESTINATION ${PROJECT_SOURCE_DIR}/cmake/
 )
 
 set(ConfigPackageLocation lib/cmake/TIECore)
@@ -71,20 +72,20 @@ install(
 
 install(
   FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/TIECore/TIECoreConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/TIECore/TIECoreConfigVersion.cmake"
+    "${PROJECT_SOURCE_DIR}/cmake/TIECore/TIECoreConfig.cmake"
+    "${PROJECT_SOURCE_DIR}/cmake/TIECore/TIECoreConfigVersion.cmake"
   DESTINATION
     ${ConfigPackageLocation}
   COMPONENT
     Devel
 )
 
-install(DIRECTORY ./
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/CoreCode
         DESTINATION include/TI-EngineCore
         FILES_MATCHING PATTERN "*.h*" )
 
 install(
-  FILES ./SerializableGenerator.cpp
+  FILES ${PROJECT_SOURCE_DIR}/CoreCode/SerializableGenerator.cpp
   DESTINATION include/TI-EngineCore/
 )
 

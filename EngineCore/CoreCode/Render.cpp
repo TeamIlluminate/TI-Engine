@@ -43,6 +43,7 @@ void Render::WindowLoop()
     sf::Clock deltaClock;
     sf::Clock imGuiClock;
     float fixedDelta = 0;
+    
     while (window->isOpen())
     {
         window->clear();

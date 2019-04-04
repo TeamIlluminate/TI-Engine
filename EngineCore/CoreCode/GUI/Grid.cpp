@@ -3,15 +3,15 @@
 
 using namespace eng;
 
-Grid::Grid(sf::Vector2f _size, string _name, sf::Vector2f _position, ImGuiWindowFlags flags) : Control(_size, _name, _position)
+Grid::Grid(sf::Vector2f _size, string _name, sf::Vector2f _position, ImGuiWindowFlags _flags) : Control(_size, _name, _position)
 {
-    flags = flags;
+    flags = _flags;
     id = GameMaster::Get().GetGID();
 }
 
-Grid::Grid(ImGuiWindowFlags flags) : Control(sf::Vector2f(100, 100), "NewGrid", sf::Vector2f(0, 0))
+Grid::Grid(ImGuiWindowFlags _flags) : Control(sf::Vector2f(100, 100), "NewGrid", sf::Vector2f(0, 0))
 {
-    flags = flags;
+    flags = _flags;
     id = GameMaster::Get().GetGID();
 }
 

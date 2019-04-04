@@ -15,6 +15,7 @@ namespace edr
         private:
 
         void LoadEditorLib(); // Using by Editor lib to reload;
+        void EditorDrawingCycle();
         void AddGrid(shared_ptr<eng::Grid> GridToAdd); // Using by Editor.lib to register grid in EngineGUI scope.
         void RemoveGrid(shared_ptr<eng::Grid> GridToRemove); // Reverse of AddGrid ofc.
 
@@ -22,5 +23,6 @@ namespace edr
         list<shared_ptr<eng::Grid>> editorGuiStorage;
         bool draw = false;
 
+        shared_ptr<sf::RenderWindow> editorWindow;
     };
 }
